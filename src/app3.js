@@ -5,6 +5,7 @@ const VIEWS = { student: {}, staff: {} };
 const NAV = {
   student: [
     { id: 'passport', ru: 'Научный паспорт', en: 'AI Research Passport', ic: 'idcard' },
+    { id: 'topics', ru: 'Подбор темы', en: 'AI Topic Finder', ic: 'bulb' },
     { id: 'search', ru: 'Поиск литературы', en: 'Research Search Bot', ic: 'search' },
     { id: 'library', ru: 'Моя библиотека', en: 'Smart Library Bot', ic: 'book' },
     { id: 'assistant', ru: 'Виртуальный библиотекарь', en: 'AI Library Assistant ENU', ic: 'chat' },
@@ -54,8 +55,9 @@ function renderMain() {
   const main = document.getElementById('main');
   if (!main) return;
   const st = captureFocus();
-  const fn = VIEWS[S.role][curView()] || VIEWS[S.role][S.role === 'student' ? 'passport' : 'overview'];
-  main.innerHTML = fn();
+  const v = VIEWS[S.role][curView()] ? curView() : (S.role === 'student' ? 'passport' : 'overview');
+  const app = main.closest('.app'); if (app) app.dataset.sec = v;
+  main.innerHTML = VIEWS[S.role][v]();
   restoreFocus(st);
 }
 function renderTop() {
@@ -74,7 +76,7 @@ function renderTop() {
       : (Live.state === 'slow' || Live.state === 'error') ? `<span class="sys-chip wait" title="Общая база пока недоступна — данные могут быть неактуальны"><span class="dot"></span><span class="lbl">Нет связи с базой</span></span>`
         : `<span class="sys-chip" title="Данные демоверсии хранятся в этом браузере"><span class="dot"></span><span class="lbl">Локальный режим</span></span>`;
   top.innerHTML = `
-    <button class="brand" data-act="about" title="О проекте">${BRAND}<span><span class="brand-name" style="display:block">Smart Research Library <span class="ver">1.0</span></span><span class="brand-sub" style="display:block">Научная библиотека ЕНУ им. Л. Н. Гумилёва</span></span><span class="demo-flag">Демо</span></button>
+    <button class="brand" data-act="about" title="О проекте">${BRAND}<span><span class="brand-name">Smart Research Library <span class="ver">1.0</span></span><span class="brand-sub">Научная библиотека ЕНУ им. Л. Н. Гумилёва</span></span><span class="demo-flag">Демо</span></button>
     <div class="grow"></div>
     <div class="role-switch" role="group" aria-label="Выбор кабинета">
       <button data-act="role" data-role="student" aria-pressed="${student}">${ic('grad')}<span class="lbl-long">Магистрант / Докторант</span><span class="lbl-short">Исследователь</span></button>
@@ -126,16 +128,17 @@ function renderNav() {
     if (S.role === 'student' && id === 'assistant') { const n = myTickets().filter(ticketUnread).length; return n ? `<span class="ni-badge" title="Новые ответы">${n}</span>` : ''; }
     return '';
   };
-  const item = it => `<a class="nav-item" href="#${S.role === 'staff' ? 'staff-' + it.id : it.id}" data-act="nav" data-view="${it.id}" ${it.id === cur ? 'aria-current="page"' : ''}>${ic(it.ic)}<span class="ni-text"><span class="ni-ru">${esc(it.ru)}</span><span class="ni-en">${esc(it.en)}</span></span>${badge(it.id)}</a>`;
+  const item = it => `<a class="nav-item" href="#${S.role === 'staff' ? 'staff-' + it.id : it.id}" data-act="nav" data-view="${it.id}" ${it.id === cur ? 'aria-current="page"' : ''}><span class="ni-ic">${ic(it.ic)}</span><span class="ni-text"><span class="ni-ru">${esc(it.ru)}</span><span class="ni-en">${esc(it.en)}</span></span>${badge(it.id)}</a>`;
   nav.innerHTML = `<div class="nav-title">${S.role === 'student' ? 'Кабинет исследователя' : 'Кабинет сотрудника'}</div>`
     + NAV[S.role].map(item).join('')
     + (S.role === 'student' ? `<div class="nav-sep"></div>${item(NAV.roadmap)}` : '')
-    + `<div class="nav-foot"><button class="nav-item" data-act="scenario">${ic('play')}<span class="ni-text"><span class="ni-ru">Сценарий показа</span></span></button><button class="nav-item" data-act="about">${ic('info')}<span class="ni-text"><span class="ni-ru">О проекте</span></span></button></div>`;
+    + `<div class="nav-foot"><button class="nav-item" data-act="scenario"><span class="ni-ic">${ic('play')}</span><span class="ni-text"><span class="ni-ru">Сценарий показа</span></span></button><button class="nav-item" data-act="about"><span class="ni-ic">${ic('info')}</span><span class="ni-text"><span class="ni-ru">О проекте</span></span></button></div>`;
 }
 
 /* ---------- Shared fragments ---------- */
 function pageHead(eyebrow, title, lede, actions = '') {
-  return `<header class="page-head"><div><div class="eyebrow">${esc(eyebrow)}</div><h1>${esc(title)}</h1>${lede ? `<p class="lede">${lede}</p>` : ''}</div>${actions ? `<div class="page-actions">${actions}</div>` : ''}</header>`;
+  const v = curView(), it = (NAV[S.role] || []).concat(S.role === 'student' ? [NAV.roadmap] : []).find(x => x.id === v);
+  return `<header class="page-head hero"><div class="hero-motif" aria-hidden="true"></div><div class="hero-main">${it ? `<div class="hero-ic" aria-hidden="true">${ic(it.ic)}</div>` : ''}<div class="hero-text"><div class="eyebrow">${esc(eyebrow)}</div><h1>${esc(title)}</h1>${lede ? `<p class="lede">${lede}</p>` : ''}</div></div>${actions ? `<div class="page-actions">${actions}</div>` : ''}</header>`;
 }
 function panel(title, sub, body, o = {}) {
   return `<section class="panel ${o.cls || ''}"${o.id ? ` id="${o.id}"` : ''}><div class="panel-head"><div><h2>${title}</h2>${sub ? `<div class="sub">${sub}</div>` : ''}</div>${o.actions ? `<div class="toolbar">${o.actions}</div>` : ''}</div><div class="panel-body ${o.flush ? 'flush' : ''} ${o.stack ? 'stack' : ''}">${body}</div>${o.foot ? `<div class="panel-foot">${o.foot}</div>` : ''}</section>`;
@@ -180,7 +183,7 @@ function passportCard(p) {
     const off = toggle && vis[key] === false;
     if (prev && off) return '';
     const btn = toggle && !prev ? `<button class="pp-vis ${off ? 'off' : ''}" data-act="pp-vis" data-key="${key}" aria-pressed="${!off}" title="${off ? 'Скрыто от других исследователей — открыть' : 'Видно другим исследователям — скрыть'}">${ic(off ? 'eyeoff' : 'eye')}<span class="sr-only">${off ? 'Скрыто' : 'Открыто'}: ${label}</span></button>` : '<span></span>';
-    return `<div class="pp-row ${off ? 'is-hidden' : ''}"><div class="pp-k">${label}</div><div class="pp-v">${html || '<span class="muted">не указано</span>'}</div>${btn}</div>`;
+    return `<div class="pp-row ${off ? 'is-hidden' : ''}"><div class="pp-k">${label}</div><div class="pp-v">${html || '<span class="missing">не указано</span>'}</div>${btn}</div>`;
   };
   const list = arr => (arr && arr.length ? `<ul>${arr.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '');
   const def = parseMonth(p.defense);
@@ -209,7 +212,7 @@ VIEWS.student.passport = function () {
   const ups = upcomingItems(4);
   const tks = myTickets().slice(0, 3);
   const js = recommendJournals(3);
-  const hint = !S.me.hintDismissed ? `<div class="note brass note-hint">${ic('info')}<div class="note-text">Это демоверсия конкурсного проекта. Вверху переключаются два кабинета: исследователя (магистранта, докторанта) и сотрудника библиотеки. Пошаговый сценарий показа — в меню.</div><button class="btn sm" data-act="scenario">${ic('play')} Сценарий показа</button><button class="btn sm ghost" data-act="hint-off" aria-label="Скрыть подсказку">${ic('x')}</button></div>` : '';
+  const hint = !S.me.hintDismissed ? `<div class="note brass note-hint">${ic('info')}<div class="note-text">Это демоверсия конкурсного проекта. Вверху переключаются два кабинета: исследователя (магистранта, докторанта) и сотрудника библиотеки. Пошаговый сценарий показа — в меню.</div><button class="btn sm" data-act="scenario"><span class="ni-ic">${ic('play')}</span> Сценарий показа</button><button class="btn sm ghost" data-act="hint-off" aria-label="Скрыть подсказку">${ic('x')}</button></div>` : '';
   return `<div class="page">${hint}
     ${pageHead('AI Research Passport', 'Научный паспорт', 'Профиль исследователя — основа для рекомендаций публикаций, журналов, мероприятий и научного плана. Вы сами решаете, какие сведения видят другие исследователи.',
     `<button class="btn" data-act="pp-preview" aria-pressed="${S.ui.ppPreview}">${ic(S.ui.ppPreview ? 'eyeoff' : 'eye')} ${S.ui.ppPreview ? 'Обычный вид' : 'Как видят другие'}</button><button class="btn primary" data-act="pp-edit">${ic('edit')} Редактировать паспорт</button>`)}
@@ -422,9 +425,9 @@ VIEWS.student.planner = function () {
     const a = new Date(info.start.getFullYear(), info.start.getMonth() + i * 6, 1), b = new Date(info.start.getFullYear(), info.start.getMonth() + i * 6 + 6, 0);
     const items = ms.filter(m => semesterOf(m.due, info.start) === i);
     if (!items.length) continue;
-    sems.push(`<div class="sem ${i === curSem ? 'now' : ''}"><div><div class="sem-title">${i + 1} семестр ${i === curSem ? '<span class="tag accent">сейчас</span>' : ''}</div><div class="sem-dates">${fmtMonShortY(+a)} – ${fmtMonShortY(+b)} · ${Math.floor(i / 2) + 1} курс</div></div><div>${items.map(m => {
+    sems.push(`<div class="sem ${i === curSem ? 'now' : ''}"><div><div class="sem-title">${i + 1} семестр ${i === curSem ? '<span class="tag accent">сейчас</span>' : ''}<span class="sem-count ${items.every(m => m.done) ? 'ok' : 'todo'}" title="Выполнено этапов">${items.filter(m => m.done).length}/${items.length}</span></div><div class="sem-dates">${fmtMonShortY(+a)} – ${fmtMonShortY(+b)} · ${Math.floor(i / 2) + 1} курс</div></div><div>${items.map(m => {
       const over = !m.done && m.due < now, soonC = !m.done && !over && m.due - now < 30 * DAY;
-      return `<div class="ms ${m.done ? 'done' : ''}"><input type="checkbox" id="ms-${m.k}" data-ms="${m.k}" ${m.done ? 'checked' : ''} aria-label="Выполнено: ${esc(m.t)}"><div><label class="ms-title" for="ms-${m.k}">${esc(m.t)}</label><div class="ms-meta"><span class="tag">${esc(TRACKS[m.tr])}</span>${over ? '<span class="tag" style="color:var(--danger)">срок прошёл</span>' : soonC ? '<span class="tag brass">скоро</span>' : ''}</div></div><div class="ms-due ${over ? 'over' : soonC ? 'soon' : ''}">${esc(fmtDS(m.due))} ${new Date(m.due).getFullYear()}</div></div>`;
+      return `<div class="ms ${m.done ? 'done' : 'todo'} ${over ? 'over' : ''}"><input type="checkbox" id="ms-${m.k}" data-ms="${m.k}" ${m.done ? 'checked' : ''} aria-label="Выполнено: ${esc(m.t)}"><div><label class="ms-title" for="ms-${m.k}">${esc(m.t)}</label><div class="ms-meta"><span class="tag">${esc(TRACKS[m.tr])}</span>${m.done ? `<span class="tag done">${ic('check')} выполнено</span>` : over ? '<span class="tag todo">срок прошёл</span>' : soonC ? '<span class="tag brass">скоро</span>' : ''}</div></div><div class="ms-due ${over ? 'over' : soonC ? 'soon' : ''}">${esc(fmtDS(m.due))} ${new Date(m.due).getFullYear()}</div></div>`;
     }).join('')}</div></div>`);
   }
   const meetings = pl.meetings.slice().sort((a, b) => b.at - a.at);
@@ -476,8 +479,12 @@ VIEWS.student.prompts = function () {
 };
 
 /* ---------- Roadmap & beta modules ---------- */
+function roadSum() {
+  const d = ROADMAP.filter(r => r.beta).length, t = ROADMAP.length - d;
+  return `<div class="panel-body road-sum"><div class="road-bar" role="img" aria-label="Реализовано: ${d}, не реализовано: ${t}">${'<i class="d" style="flex:1"></i>'.repeat(d)}${'<i class="t" style="flex:1"></i>'.repeat(t)}</div><div class="road-legend"><span><i style="background:var(--s-done)"></i>Реализовано: ${d}</span><span><i style="background:var(--s-todo)"></i>Не реализовано: ${t}</span></div></div>`;
+}
 VIEWS.student.roadmap = function () {
-  const grid = `<div class="road-grid">${ROADMAP.map(r => `<div class="road"><div class="road-head"><span class="road-ic">${ic(r.ic)}</span><div><div class="road-title">${esc(r.ru)}</div><div class="road-en">${String(r.n).padStart(2, '0')} · ${esc(r.en)}</div></div></div><p>${esc(r.d)}</p><div class="toolbar" style="margin-top:auto;padding-top:6px">${r.beta ? `<span class="tag brass">Бета</span><button class="btn xs" data-act="beta-tab" data-v="${r.id}">Попробовать ${ic('arrow')}</button>` : '<span class="tag">Следующий этап</span>'}${r.prompts ? `<button class="btn xs" data-act="p-goto" data-v="${esc(r.prompts)}">Промпты ${ic('arrow')}</button>` : ''}</div></div>`).join('')}</div>`;
+  const grid = `<div class="road-grid">${ROADMAP.map(r => `<div class="road ${r.beta ? 'done' : 'todo'}"><div class="road-head"><span class="road-ic">${ic(r.ic)}</span><div><div class="road-title">${esc(r.ru)}</div><div class="road-en">${String(r.n).padStart(2, '0')} · ${esc(r.en)}</div></div></div><p>${esc(r.d)}</p><div class="toolbar" style="margin-top:auto;padding-top:6px">${r.beta ? `<span class="tag done">${ic('check')} Реализовано · бета</span><button class="btn xs" data-act="beta-tab" data-v="${r.id}">Попробовать ${ic('arrow')}</button>` : `<span class="tag todo">${ic('x')} Не реализовано</span>`}${r.prompts ? `<button class="btn xs" data-act="p-goto" data-v="${esc(r.prompts)}">Промпты ${ic('arrow')}</button>` : ''}</div></div>`).join('')}</div>`;
   const tab = S.ui.beta;
   const tabs = [['journal', 'AI Journal Finder'], ['reviewer', 'AI Reviewer Simulator'], ['translator', 'AI Academic Translator']];
   const out = S.ui.betaOut[tab];
@@ -509,5 +516,111 @@ VIEWS.student.roadmap = function () {
   }
   const betaPanel = panel('Бета-модули', aiOff ? 'Бета-модули работают через ИИ Claude — откройте демоверсию в приложении Claude, чтобы попробовать' : 'Работают через ИИ Claude', `<div class="seg" role="group" aria-label="Модуль">${tabs.map(([k, l]) => `<button data-act="beta-tab" data-v="${k}" aria-pressed="${tab === k}">${l}</button>`).join('')}</div>${tool}${result ? `<div class="divider"></div>${result}` : ''}`, { stack: true, id: 'beta' });
   return `<div class="page">${pageHead('Roadmap', 'Направления развития платформы', 'Модули следующего этапа Smart Research Library. Три из них уже можно попробовать в бета-режиме.')}
-    ${panel('Модули следующего этапа', 'Нумерация — по структуре проекта (14 модулей)', grid, { flush: true, cls: 'clip' })}${betaPanel}</div>`;
+    ${panel('Модули следующего этапа', 'Нумерация — по структуре проекта (14 модулей)', roadSum() + grid, { flush: true, cls: 'clip' })}${betaPanel}</div>`;
+};
+
+/* ---------- AI Topic Finder ---------- */
+const TF_YEARS = [['all', 'Все годы (2019–2025)'], ['2024', '2024–2025'], ['2022', '2022–2023'], ['2021', '2021–2022'], ['2019', '2019–2020']];
+const TF_GROUPS = ['будущие педагоги-психологи', 'студенты', 'магистранты', 'учащиеся', 'учителя', 'родители'];
+function tfNovelty(t) {
+  const n = t.subj, q = `«${n}»`;
+  const T = {
+    ai: [`Новизна: ${q} рассматривается в контексте ИИ-инструментов в образовании (адаптивные платформы, генеративный ИИ). Исследование выявляет условия доверия к таким инструментам и их этические риски.`, `Жаңалығы: ${q} білім берудегі ЖИ құралдары (бейімделгіш платформалар, генеративті ЖИ) контекстінде қарастырылады. Зерттеу осындай құралдарға деген сенім шарттарын және олардың этикалық тәуекелдерін анықтайды.`, `Novelty: ${q} is examined in the context of AI tools in education (adaptive platforms, generative AI). The study identifies the conditions for trust in such tools and their ethical risks.`],
+    digital: [`Новизна: ${q} анализируется в условиях цифровой трансформации вуза и школы: онлайн- и гибридное обучение, цифровая грамотность и информационная безопасность.`, `Жаңалығы: ${q} ЖОО мен мектептің цифрлық трансформациясы жағдайында талданады: онлайн және гибридті оқыту, цифрлық сауаттылық және ақпараттық қауіпсіздік.`, `Novelty: ${q} is analysed in the context of the digital transformation of universities and schools: online and hybrid learning, digital literacy and information security.`],
+    inclusive: [`Новизна: ${q} рассматривается в инклюзивной образовательной среде с учётом разнообразия потребностей обучающихся и доступности цифровых ресурсов.`, `Жаңалығы: ${q} білім алушылар қажеттіліктерінің әртүрлілігі мен цифрлық ресурстардың қолжетімділігін ескере отырып, инклюзивті білім беру ортасында қарастырылады.`, `Novelty: ${q} is examined in an inclusive learning environment, taking into account the diversity of learners’ needs and the accessibility of digital resources.`],
+    psychology: [`Новизна: уточняются структура и условия развития направления ${q} с учётом вызовов цифровой среды (социальные сети, дистанционное обучение) и инклюзивного подхода.`, `Жаңалығы: цифрлық орта сын-қатерлерін (әлеуметтік желілер, қашықтан оқыту) және инклюзивті тәсілді ескере отырып, ${q} бағытының құрылымы мен даму шарттары нақтыланады.`, `Novelty: the structure and conditions for developing ${q} are refined, taking into account the challenges of the digital environment (social media, distance learning) and an inclusive approach.`],
+    thinking: [`Новизна: ${q} исследуется через цифровые и диалоговые практики (коучинг, рефлексия в онлайн-среде), что отличает подход от традиционных методик.`, `Жаңалығы: ${q} цифрлық және диалогтық тәжірибелер (коучинг, онлайн ортадағы рефлексия) арқылы зерттеледі, бұл тәсілді дәстүрлі әдістемелерден ерекшелейді.`, `Novelty: ${q} is studied through digital and dialogic practices (coaching, reflection in an online environment), which sets the approach apart from traditional methods.`],
+    management: [`Новизна: ${q} рассматривается с учётом цифровой трансформации образования и требований к компетенциям, связанным с ИИ и инклюзивностью.`, `Жаңалығы: ${q} білім берудің цифрлық трансформациясы мен ЖИ және инклюзивтілікке байланысты құзыреттерге қойылатын талаптарды ескере отырып қарастырылады.`, `Novelty: ${q} is examined in light of the digital transformation of education and the requirements for competencies related to AI and inclusion.`],
+    language: [`Новизна: ${q} связывается с цифровыми средами и ИИ-поддержкой (автоматическая обратная связь, мультимедийные материалы).`, `Жаңалығы: ${q} цифрлық ортамен және ЖИ қолдауымен (автоматты кері байланыс, мультимедиялық материалдар) байланыстырылады.`, `Novelty: ${q} is linked to digital environments and AI support (automated feedback, multimedia materials).`],
+    career: [`Новизна: ${q} рассматривается в условиях цифровых сервисов профориентации и ИИ-рекомендаций с учётом требований рынка труда.`, `Жаңалығы: ${q} еңбек нарығының талаптарын ескере отырып, кәсіби бағдар берудің цифрлық сервистері мен ЖИ ұсынымдары жағдайында қарастырылады.`, `Novelty: ${q} is examined in the context of digital career-guidance services and AI recommendations, taking labour-market requirements into account.`],
+    ecology: [`Новизна: ${q} рассматривается с учётом цифровых форматов обучения и целей устойчивого развития, включая ИИ-поддержку образовательных программ.`, `Жаңалығы: ${q} оқытудың цифрлық форматтары мен тұрақты даму мақсаттарын, соның ішінде білім беру бағдарламаларын ЖИ арқылы қолдауды ескере отырып қарастырылады.`, `Novelty: ${q} is examined in light of digital learning formats and the Sustainable Development Goals, including AI support for educational programmes.`],
+    ethics: [`Новизна: ${q} исследуется в контексте этики использования ИИ и цифровых сред, влияющих на нравственное воспитание обучающихся.`, `Жаңалығы: ${q} білім алушылардың адамгершілік тәрбиесіне әсер ететін ЖИ мен цифрлық ортаны пайдалану этикасы контекстінде зерттеледі.`, `Novelty: ${q} is studied in the context of the ethics of using AI and digital environments that affect learners’ moral education.`],
+    professional: [`Новизна: ${q} рассматривается с учётом цифровой трансформации образования и новых требований к компетенциям педагога, включая ИИ и инклюзивность.`, `Жаңалығы: ${q} білім берудің цифрлық трансформациясы мен педагог құзыреттеріне қойылатын жаңа талаптарды, соның ішінде ЖИ мен инклюзивтілікті ескере отырып қарастырылады.`, `Novelty: ${q} is examined in light of the digital transformation of education and new requirements for teacher competencies, including AI and inclusion.`]
+  };
+  return L3(...T[t.domain]);
+}
+function tfStats(t) {
+  const base = L3('Описательная статистика, проверка нормальности распределения (Шапиро–Уилка), альфа Кронбаха для шкал.', 'Сипаттамалық статистика, үлестірімнің қалыптылығын тексеру (Шапиро–Уилк), шкалалар үшін Кронбах альфасы.', 'Descriptive statistics, normality testing (Shapiro–Wilk), Cronbach’s alpha for scales.');
+  const cmp = L3('t-критерий или U Манна–Уитни; ANOVA для трёх и более групп; корреляция Пирсона; при большой выборке структурное моделирование (SEM).', 't-критерий немесе Манн–Уитни U; үш және одан көп топ үшін ANOVA; Пирсон корреляциясы; іріктеме үлкен болса құрылымдық модельдеу (SEM).', 't-test or Mann–Whitney U; ANOVA for three or more groups; Pearson correlation; structural equation modelling (SEM) for large samples.');
+  const D = {
+    ai: L3('Корреляция Пирсона или Спирмена; регрессия (влияние частоты использования ИИ-инструментов на компетентность); при формирующем эксперименте ANOVA с повторными измерениями.', 'Пирсон немесе Спирмен корреляциясы; регрессия (ЖИ құралдарын пайдалану жиілігінің құзыреттілікке әсері); қалыптастырушы экспериментте қайталама өлшемді ANOVA.', 'Pearson or Spearman correlation; regression (effect of AI-tool use frequency on competence); repeated-measures ANOVA for a formative experiment.'),
+    digital: L3('Корреляция Пирсона или Спирмена; регрессия (влияние цифровой среды на результат); при формирующем эксперименте ANOVA с повторными измерениями.', 'Пирсон немесе Спирмен корреляциясы; регрессия (цифрлық ортаның нәтижеге әсері); қалыптастырушы экспериментте қайталама өлшемді ANOVA.', 'Pearson or Spearman correlation; regression (effect of the digital environment on outcomes); repeated-measures ANOVA for a formative experiment.'),
+    inclusive: L3('U Манна–Уитни или t-критерий для сравнения групп; хи-квадрат для категориальных ответов; ANOVA при трёх и более группах.', 'Топтарды салыстыру үшін Манн–Уитни U немесе t-критерий; категориялық жауаптар үшін хи-квадрат; үш және одан көп топ болса ANOVA.', 'Mann–Whitney U or t-test to compare groups; chi-square for categorical responses; ANOVA for three or more groups.'),
+    psychology: L3('Факторный анализ (EFA/CFA) для проверки структуры шкалы; корреляция Спирмена; t-критерий или U Манна–Уитни для сравнения групп.', 'Шкала құрылымын тексеру үшін факторлық талдау (EFA/CFA); Спирмен корреляциясы; топтарды салыстыру үшін t-критерий немесе Манн–Уитни U.', 'Factor analysis (EFA/CFA) to test scale structure; Spearman correlation; t-test or Mann–Whitney U to compare groups.'),
+    thinking: L3('Парный t-критерий или критерий Уилкоксона (до/после); ANOVA с повторными измерениями; размер эффекта d Коэна.', 'Жұптық t-критерий немесе Уилкоксон критерийі (дейін/кейін); қайталама өлшемді ANOVA; Коэн d әсер мөлшері.', 'Paired t-test or Wilcoxon test (before/after); repeated-measures ANOVA; Cohen’s d effect size.'),
+    management: cmp, professional: cmp,
+    language: L3('Хи-квадрат для категориальных данных; парный t-критерий (до/после); корреляция Спирмена.', 'Категориялық деректер үшін хи-квадрат; жұптық t-критерий (дейін/кейін); Спирмен корреляциясы.', 'Chi-square for categorical data; paired t-test (before/after); Spearman correlation.'),
+    career: L3('Регрессия; ANOVA для сравнения групп; корреляция Пирсона.', 'Регрессия; топтарды салыстыру үшін ANOVA; Пирсон корреляциясы.', 'Regression; ANOVA to compare groups; Pearson correlation.'),
+    ecology: L3('t-критерий или U Манна–Уитни; ANOVA для трёх и более групп; корреляция Пирсона или Спирмена.', 't-критерий немесе Манн–Уитни U; үш және одан көп топ үшін ANOVA; Пирсон немесе Спирмен корреляциясы.', 't-test or Mann–Whitney U; ANOVA for three or more groups; Pearson or Spearman correlation.'),
+    ethics: L3('t-критерий или U Манна–Уитни; корреляция Спирмена; регрессия для предикторов нравственной позиции.', 't-критерий немесе Манн–Уитни U; Спирмен корреляциясы; адамгершілік ұстанымның предикторлары үшін регрессия.', 't-test or Mann–Whitney U; Spearman correlation; regression for predictors of moral stance.')
+  };
+  return [base, D[t.domain]];
+}
+/* Подбор: та же логика, что в PhD AI Navigator — слова запроса сверяются с ключами направления и с началом слов темы */
+function tfMatch(text, limit = 4) {
+  const words = [...new Set(String(text || '').toLowerCase().match(/[\p{L}\p{N}-]+/gu) || [])];
+  if (!words.length) return [];
+  const hit = (w, k) => w === k || (k.length >= 5 && w.startsWith(k));
+  return TF_TOPICS.map(t => {
+    const ru = t.ru.toLowerCase(), kk = t.kk.toLowerCase(), keys = TF_DOMAINS[t.domain].keys;
+    const terms = words.filter(w => keys.some(k => hit(w, k)) || (w.length >= 5 && (ru.includes(w.slice(0, 5)) || kk.includes(w.slice(0, 5)))));
+    return { t, terms };
+  }).filter(r => r.terms.length).sort((a, b) => b.terms.length - a.terms.length || b.t.y - a.t.y || a.t.no - b.t.no).slice(0, limit);
+}
+function tfCopyText(t) {
+  return [`Тема: ${t.ru}`, `Тема (каз.): ${t.kk}`, `Год: ${t.ay}`, `Объект исследования: ${t.obj}`, `Предмет исследования: ${t.subj}`, tfNovelty(t), 'Статистический аппарат:', ...tfStats(t)].join('\n');
+}
+const tfDomTag = d => `<span class="tf-dom" style="--dc:${TF_DOMAINS[d].c}"><i></i>${esc(TF_DOMAINS[d].ru)}</span>`;
+function tfCard(t, terms, o = {}) {
+  const [main, second] = LANG === 'kk' ? [t.kk, t.ru] : [t.ru, t.kk];
+  const blocks = [
+    ['tf-obj', 'users', 'Объект исследования', `<p>${esc(t.obj)}</p>`],
+    ['tf-subj', 'target', 'Предмет исследования', `<p>${esc(t.subj)}</p>`],
+    ['tf-nov', 'sparkle', 'Научная новизна', `<p class="no-i18n">${esc(tfNovelty(t))}</p>`],
+    ['tf-stat', 'pie', 'Статистический аппарат', `<ul class="no-i18n">${tfStats(t).map(s => `<li>${esc(s)}</li>`).join('')}</ul>`]
+  ];
+  return `<article class="tf-card${o.sel ? ' is-sel' : ''}" style="--dc:${TF_DOMAINS[t.domain].c}">
+    <div class="tf-card-top"><span class="tf-official yr-${t.y}">${ic('check')} Официальная тема ${esc(t.ay)}</span>${tfDomTag(t.domain)}<span class="tf-acts"><button class="btn xs" data-act="tf-copy" data-no="${t.no}">${ic('copy')} Копировать</button><button class="btn xs" data-act="tf-lit" data-no="${t.no}">${ic('search')} Литература</button></span></div>
+    <h3 class="tf-title no-i18n" lang="${LANG === 'kk' ? 'kk' : 'ru'}">${esc(main)}</h3><p class="tf-second no-i18n">${esc(second)}</p>
+    <div class="tf-blocks">${blocks.map(([c, i, h, b]) => `<div class="tf-block ${c}"><div class="tf-bh">${ic(i)}<span>${h}</span></div>${b}</div>`).join('')}</div>
+    ${terms && terms.length ? `<div class="tf-terms"><span>Совпадение с вашими интересами:</span>${terms.map(w => `<span class="tf-term no-i18n">${esc(w)}</span>`).join('')}</div>` : ''}
+  </article>`;
+}
+function tfAiCard(v, i) {
+  return `<article class="tf-card tf-ai" style="--dc:var(--accent)">
+    <div class="tf-card-top"><span class="tf-official ai">${ic('sparkle')} Вариант ИИ ${i + 1}</span><span class="tag">черновик — обсудите с руководителем</span><span class="tf-acts"><button class="btn xs" data-act="tf-ai-copy" data-i="${i}">${ic('copy')} Копировать</button></span></div>
+    <h3 class="tf-title no-i18n">${esc(v.title || '')}</h3>${v.title_kk ? `<p class="tf-second no-i18n">${esc(v.title_kk)}</p>` : ''}
+    <div class="tf-blocks no-i18n">${[['tf-obj', 'users', L3('Объект исследования', 'Зерттеу объектісі', 'Object of study'), v.object], ['tf-subj', 'target', L3('Предмет исследования', 'Зерттеу пәні', 'Subject of study'), v.subject], ['tf-nov', 'sparkle', L3('Научная новизна', 'Ғылыми жаңалығы', 'Scientific novelty'), v.novelty], ['tf-hyp', 'bulb', L3('Гипотеза', 'Болжам', 'Hypothesis'), v.hypothesis], ['tf-stat', 'pie', L3('Методы и статистика', 'Әдістер және статистика', 'Methods and statistics'), v.methods]].filter(x => x[3]).map(([c, i, h, b]) => `<div class="tf-block ${c}"><div class="tf-bh">${ic(i)}<span>${esc(h)}</span></div><p>${esc(b)}</p></div>`).join('')}</div>
+  </article>`;
+}
+VIEWS.student.topics = function () {
+  const st = S.ui.tf, q = dv('tf-q', ''), year = dv('tf-year', 'all'), find = (dv('tf-find', '') || '').trim().toLowerCase();
+  const res = st.res ? st.res.map(r => ({ t: TF_TOPICS.find(x => x.no === r.no), terms: r.terms })).filter(r => r.t) : null;
+  const sel = st.sel ? TF_TOPICS.find(x => x.no === st.sel) : null;
+  const base = TF_TOPICS.filter(t => (year === 'all' || String(t.y) === year) && (!find || t.ru.toLowerCase().includes(find) || t.kk.toLowerCase().includes(find)));
+  const doms = Object.keys(TF_DOMAINS).map(d => [d, TF_TOPICS.filter(t => t.domain === d).length]).sort((a, b) => b[1] - a[1]);
+  const maxD = doms[0][1];
+  const years = [...new Set(TF_TOPICS.map(t => t.ay))];
+  const interests = (S.me.passport.interests || []).join(', ');
+  const aiOut = st.ai;
+  const kpis = `<div class="kpis tf-kpis">${kpi('Утверждённых тем', TF_TOPICS.length, 'специальность 8D01103', 'file')}${kpi('Учебных лет', years.length, '2019–2025', 'calendar')}${kpi('Направлений', Object.keys(TF_DOMAINS).length, 'по ключевым понятиям', 'layers')}${kpi('Подобрано для вас', res ? res.length : '—', res ? 'из базы ЕНУ' : 'опишите интересы', 'target')}</div>`;
+  const step = panel('1. Ваши интересы', 'Опишите понятия и группы участников. Подбор идёт по базе ЕНУ 2019–2025 (8D01103 «Педагогика и психология»).', `
+    <label class="field"><span class="field-label">Интересующие понятия</span><textarea class="textarea" id="tf-q" data-draft="tf-q" rows="3" placeholder="цифровая грамотность, студенты педагогических вузов, мотивация">${esc(q)}</textarea><span class="field-hint">Перечислите через запятую или пробел.</span></label>
+    <div class="tf-chips"><span class="tf-chips-label">Направления</span>${Object.keys(TF_DOMAINS).map(d => `<button class="tf-chip" style="--dc:${TF_DOMAINS[d].c}" data-act="tf-add" data-v="${esc(TF_DOMAINS[d].ru)}">${esc(TF_DOMAINS[d].ru)}</button>`).join('')}</div>
+    <div class="tf-chips"><span class="tf-chips-label">Участники</span>${TF_GROUPS.map(g => `<button class="tf-chip plain" data-act="tf-add" data-v="${esc(g)}">${esc(g)}</button>`).join('')}</div>
+    <div class="toolbar"><button class="btn primary" data-act="tf-run">${ic('search')} Подобрать темы из базы</button><button class="btn ai" data-act="tf-ai" ${aiOut && aiOut.state === 'loading' ? 'disabled' : ''}>${ic('sparkle')} ${aiOut && aiOut.state === 'loading' ? 'ИИ пишет…' : 'Сформулировать свои темы с ИИ'}</button>${interests ? `<button class="btn ghost" data-act="tf-passport">${ic('idcard')} Взять из паспорта</button>` : ''}${q ? `<button class="btn ghost" data-act="tf-clear">${ic('x')} Очистить</button>` : ''}</div>`, { cls: 'tf-step', stack: true });
+  const results = res === null
+    ? `<div class="tf-empty">${ic('bulb')}<p>Здесь появятся до четырёх тем из базы с объектом, предметом, новизной и статистическим аппаратом.</p></div>`
+    : res.length ? res.map(r => tfCard(r.t, r.terms)).join('') : `<div class="tf-empty">${ic('search')}<p>Совпадений не найдено. Добавьте синонимы или выберите направление.</p></div>`;
+  const aiBlock = !aiOut ? '' : aiOut.state === 'loading' ? `<div class="tf-empty">${ic('sparkle')}<p>ИИ формулирует варианты тем…</p></div>`
+    : aiOut.items && aiOut.items.length ? `<div class="tf-sec-title">${ic('sparkle')} Варианты ИИ на основе ваших интересов</div>${aiOut.items.map(tfAiCard).join('')}` : aiOut.note ? `<div class="note">${ic('info')}<div>${esc(aiOut.note)}</div></div>` : '';
+  const selBlock = sel && !(res || []).some(r => r.t.no === sel.no) ? `<div class="tf-sec-title">${ic('bookmark')} Тема из базы</div>${tfCard(sel, null, { sel: true })}` : '';
+  const list = base.length ? `<ul class="tf-list" data-keep-scroll="tf-list">${base.map(t => `<li><button class="tf-row${st.sel === t.no ? ' is-sel' : ''}" data-act="tf-pick" data-no="${t.no}" style="--dc:${TF_DOMAINS[t.domain].c}"><span class="tf-row-top"><span class="tf-yr yr-${t.y}">${esc(t.ay)}</span><span class="tf-row-dom"><i></i>${esc(TF_DOMAINS[t.domain].ru)}</span></span><span class="tf-row-ru no-i18n">${esc(LANG === 'kk' ? t.kk : t.ru)}</span><span class="tf-row-kk no-i18n">${esc(LANG === 'kk' ? t.ru : t.kk)}</span></button></li>`).join('')}</ul>` : '<div class="empty">По этим условиям тем не найдено.</div>';
+  const basePanel = panel('База утверждённых тем ЕНУ', 'Официальные темы диссертаций по специальности 8D01103 «Педагогика и психология», 2019–2025.', `
+    <div class="tf-filters"><label class="field"><span class="field-label">Учебный год</span><select class="select" id="tf-year">${TF_YEARS.map(([v, l]) => `<option value="${v}" ${v === year ? 'selected' : ''}>${l}</option>`).join('')}</select></label><label class="field"><span class="field-label">Поиск по названию</span><input class="input" id="tf-find" data-draft="tf-find" data-live="1" type="search" value="${esc(dv('tf-find', ''))}" placeholder="Например: цифровой"></label></div>
+    <div class="muted small">Найдено тем: ${base.length}</div>${list}`, { stack: true });
+  const domPanel = panel('Направления в базе', 'Сколько утверждённых тем по каждому направлению', `<div class="tf-doms">${doms.map(([d, n]) => `<button class="tf-dom-row" data-act="tf-add" data-v="${esc(TF_DOMAINS[d].ru)}" style="--dc:${TF_DOMAINS[d].c}"><span class="tf-dom-name">${esc(TF_DOMAINS[d].ru)}</span><span class="tf-dom-bar"><i style="width:${Math.round(n / maxD * 100)}%"></i></span><b>${n}</b></button>`).join('')}</div>`);
+  return `<div class="page">${pageHead('AI Topic Finder', 'Подбор темы диссертации', 'Уточните интересы — модуль подберёт 3–4 утверждённые темы ЕНУ с объектом, предметом, новизной и статистическим аппаратом. ИИ поможет сформулировать собственные варианты.')}
+    ${kpis}
+    <div class="split tf-split"><div class="col">${step}<div class="tf-results" id="tf-results">${selBlock}${res && res.length ? `<div class="tf-sec-title">${ic('target')} Подходящие темы из базы · ${res.length}</div>` : ''}${results}${aiBlock}</div></div><div class="col">${basePanel}${domPanel}</div></div></div>`;
 };

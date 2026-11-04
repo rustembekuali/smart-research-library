@@ -10,7 +10,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Literata:opsz,wght@7..72,500;7..72,600;7..72,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Rubik:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
   /* Layout: top bar with the cabinet switch, a left rail of modules, a working canvas of panels.
@@ -604,6 +604,291 @@ button.tag:hover { filter: brightness(.96); }
   .pp-k { grid-column: 1 / -1; }
   .msg.user .bubble, .answer { max-width: 100%; }
 }
+/* =====================================================================
+   Оформление 2.0: у каждого раздела свой цвет и фоновый мотив,
+   выполненное — зелёным, невыполненное — красным.
+   ===================================================================== */
+:root {
+  --s-passport: #3B4BC8; --s-passport-h: #2F3DAA; --s-passport-soft: #E8EBFB;
+  --s-topics: #B45309; --s-topics-h: #92400E; --s-topics-soft: #FDF0DC;
+  --s-search: #0F766E; --s-search-h: #115E59; --s-search-soft: #DDF3F0;
+  --s-library: #9A3412; --s-library-h: #7C2D12; --s-library-soft: #FBE9DF;
+  --s-assistant: #1D63C9; --s-assistant-h: #1A52A6; --s-assistant-soft: #E2EEFC;
+  --s-planner: #15803D; --s-planner-h: #166534; --s-planner-soft: #E1F4E7;
+  --s-prompts: #7C3AED; --s-prompts-h: #6D28D9; --s-prompts-soft: #F1E9FE;
+  --s-roadmap: #A21CAF; --s-roadmap-h: #86198F; --s-roadmap-soft: #FAE8FB;
+  --s-overview: #2F45B5; --s-overview-h: #24399E; --s-overview-soft: #E9EDFA;
+  --s-tickets: #0369A1; --s-tickets-h: #075985; --s-tickets-soft: #E0F0FA;
+  --s-kb: #0F766E; --s-kb-h: #115E59; --s-kb-soft: #DDF3F0;
+  --s-events: #C2410C; --s-events-h: #9A3412; --s-events-soft: #FDECE2;
+  --s-resources: #0E7490; --s-resources-h: #155E75; --s-resources-soft: #DFF1F6;
+  --s-done: #15803D; --s-done-soft: #E3F5E9;
+  --s-todo: #C62828; --s-todo-soft: #FCE8E8;
+  --grid-line: rgba(17, 26, 46, .035);
+  --font-display: "Rubik", "Nunito", system-ui, sans-serif;
+  --font-body: "Nunito", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --r: 16px; --r-sm: 10px;
+  --press: color-mix(in srgb, var(--accent) 62%, #000);
+}
+:root[data-theme="dark"] {
+  --s-passport: #A5B4FC; --s-passport-h: #C7D2FE; --s-passport-soft: #1E2452;
+  --s-topics: #FCD34D; --s-topics-h: #FDE68A; --s-topics-soft: #33280A;
+  --s-search: #5EEAD4; --s-search-h: #99F6E4; --s-search-soft: #0E2E2B;
+  --s-library: #FDBA74; --s-library-h: #FED7AA; --s-library-soft: #3A1E0E;
+  --s-assistant: #93C5FD; --s-assistant-h: #BFDBFE; --s-assistant-soft: #13284A;
+  --s-planner: #86EFAC; --s-planner-h: #BBF7D0; --s-planner-soft: #0F2E1B;
+  --s-prompts: #C4B5FD; --s-prompts-h: #DDD6FE; --s-prompts-soft: #261A47;
+  --s-roadmap: #F0ABFC; --s-roadmap-h: #F5D0FE; --s-roadmap-soft: #3A1340;
+  --s-overview: #8FA4FF; --s-overview-h: #A9B8FF; --s-overview-soft: #1C2647;
+  --s-tickets: #7DD3FC; --s-tickets-h: #BAE6FD; --s-tickets-soft: #0F2A3D;
+  --s-kb: #5EEAD4; --s-kb-h: #99F6E4; --s-kb-soft: #0E2E2B;
+  --s-events: #FDBA74; --s-events-h: #FED7AA; --s-events-soft: #3A1E0E;
+  --s-resources: #67E8F9; --s-resources-h: #A5F3FC; --s-resources-soft: #0E2C33;
+  --s-done: #6EE7A0; --s-done-soft: #12301F;
+  --s-todo: #FF8A80; --s-todo-soft: #3A1715;
+  --grid-line: rgba(255, 255, 255, .03);
+  --press: color-mix(in srgb, var(--accent) 55%, #000);
+}
+.app { --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='22'%3E%3Cpath d='M0 11c12-12 36-12 48 0s36 12 48 0' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E"); --press: color-mix(in srgb, var(--accent) 62%, #000); }
+:root[data-theme="dark"] .app { --press: color-mix(in srgb, var(--accent) 55%, #000); }
+.app[data-sec="passport"] { --accent: var(--s-passport); --accent-hover: var(--s-passport-h); --accent-soft: var(--s-passport-soft); --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='22'%3E%3Cpath d='M0 11c12-12 36-12 48 0s36 12 48 0' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E"); }
+.app[data-sec="topics"] { --accent: var(--s-topics); --accent-hover: var(--s-topics-h); --accent-soft: var(--s-topics-soft); --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Cg fill='%23000'%3E%3Ccircle cx='12' cy='14' r='2.6'/%3E%3Ccircle cx='52' cy='24' r='1.9'/%3E%3Ccircle cx='30' cy='54' r='2.3'/%3E%3Ccircle cx='62' cy='60' r='1.4'/%3E%3C/g%3E%3Cpath d='M12 14 52 24 30 54zM52 24l10 36' fill='none' stroke='%23000' stroke-width='.9'/%3E%3C/svg%3E"); }
+.app[data-sec="search"] { --accent: var(--s-search); --accent-hover: var(--s-search-h); --accent-soft: var(--s-search-soft); --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22'%3E%3Ccircle cx='11' cy='11' r='1.7' fill='%23000'/%3E%3C/svg%3E"); }
+.app[data-sec="library"] { --accent: var(--s-library); --accent-hover: var(--s-library-h); --accent-soft: var(--s-library-soft); --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='44'%3E%3Cg fill='%23000'%3E%3Crect x='2' y='10' width='7' height='34' rx='1'/%3E%3Crect x='11' y='3' width='9' height='41' rx='1'/%3E%3Crect x='22' y='14' width='6' height='30' rx='1'/%3E%3Crect x='30' y='6' width='8' height='38' rx='1'/%3E%3C/g%3E%3Cpath d='M41 44 49 9' stroke='%23000' stroke-width='5'/%3E%3C/svg%3E"); }
+.app[data-sec="assistant"] { --accent: var(--s-assistant); --accent-hover: var(--s-assistant-h); --accent-soft: var(--s-assistant-soft); --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='52'%3E%3Cpath d='M8 6h24a5 5 0 0 1 5 5v9a5 5 0 0 1-5 5H17l-7 6v-6H8a5 5 0 0 1-5-5v-9a5 5 0 0 1 5-5z' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3Cg fill='%23000'%3E%3Ccircle cx='13' cy='15.5' r='1.6'/%3E%3Ccircle cx='20' cy='15.5' r='1.6'/%3E%3Ccircle cx='27' cy='15.5' r='1.6'/%3E%3C/g%3E%3C/svg%3E"); }
+.app[data-sec="planner"] { --accent: var(--s-planner); --accent-hover: var(--s-planner-h); --accent-soft: var(--s-planner-soft); --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Crect x='3' y='3' width='20' height='20' rx='4' fill='none' stroke='%23000' stroke-width='1.3'/%3E%3C/svg%3E"); }
+.app[data-sec="prompts"] { --accent: var(--s-prompts); --accent-hover: var(--s-prompts-h); --accent-soft: var(--s-prompts-soft); --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='52'%3E%3Cg fill='%23000'%3E%3Cpath d='M14 4l2.4 7.1L23.5 13.5l-7.1 2.4L14 23l-2.4-7.1L4.5 13.5l7.1-2.4z'/%3E%3Cpath d='M38 28l1.3 3.7 3.7 1.3-3.7 1.3L38 38l-1.3-3.7-3.7-1.3 3.7-1.3z'/%3E%3C/g%3E%3C/svg%3E"); }
+.app[data-sec="roadmap"] { --accent: var(--s-roadmap); --accent-hover: var(--s-roadmap-h); --accent-soft: var(--s-roadmap-soft); --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='44'%3E%3Cpath d='M0 32c24 0 24-20 48-20s24 20 48 20' fill='none' stroke='%23000' stroke-width='2.2' stroke-dasharray='6 7' stroke-linecap='round'/%3E%3C/svg%3E"); }
+.app[data-sec="overview"] { --accent: var(--s-overview); --accent-hover: var(--s-overview-h); --accent-soft: var(--s-overview-soft); --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cg fill='%23000'%3E%3Crect x='4' y='22' width='7' height='16' rx='1.5'/%3E%3Crect x='15' y='10' width='7' height='28' rx='1.5'/%3E%3Crect x='26' y='17' width='7' height='21' rx='1.5'/%3E%3C/g%3E%3C/svg%3E"); }
+.app[data-sec="tickets"] { --accent: var(--s-tickets); --accent-hover: var(--s-tickets-h); --accent-soft: var(--s-tickets-soft); --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18'%3E%3Cpath d='M0 18 18 0' stroke='%23000' stroke-width='1.4'/%3E%3C/svg%3E"); }
+.app[data-sec="kb"] { --accent: var(--s-kb); --accent-hover: var(--s-kb-h); --accent-soft: var(--s-kb-soft); --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='48'%3E%3Cpath d='M14 0 28 8v16L14 32 0 24V8zM14 32v16' fill='none' stroke='%23000' stroke-width='1.3'/%3E%3C/svg%3E"); }
+.app[data-sec="events"] { --accent: var(--s-events); --accent-hover: var(--s-events-h); --accent-soft: var(--s-events-soft); --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Crect x='3' y='3' width='20' height='20' rx='4' fill='none' stroke='%23000' stroke-width='1.3'/%3E%3C/svg%3E"); }
+.app[data-sec="resources"] { --accent: var(--s-resources); --accent-hover: var(--s-resources-h); --accent-soft: var(--s-resources-soft); --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='22'%3E%3Cpath d='M0 11c12-12 36-12 48 0s36 12 48 0' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E"); }
+.nav-item[data-view="passport"] { --c: var(--s-passport); --c-soft: var(--s-passport-soft); }
+.nav-item[data-view="topics"] { --c: var(--s-topics); --c-soft: var(--s-topics-soft); }
+.nav-item[data-view="search"] { --c: var(--s-search); --c-soft: var(--s-search-soft); }
+.nav-item[data-view="library"] { --c: var(--s-library); --c-soft: var(--s-library-soft); }
+.nav-item[data-view="assistant"] { --c: var(--s-assistant); --c-soft: var(--s-assistant-soft); }
+.nav-item[data-view="planner"] { --c: var(--s-planner); --c-soft: var(--s-planner-soft); }
+.nav-item[data-view="prompts"] { --c: var(--s-prompts); --c-soft: var(--s-prompts-soft); }
+.nav-item[data-view="roadmap"] { --c: var(--s-roadmap); --c-soft: var(--s-roadmap-soft); }
+.nav-item[data-view="overview"] { --c: var(--s-overview); --c-soft: var(--s-overview-soft); }
+.nav-item[data-view="tickets"] { --c: var(--s-tickets); --c-soft: var(--s-tickets-soft); }
+.nav-item[data-view="kb"] { --c: var(--s-kb); --c-soft: var(--s-kb-soft); }
+.nav-item[data-view="events"] { --c: var(--s-events); --c-soft: var(--s-events-soft); }
+.nav-item[data-view="resources"] { --c: var(--s-resources); --c-soft: var(--s-resources-soft); }
+.nav-foot .nav-item { --c: var(--ink-3); --c-soft: var(--surface-2); }
+
+body { font: 500 14.5px/1.55 var(--font-body); }
+b, strong { font-weight: 800; }
+.btn, .seg button, .chip-btn, .role-switch button { font-weight: 700; }
+.panel-head h2, .kpi-value, .brand-name, .page-head h1, .modal h2, .sem-title, .road-title { font-family: var(--font-display); }
+.page-head h1 { font-weight: 600; font-size: 31px; letter-spacing: -.015em; }
+.panel-head h2 { font-weight: 500; font-size: 16px; display: flex; align-items: center; gap: 9px; }
+.panel-head h2::before { content: ""; width: 8px; height: 8px; border-radius: 3px; background: var(--accent); flex: none; box-shadow: 0 0 0 3px var(--accent-soft); }
+.kpi-value { font-weight: 600; }
+.eyebrow { color: var(--accent); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-size: 11px; }
+
+/* Фон рабочей области: мягкое свечение цвета раздела и тонкая сетка */
+.main {
+  background:
+    radial-gradient(ellipse 55% 38% at 100% 0, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%),
+    radial-gradient(ellipse 40% 30% at 0 100%, color-mix(in srgb, var(--accent) 6%, transparent), transparent 70%),
+    linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0 / 32px 32px,
+    var(--paper);
+  transition: background-color .3s;
+}
+
+/* Шапка раздела: цветная карточка с иконкой и мотивом */
+.page-head.hero {
+  position: relative; overflow: hidden; isolation: isolate; align-items: center;
+  padding: 22px 24px; border-radius: 22px;
+  background: linear-gradient(120deg, color-mix(in srgb, var(--accent-soft) 92%, var(--surface)), var(--surface) 72%);
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--line));
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--accent) 10%, transparent);
+}
+.hero-motif {
+  position: absolute; inset: 0 0 0 38%; z-index: -1; pointer-events: none; background: var(--accent); opacity: .16;
+  -webkit-mask: var(--motif) repeat, linear-gradient(90deg, transparent, #000 55%); -webkit-mask-composite: source-in;
+  mask: var(--motif) repeat, linear-gradient(90deg, transparent, #000 55%); mask-composite: intersect;
+}
+.hero-main { display: flex; gap: 18px; align-items: center; min-width: 0; flex: 1 1 420px; }
+.hero-ic {
+  width: 58px; height: 58px; border-radius: 18px; display: grid; place-items: center; flex: none; color: #fff;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--accent) 72%, #fff), var(--accent) 55%, var(--press));
+  box-shadow: 0 4px 0 var(--press), 0 12px 24px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+:root[data-theme="dark"] .hero-ic { color: #0C111C; }
+.hero-ic svg.i { width: 28px; height: 28px; stroke-width: 1.9; }
+.hero-text { min-width: 0; }
+.page-head.hero .lede { color: var(--ink-2); }
+
+/* Кнопки с «нажатием», как в CHEMLAB */
+.btn { border-radius: 11px; transition: transform .1s, box-shadow .1s, background .15s, filter .15s; }
+.btn.primary { box-shadow: 0 3px 0 var(--press); }
+.btn.primary:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--press); }
+.btn:not(.primary):not(.ghost):not(.ai):not(.is-on) { box-shadow: 0 2px 0 var(--line); }
+.btn:not(.primary):active { transform: translateY(1px); }
+.btn.ai { background: linear-gradient(135deg, var(--brass-soft), color-mix(in srgb, var(--brass-soft) 60%, var(--accent-soft))); }
+
+/* Панели и показатели */
+.panel { border-radius: var(--r); box-shadow: 0 1px 2px rgba(17, 26, 46, .04), 0 8px 24px rgba(17, 26, 46, .05); }
+:root[data-theme="dark"] .panel { box-shadow: 0 8px 24px rgba(0, 0, 0, .25); }
+.kpi { border-radius: var(--r); position: relative; overflow: hidden; --k: var(--accent); }
+.kpis > .kpi:nth-child(4n+1) { --k: var(--accent); }
+.kpis > .kpi:nth-child(4n+2) { --k: var(--s-search); }
+.kpis > .kpi:nth-child(4n+3) { --k: var(--s-topics); }
+.kpis > .kpi:nth-child(4n+4) { --k: var(--s-prompts); }
+.kpi::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--k); opacity: .85; }
+.kpi-label svg.i { width: 26px; height: 26px; padding: 5px; border-radius: 8px; color: var(--k); background: color-mix(in srgb, var(--k) 13%, transparent); }
+.kpi.attn { box-shadow: inset 3px 0 0 var(--s-todo); }
+.progress-bar { background: var(--s-todo-soft); }
+.progress-bar > span { background: linear-gradient(90deg, color-mix(in srgb, var(--s-done) 70%, #fff), var(--s-done)); }
+
+/* ---------- Навигация: цветные плитки, без прокрутки ---------- */
+.nav { gap: 3px; padding: 14px 12px; }
+.nav-item { gap: 10px; padding: 6px 8px; border-radius: 12px; font-weight: 600; position: relative; transition: background .15s, color .15s; }
+.ni-ic { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; flex: none; color: var(--c); background: color-mix(in srgb, var(--c) 13%, transparent); transition: background .15s, color .15s, box-shadow .15s; }
+.ni-ic svg.i { width: 18px; height: 18px; }
+.nav-item:hover { background: color-mix(in srgb, var(--c) 7%, transparent); }
+.nav-item[aria-current="page"] { background: color-mix(in srgb, var(--c) 11%, var(--surface)); color: var(--c); }
+.nav-item[aria-current="page"] .ni-ic { background: var(--c); color: var(--surface); box-shadow: 0 3px 0 color-mix(in srgb, var(--c) 60%, #000); }
+.nav-item[aria-current="page"]::before { content: ""; position: absolute; left: -12px; top: 9px; bottom: 9px; width: 4px; border-radius: 0 4px 4px 0; background: var(--c); }
+.nav-foot .ni-ic { width: 28px; height: 28px; background: var(--surface-2); }
+.nav-title { color: var(--ink-3); font-weight: 800; }
+@media (min-width: 861px) and (max-height: 820px) { .ni-en { display: none; } .nav-item { padding: 5px 8px; } .ni-ic { width: 28px; height: 28px; } }
+@media (min-width: 861px) and (max-height: 640px) { .nav-foot { flex-direction: row; } .nav-foot .ni-text { display: none; } .nav-title { display: none; } }
+
+/* ---------- Статусы: выполнено — зелёным, не выполнено — красным ---------- */
+.pill.waiting { color: var(--s-todo); background: var(--s-todo-soft); }
+.pill.progress { color: var(--warn); background: var(--warn-soft); }
+.pill.resolved, .pill.approved { color: var(--s-done); background: var(--s-done-soft); }
+.pill.draft { color: var(--s-todo); background: var(--s-todo-soft); box-shadow: none; }
+.stripe.waiting { background: var(--s-todo); }
+.stripe.progress { background: var(--warn); }
+.stripe.resolved { background: var(--s-done); }
+.tag.ok { color: var(--s-done); background: var(--s-done-soft); }
+.tag.todo { color: var(--s-todo); background: var(--s-todo-soft); box-shadow: none; }
+.tag.done { color: var(--s-done); background: var(--s-done-soft); box-shadow: none; }
+.missing { color: var(--s-todo); font-weight: 700; }
+
+.ms { padding: 8px 10px 8px 12px; margin: 4px 0; border-radius: 12px; border-left: 4px solid var(--s-todo); background: color-mix(in srgb, var(--s-todo-soft) 55%, transparent); }
+.ms.done { border-left-color: var(--s-done); background: color-mix(in srgb, var(--s-done-soft) 70%, transparent); }
+.ms.done .ms-title { color: var(--s-done); text-decoration-color: color-mix(in srgb, var(--s-done) 45%, transparent); }
+.ms input { accent-color: var(--s-done); }
+.ms.over { border-left-width: 6px; background: var(--s-todo-soft); }
+.ms-due { color: var(--s-todo); }
+.ms.done .ms-due { color: var(--s-done); }
+.ms-due.soon { color: var(--warn); }
+.sem-count { font: 700 11.5px/1 var(--font-body); padding: 4px 8px; border-radius: 999px; }
+.sem-count.ok { color: var(--s-done); background: var(--s-done-soft); }
+.sem-count.todo { color: var(--s-todo); background: var(--s-todo-soft); }
+
+.road { position: relative; }
+.road::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--s-todo); opacity: .75; }
+.road.done::before { background: var(--s-done); }
+.road.done .road-ic { color: var(--s-done); background: var(--s-done-soft); }
+.road.todo .road-ic { color: var(--s-todo); background: var(--s-todo-soft); }
+.road-sum { display: flex; flex-direction: column; gap: 8px; }
+.road-bar { display: flex; height: 12px; border-radius: 999px; overflow: hidden; gap: 3px; }
+.road-bar i { display: block; height: 100%; }
+.road-bar .d { background: var(--s-done); }
+.road-bar .t { background: var(--s-todo); opacity: .8; }
+.road-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: var(--ink-2); }
+.road-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.road-legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+
+.seg button[data-act="lib-status"][data-v="done"][aria-pressed="true"] { background: var(--s-done-soft); color: var(--s-done); }
+.seg button[data-act="lib-status"][data-v="unread"][aria-pressed="true"] { background: var(--s-todo-soft); color: var(--s-todo); }
+.seg button[data-act="lib-status"][data-v="reading"][aria-pressed="true"] { background: var(--warn-soft); color: var(--warn); }
+
+/* ---------- AI Topic Finder ---------- */
+.tf-split { grid-template-columns: minmax(0, 1fr) 400px; }
+.tf-step .field-label { font-size: 12.5px; font-weight: 700; color: var(--ink-2); }
+.tf-step .field-hint { font-size: 12px; color: var(--ink-3); }
+.tf-chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.tf-chips-label { font: 700 11px/1 var(--font-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); margin-right: 4px; }
+.tf-chip { --dc: var(--accent); border: 1px solid color-mix(in srgb, var(--dc) 35%, var(--line)); background: color-mix(in srgb, var(--dc) 9%, var(--surface)); color: color-mix(in srgb, var(--dc) 85%, var(--ink)); border-radius: 999px; padding: 4px 11px; font: 600 12.5px/1.4 var(--font-body); cursor: pointer; transition: transform .1s, background .15s; }
+.tf-chip:hover { background: color-mix(in srgb, var(--dc) 18%, var(--surface)); }
+.tf-chip:active { transform: scale(.96); }
+.tf-chip.plain { --dc: var(--ink-3); }
+:root[data-theme="dark"] .tf-chip, :root[data-theme="dark"] .tf-dom, :root[data-theme="dark"] .tf-row-dom { color: color-mix(in srgb, var(--dc) 45%, #fff); }
+.tf-results { display: flex; flex-direction: column; gap: 14px; scroll-margin-top: 80px; }
+.tf-sec-title { display: flex; align-items: center; gap: 8px; font: 600 15px/1.3 var(--font-display); color: var(--ink); margin-top: 4px; }
+.tf-sec-title svg.i { color: var(--accent); }
+.tf-empty { display: flex; gap: 14px; align-items: center; padding: 18px 20px; border-radius: var(--r); border: 2px dashed color-mix(in srgb, var(--accent) 30%, var(--line)); color: var(--ink-2); background: color-mix(in srgb, var(--accent-soft) 40%, transparent); }
+.tf-empty svg.i { width: 28px; height: 28px; color: var(--accent); flex: none; }
+.tf-card { --dc: var(--accent); position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 16px 18px 16px 22px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 8px 24px rgba(17, 26, 46, .06); overflow: hidden; }
+.tf-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--dc); }
+.tf-card.is-sel { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.tf-card-top { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
+.tf-acts { display: inline-flex; gap: 6px; margin-left: auto; }
+.tf-official { display: inline-flex; align-items: center; gap: 5px; font: 700 12px/1 var(--font-body); padding: 6px 10px; border-radius: 999px; color: var(--s-done); background: var(--s-done-soft); }
+.tf-official svg.i { width: 14px; height: 14px; }
+.tf-official.ai { color: var(--brass); background: var(--brass-soft); }
+.tf-dom, .tf-row-dom { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: color-mix(in srgb, var(--dc) 85%, var(--ink)); }
+.tf-dom { padding: 4px 9px; border-radius: 999px; background: color-mix(in srgb, var(--dc) 10%, transparent); }
+.tf-dom i, .tf-row-dom i { width: 8px; height: 8px; border-radius: 50%; background: var(--dc); flex: none; }
+.tf-title { font: 600 17.5px/1.35 var(--font-display); color: var(--ink); }
+.tf-second { font-size: 13px; font-style: italic; color: var(--ink-3); margin-top: -4px; }
+.tf-blocks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.tf-block { --bc: var(--s-assistant); border-radius: 14px; padding: 11px 13px; background: color-mix(in srgb, var(--bc) 7%, var(--surface)); border: 1px solid color-mix(in srgb, var(--bc) 18%, var(--line)); font-size: 13.5px; color: var(--ink-2); min-width: 0; }
+.tf-block p { margin: 0; }
+.tf-block ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.tf-bh { display: flex; align-items: center; gap: 7px; font: 700 11.5px/1.2 var(--font-body); text-transform: uppercase; letter-spacing: .05em; color: var(--bc); margin-bottom: 6px; }
+.tf-bh svg.i { width: 16px; height: 16px; }
+.tf-block.tf-obj { --bc: var(--s-assistant); }
+.tf-block.tf-subj { --bc: var(--s-prompts); }
+.tf-block.tf-nov { --bc: var(--s-topics); }
+.tf-block.tf-stat { --bc: var(--s-done); }
+.tf-block.tf-hyp { --bc: var(--s-roadmap); }
+.tf-terms { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12.5px; color: var(--ink-3); padding-top: 8px; border-top: 1px dashed var(--line); }
+.tf-term { padding: 2px 8px; border-radius: 6px; background: var(--s-done-soft); color: var(--s-done); font-weight: 700; }
+.tf-filters { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+.brand { --accent: var(--s-overview); }
+.brand-name, .brand-sub { display: block; }
+.tf-filters .field-label { font-size: 12.5px; font-weight: 700; color: var(--ink-2); }
+.tf-list { list-style: none; margin: 0; padding: 0; max-height: 520px; overflow-y: auto; border: 1px solid var(--line); border-radius: 14px; }
+.tf-list li + li { border-top: 1px solid var(--line); }
+.tf-row { --dc: var(--accent); display: flex; flex-direction: column; gap: 4px; width: 100%; text-align: left; border: 0; background: transparent; padding: 11px 14px; cursor: pointer; position: relative; transition: background .15s; }
+.tf-row:hover { background: color-mix(in srgb, var(--dc) 6%, transparent); }
+.tf-row.is-sel { background: color-mix(in srgb, var(--accent) 10%, transparent); box-shadow: inset 4px 0 0 var(--accent); }
+.tf-row-top { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.tf-yr { font: 700 11px/1 var(--font-mono); padding: 4px 7px; border-radius: 6px; color: #fff; background: var(--yc, var(--accent)); }
+.yr-2024 { --yc: #0F766E; } .yr-2022 { --yc: #7C3AED; } .yr-2021 { --yc: #C2410C; } .yr-2019 { --yc: #1D4ED8; }
+:root[data-theme="dark"] .tf-yr { color: #0C111C; }
+:root[data-theme="dark"] .yr-2024 { --yc: #5EEAD4; } :root[data-theme="dark"] .yr-2022 { --yc: #C4B5FD; } :root[data-theme="dark"] .yr-2021 { --yc: #FDBA74; } :root[data-theme="dark"] .yr-2019 { --yc: #93C5FD; }
+.tf-row-ru { font-size: 13.5px; font-weight: 600; color: var(--ink); line-height: 1.4; }
+.tf-row-kk { font-size: 12px; font-style: italic; color: var(--ink-3); line-height: 1.4; }
+.tf-doms { display: flex; flex-direction: column; gap: 4px; }
+.tf-dom-row { --dc: var(--accent); display: grid; grid-template-columns: minmax(0, 1fr) 90px 22px; gap: 10px; align-items: center; border: 0; background: transparent; padding: 6px 8px; border-radius: 10px; text-align: left; cursor: pointer; font-size: 13px; color: var(--ink-2); }
+.tf-dom-row:hover { background: color-mix(in srgb, var(--dc) 8%, transparent); }
+.tf-dom-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tf-dom-bar { height: 8px; border-radius: 999px; background: color-mix(in srgb, var(--dc) 12%, transparent); overflow: hidden; }
+.tf-dom-bar i { display: block; height: 100%; border-radius: 999px; background: var(--dc); }
+.tf-dom-row b { text-align: right; font-family: var(--font-mono); font-size: 12.5px; color: var(--ink); }
+
+@media (max-width: 1180px) { .tf-split { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 860px) {
+  /* Модули — плитками, без горизонтальной прокрутки */
+  .nav { position: static; display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); overflow: visible; gap: 6px; padding: 10px; border-right: 0; border-bottom: 1px solid var(--line); min-height: 0; max-height: none; }
+  .nav-title, .nav-sep, .ni-en { display: none; }
+  .nav-foot { display: contents; }
+  .nav-item, .nav-foot .nav-item { width: auto; flex-direction: column; justify-content: flex-start; text-align: center; gap: 5px; padding: 8px 4px; font-size: 11.5px; line-height: 1.2; white-space: normal; border-radius: 14px; }
+  .ni-text { align-items: center; }
+  .nav-item .ni-ic, .nav-foot .ni-ic { width: 36px; height: 36px; }
+  .nav-item[aria-current="page"]::before { display: none; }
+  .nav-item[aria-current="page"] { box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--c) 40%, transparent); }
+  .ni-badge { position: absolute; top: 4px; right: 6px; margin: 0; }
+  .page-head.hero { padding: 16px; border-radius: 18px; }
+  .page-head h1 { font-size: 24px; }
+  .hero-main { gap: 12px; align-items: flex-start; }
+  .brand-sub { display: none; }
+  .hero-ic { width: 46px; height: 46px; border-radius: 14px; }
+  .hero-ic svg.i { width: 22px; height: 22px; }
+  .tf-blocks, .tf-filters { grid-template-columns: minmax(0, 1fr); }
+}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
@@ -1186,6 +1471,69 @@ const SAMPLES = {
   abstract: 'Цель исследования — оценить, как цифровые сервисы научной библиотеки и инструменты генеративного искусственного интеллекта влияют на исследовательскую подготовку докторантов. В смешанном дизайне сочетались анкетирование 214 магистрантов и докторантов трёх университетов Казахстана и 18 полуструктурированных интервью с научными руководителями и библиотекарями. Регулярное использование консультаций библиотеки было связано с более высокой самооценкой навыков поиска литературы, тогда как самостоятельное использование чат-ботов без обучения сопровождалось ошибками в цитировании. Результаты обосновывают модель сопровождения, сочетающую ИИ-инструменты с подтверждёнными ответами библиотекарей.',
   manuscript: 'Введение. Искусственный интеллект активно используется в высшем образовании, однако влияние ИИ-инструментов на подготовку докторантов изучено мало. Цель работы — выявить связь между использованием сервисов научной библиотеки и навыками поиска литературы.\nМетоды. Проведено онлайн-анкетирование (n = 214). Навыки поиска оценивались по шкале самооценки из 12 пунктов. Для сравнения групп использован t-критерий Стьюдента.\nРезультаты. Участники, посещавшие консультации библиотеки, показали более высокие баллы (M = 4,1 против 3,6; p < 0,05).\nОбсуждение. Полученные данные подтверждают важность библиотечного сопровождения.\nВыводы. Консультации библиотеки повышают навыки поиска литературы у всех докторантов.',
   translate: 'Систематический обзор литературы позволяет обобщить результаты исследований по заранее определённому протоколу. Поиск проводился в базах Scopus и Web of Science; после удаления дубликатов два исследователя независимо провели скрининг названий и аннотаций.'
+};
+/* ---------- AI Topic Finder: база утверждённых тем ЕНУ ----------
+   Официальные темы диссертаций по специальности 8D01103 «Педагогика и психология», 2019–2025.
+   Перенесено из модуля AI Topic Finder проекта PhD AI Navigator ENU (тот же набор и та же логика подбора).
+   Поля: [№ группы, год начала, учебный год, направление, тема (рус.), тема (каз.), объект, предмет] */
+const TF_TOPICS = [
+  [32, 2024, '2024–2025', 'psychology', 'Развитие эмоционального интеллекта будущих педагогов-психологов на основе цифровых технологий.', 'Цифрлық технология негізінде болашақ педагог-психологтердің эмоционалдық интеллектісін дамыту.', 'Будущие педагоги-психологи', 'Эмоциональный интеллект на основе цифровых технологий'],
+  [33, 2024, '2024–2025', 'ai', 'Развитие цифровой грамотности будущих педагогов-психологов на основе искусственного интеллекта.', 'Болашақ педагог-психологтердің цифрлық сауаттылығын жасанды интеллект негізінде дамыту.', 'Будущие педагоги-психологи', 'Цифровая грамотность на основе искусственного интеллекта'],
+  [34, 2024, '2024–2025', 'career', 'Педагогические условия подготовки выпускников высших учебных заведений к профессиональной адаптации.', 'Жоғары оқу орындары түлектерін кәсіби бейімделуге даярлаудың педагогикалық шарттары.', 'Выпускники вузов', 'Подготовка к профессиональной адаптации'],
+  [35, 2024, '2024–2025', 'digital', 'Подготовка будущих педагогов-психологов к профилактике мобильной зависимости учащихся.', 'Болашақ педагог-психологтерді оқушылардың мобильдік тәуелділігінің алдын алуға дайындау.', 'Будущие педагоги-психологи', 'Профилактика мобильной зависимости учащихся'],
+  [36, 2024, '2024–2025', 'professional', 'Формирование профессиональной компетентности будущих педагогов-психологов в коллаборативной исследовательской среде.', 'Коллаборативті зерттеу ортасында болашақ педагог-психологтердің кәсіби құзыреттілігін қалыптастыру.', 'Будущие педагоги-психологи', 'Профессиональная компетентность в коллаборативной исследовательской среде'],
+  [37, 2024, '2024–2025', 'inclusive', 'Формирование инклюзивной культуры будущих педагогов-психологов.', 'Болашақ педагог-психологтердің инклюзивті мәдениетін қалыптастыру.', 'Будущие педагоги-психологи', 'Инклюзивная культура'],
+  [38, 2024, '2024–2025', 'ecology', 'Педагогические основы формирования экологических компетенций студентов для устойчивого развития.', 'Тұрақты даму үшін студенттердің экологиялық құзыреттіліктерін қалыптастырудың педагогикалық негіздері.', 'Студенты', 'Экологические компетенции для устойчивого развития'],
+  [39, 2024, '2024–2025', 'ai', 'Этико-психологические основы управления искусственным интеллектом в университетском образовании.', 'Университеттік білім берудегі жасанды интеллектіні басқарудың этикалық-психологиялық негіздері.', 'Студенты университетов', 'Этико-психологические основы управления ИИ в университете'],
+  [40, 2024, '2024–2025', 'professional', 'Совершенствование содержания дидактики при подготовке будущих учителей.', 'Болашақ мұғалімдерді даярлауда дидактика мазмұнын жетілдіру.', 'Будущие учителя', 'Содержание дидактики при подготовке учителей'],
+  [41, 2024, '2024–2025', 'ai', 'Развитие учебной мотивации студентов на основе искусственного интеллекта.', 'Жасанды интеллект негізінде студенттердің оқу мотивациясын дамыту.', 'Студенты', 'Учебная мотивация на основе искусственного интеллекта'],
+  [42, 2024, '2024–2025', 'inclusive', 'Формирование медиаграмотности родителей детей с цифровым аутизмом.', 'Цифрлық аутизмі бар балалардың ата-аналарының медиасауаттылығын қалыптастыру.', 'Родители детей с цифровым аутизмом', 'Медиаграмотность родителей'],
+  [20, 2022, '2022–2023', 'thinking', 'Развитие педагогического мышления магистрантов на основе метакогнитивного подхода.', 'Метакогнитивтік тұғыр негізінде магистранттардың педагогикалық ойлауын дамыту.', 'Магистранты', 'Педагогическое мышление на основе метакогнитивного подхода'],
+  [21, 2022, '2022–2023', 'digital', 'Развитие цифровой компетентности будущих педагогов-психологов.', 'Болашақ педагог-психологтердің цифрлық құзыреттілігін дамыту.', 'Будущие педагоги-психологи', 'Цифровая компетентность'],
+  [22, 2022, '2022–2023', 'career', 'Научно-педагогические основы профориентации учащихся.', 'Оқушыларға кәсіби бағдар берудің ғылыми-педагогикалық негіздері.', 'Учащиеся', 'Научно-педагогические основы профессиональной ориентации'],
+  [23, 2022, '2022–2023', 'psychology', 'Развитие психологического здоровья будущих педагогов на основе саморегуляции.', 'Болашақ педагогтердің өзін-өзі реттеуі негізінде психологиялық денсаулығын дамыту.', 'Будущие педагоги', 'Психологическое здоровье на основе саморегуляции'],
+  [24, 2022, '2022–2023', 'digital', 'Педагогические условия формирования культуры информационно-психологической безопасности подростков.', 'Жеткіншектердің ақпараттық-психологиялық қауіпсіздік мәдениетін қалыптастырудың педагогикалық шарттары.', 'Подростки', 'Культура информационно-психологической безопасности'],
+  [25, 2022, '2022–2023', 'digital', 'Развитие информационной компетентности студентов в процессе медиаобразования.', 'Медиабілім үдерісінде студенттердің ақпараттық құзыреттілігін дамыту.', 'Студенты', 'Информационная компетентность в процессе медиаобразования'],
+  [26, 2022, '2022–2023', 'language', 'Научно-методические основы развития навыков академического письма будущих педагогов-психологов.', 'Болашақ педагог-психологтердің академиялық жазу дағдыларын дамытудың ғылыми-әдістемелік негіздері.', 'Будущие педагоги-психологи', 'Навыки академического письма'],
+  [27, 2022, '2022–2023', 'thinking', 'Развитие критического мышления будущих педагогов-психологов на основе технологии коучинга.', 'Коучинг технологиясы негізінде болашақ педагог-психологтердің сыни тұрғыдан ойлау қабілеттерін дамыту.', 'Будущие педагоги-психологи', 'Критическое мышление на основе технологии коучинга'],
+  [28, 2022, '2022–2023', 'thinking', 'Научно-педагогические основы развития рефлексивной культуры студентов.', 'Студенттердің рефлексиялық мәдениетін дамытудың ғылыми-педагогикалық негіздері.', 'Студенты', 'Рефлексивная культура студентов'],
+  [29, 2022, '2022–2023', 'professional', 'Совершенствование методической компетентности учителей в условиях обновления содержания образования.', 'Білім мазмұнын жаңарту үдерісінде мұғалімдердің әдістемелік құзыреттілігін жетілдіру.', 'Учителя', 'Методическая компетентность учителей'],
+  [30, 2022, '2022–2023', 'language', 'Формирование глобальных компетенций студентов в условиях полиязычного образования.', 'Көптілді білім беру жағдайында студенттердің жаһандық құзыреттіліктерін қалыптастыру.', 'Студенты', 'Глобальные компетенции в условиях полиязычного образования'],
+  [31, 2022, '2022–2023', 'career', 'Проектирование профессиональной ориентации учащихся на основе личностного потенциала.', 'Тұлғалық әлеует негізінде оқушылардың кәсіби бағдарын жобалау.', 'Учащиеся', 'Проектирование профессиональной ориентации на основе личностного потенциала'],
+  [17, 2021, '2021–2022', 'psychology', 'Психолого-педагогические особенности перфекционистских отношений студентов.', 'Студенттердің перфекционистік қарым-қатынастарының психологиялық-педагогикалық ерекшеліктері.', 'Студенты', 'Перфекционистские отношения студентов'],
+  [18, 2021, '2021–2022', 'professional', 'Развитие культурологической компетентности в профессиональной деятельности педагогов.', 'Педагогтердің кәсіби іс-әрекетіндегі мәдениеттанулық құзыреттілікті дамыту.', 'Педагоги', 'Культурологическая компетентность в профессиональной деятельности'],
+  [19, 2021, '2021–2022', 'professional', 'Психолого-педагогические основы развития методической компетентности преподавателей IT-дисциплин.', 'IT-пәндері оқытушыларының әдістемелік құзыреттілігін дамытудың психологиялық-педагогикалық негіздері.', 'Преподаватели IT-дисциплин', 'Методическая компетентность преподавателей IT-дисциплин'],
+  [1, 2019, '2019–2020', 'professional', 'Формирование готовности будущих педагогов-психологов к проектированию профессиональной деятельности в условиях инновационной образовательной среды.', 'Болашақ педагог-психологтердің инновациялық білім беру ортасы жағдайында кәсіби қызметті жобалауға дайындығын қалыптастыру.', 'Будущие педагоги-психологи', 'Готовность к проектированию профессиональной деятельности в инновационной образовательной среде'],
+  [2, 2019, '2019–2020', 'digital', 'Формирование трансверсальной компетентности будущих педагогов-психологов на основе цифровых технологий.', 'Болашақ педагог-психологтердің трансверсалды құзыреттілігін цифрлық технологиялар негізінде қалыптастыру.', 'Будущие педагоги-психологи', 'Трансверсальная компетентность на основе цифровых технологий'],
+  [3, 2019, '2019–2020', 'psychology', 'Особенности развития прагматической позиции будущих педагогов-психологов.', 'Болашақ педагог-психологтерде прагматикалық ұстанымның даму ерекшеліктері.', 'Будущие педагоги-психологи', 'Развитие прагматической позиции'],
+  [4, 2019, '2019–2020', 'professional', 'Формирование профессиональных компетенций будущих педагогов на основе практико-ориентированного обучения.', 'Практикаға бағытталған оқыту негізінде болашақ педагогтердің кәсіби құзыреттілігін қалыптастыру.', 'Будущие педагоги', 'Профессиональная компетентность в практико-ориентированном обучении'],
+  [5, 2019, '2019–2020', 'thinking', 'Психолого-педагогические условия формирования у учащихся исторического мышления.', 'Оқушылардың тарихи ойлауын қалыптастырудың психологиялық-педагогикалық шарттары.', 'Учащиеся', 'Историческое мышление'],
+  [6, 2019, '2019–2020', 'language', 'Педагогические условия реализации регионального подхода в процессе обучения в вузе (на материале обучения английскому языку).', 'ЖОО-да оқыту үдерісінде аймақтық тұғырды жүзеге асырудың педагогикалық шарттары (ағылшын тілін оқыту материалдары негізінде).', 'Студенты вузов', 'Педагогические условия регионального подхода при обучении английскому языку'],
+  [7, 2019, '2019–2020', 'digital', 'Научные основы использования медиатехнологий в формировании креативности будущих педагогов-психологов.', 'Болашақ педагог-психологтердің креативтілігін қалыптастыруда медиатехнологияларды пайдаланудың ғылыми негіздері.', 'Будущие педагоги-психологи', 'Креативность при использовании медиатехнологий'],
+  [8, 2019, '2019–2020', 'psychology', 'Психолого-педагогические особенности когнитивного стиля как фактор успешности и неуспешности обучающихся.', 'Білім алушылардың жетістіктері мен сәтсіздіктерінің факторы ретіндегі когнитивті стильдің психологиялық-педагогикалық ерекшеліктері.', 'Обучающиеся', 'Когнитивный стиль как фактор успешности обучения'],
+  [9, 2019, '2019–2020', 'psychology', 'Развитие социального интеллекта у будущих педагогов-психологов.', 'Болашақ педагог-психологтердің әлеуметтік интеллектісін дамыту.', 'Будущие педагоги-психологи', 'Социальный интеллект'],
+  [10, 2019, '2019–2020', 'ethics', 'Научные основы формирования профессиональной готовности будущего педагога к нравственно-этическому воспитанию.', 'Болашақ педагогтің адамгершілік-этикалық тәрбие беруге кәсіби даярлығын қалыптастырудың ғылыми негіздері.', 'Будущие педагоги', 'Профессиональная готовность к нравственно-этическому воспитанию'],
+  [11, 2019, '2019–2020', 'management', 'Педагогические условия формирования корпоративной компетентности будущих педагогов.', 'Болашақ педагогтердің корпоративтік құзыреттілігін қалыптастырудың педагогикалық шарттары.', 'Будущие педагоги', 'Корпоративная компетентность и педагогические условия её формирования'],
+  [12, 2019, '2019–2020', 'language', 'Научно-педагогические основы формирования профессионально-языковой компетентности студентов университетов.', 'Жоғары оқу орны студенттерінің кәсіби-тілдік құзыреттілігін қалыптастырудың ғылыми-педагогикалық негіздері.', 'Студенты вузов', 'Профессионально-языковая компетентность'],
+  [13, 2019, '2019–2020', 'language', 'Особенности формирования дискурсивной компетентности будущего CLIL-педагога.', 'Болашақ CLIL-педагогтің дискурсивтік құзыреттілігін қалыптастыру ерекшеліктері.', 'Будущие CLIL-педагоги', 'Дискурсивная компетентность CLIL-педагога'],
+  [14, 2019, '2019–2020', 'ecology', 'Педагогический менеджмент экологизации обучения студентов в условиях неформального образования.', 'Бейресми білім беру жағдайында студенттерді оқытуды экологияландырудың педагогикалық менеджменті.', 'Студенты в неформальном образовании', 'Педагогический менеджмент экологизации обучения'],
+  [15, 2019, '2019–2020', 'psychology', 'Особенности развития способности к нарративу будущих педагогов-психологов.', 'Болашақ педагог-психологтердің нарративтік қабілеттерін дамыту ерекшеліктері.', 'Будущие педагоги-психологи', 'Нарративные способности'],
+  [16, 2019, '2019–2020', 'management', 'Педагогические условия формирования управленческой компетентности будущих педагогов.', 'Болашақ педагогтердің басқарушылық құзыреттілігін қалыптастырудың педагогикалық шарттары.', 'Будущие педагоги', 'Управленческая компетентность и педагогические условия её формирования']
+].map(([no, y, ay, domain, ru, kk, obj, subj]) => ({ no, y, ay, domain, ru, kk, obj, subj }));
+
+/* Направления: название, цвет, ключевые основы слов для подбора */
+const TF_DOMAINS = {
+  ai: { ru: 'искусственный интеллект в образовании', c: '#7c3aed', keys: ['искусствен', 'нейросет', 'chatgpt', 'ии'] },
+  digital: { ru: 'цифровая грамотность и медиа', c: '#0e7490', keys: ['цифров', 'цифра', 'digital', 'медиа', 'интернет', 'онлайн', 'информац', 'гаджет', 'дистанцион', 'смартфон'] },
+  inclusive: { ru: 'инклюзивное образование', c: '#be185d', keys: ['инклюз', 'аутизм', 'особ', 'доступн', 'разнообраз'] },
+  psychology: { ru: 'психология личности', c: '#c2410c', keys: ['психолог', 'эмоц', 'интеллект', 'стресс', 'перфекцион', 'когнитив', 'здоровь', 'мотиваци', 'личност', 'нарратив', 'отношен'] },
+  thinking: { ru: 'мышление и рефлексия', c: '#4338ca', keys: ['мышлен', 'рефлекс', 'коучинг', 'критическ', 'метакогн', 'ойлау'] },
+  management: { ru: 'менеджмент и управление', c: '#334155', keys: ['менедж', 'управл', 'корпоратив', 'лидер', 'басқар'] },
+  language: { ru: 'языковая подготовка и дискурс', c: '#0369a1', keys: ['язык', 'англ', 'clil', 'дискурс', 'полиязыч', 'письм', 'көптіл'] },
+  career: { ru: 'профориентация и адаптация', c: '#a16207', keys: ['профориент', 'бағдар', 'карьер', 'адаптац', 'трудоустр', 'бейімд'] },
+  ecology: { ru: 'экологическое образование', c: '#15803d', keys: ['экол', 'устойчив'] },
+  ethics: { ru: 'этика и нравственное воспитание', c: '#9f1239', keys: ['этик', 'нравств', 'адамгершіл'] },
+  professional: { ru: 'профессиональная компетентность', c: '#1d4ed8', keys: ['компетент', 'подготов', 'методич', 'дидакт', 'профессион'] }
 };
 /* ---------- Переводы интерфейса: [русский, қазақша, English] ----------
    Ключ — русский текст шаблона. {0}, {1} — числа; {D0} — дата; {R0} — время «назад»;
@@ -2196,7 +2544,95 @@ const I18N_ROWS = [
   ["академическое письмо", "академиялық жазу", "academic writing"],
   ["библиометрия", "библиометрия", "bibliometrics"],
   ["Открыта запись на практикум по Zotero", "Zotero практикумына жазылу ашылды", "Registration is open for the Zotero workshop"],
-  ["Практикум «{Q0}» пройдёт {D0} в {0}:{1}, очно. Записаться можно на странице «{Q1}», блок «{Q2}».", "«{Q0}» практикумы {D0} күні сағат {0}:{1}-де күндізгі форматта өтеді. «{Q1}» бетіндегі «{Q2}» блогында жазылуға болады.", "The «{Q0}» workshop takes place on {D0} at {0}:{1}, in person. Sign up on the «{Q1}» page, «{Q2}» section."]
+  ["Практикум «{Q0}» пройдёт {D0} в {0}:{1}, очно. Записаться можно на странице «{Q1}», блок «{Q2}».", "«{Q0}» практикумы {D0} күні сағат {0}:{1}-де күндізгі форматта өтеді. «{Q1}» бетіндегі «{Q2}» блогында жазылуға болады.", "The «{Q0}» workshop takes place on {D0} at {0}:{1}, in person. Sign up on the «{Q1}» page, «{Q2}» section."],
+  // AI Topic Finder, статусы выполнения
+  ["Подбор темы", "Тақырып таңдау", "Topic finder"],
+  ["Подбор темы диссертации", "Диссертация тақырыбын таңдау", "Dissertation topic finder"],
+  ["Уточните интересы — модуль подберёт {0}–{1} утверждённые темы ЕНУ с объектом, предметом, новизной и статистическим аппаратом. ИИ поможет сформулировать собственные варианты.", "Қызығушылықтарыңызды нақтылаңыз — модуль объектісі, пәні, жаңалығы және статистикалық аппараты бар ЕҰУ-дың {0}–{1} бекітілген тақырыбын іріктейді. ЖИ өз нұсқаларыңызды тұжырымдауға көмектеседі.", "Describe your interests and the module will pick {0}–{1} approved ENU topics with the object, subject, novelty and statistical methods. AI can help you word your own options."],
+  ["Утверждённых тем", "Бекітілген тақырып", "Approved topics"],
+  ["специальность {0}D{1}", "{0}D{1} мамандығы", "specialty {0}D{1}"],
+  ["Учебных лет", "Оқу жылы", "Academic years"],
+  ["Направлений", "Бағыт", "Research areas"],
+  ["по ключевым понятиям", "негізгі ұғымдар бойынша", "by key concepts"],
+  ["Подобрано для вас", "Сізге іріктелді", "Matched for you"],
+  ["опишите интересы", "қызығушылықтарды сипаттаңыз", "describe your interests"],
+  ["из базы ЕНУ", "ЕҰУ базасынан", "from the ENU database"],
+  ["{0}. Ваши интересы", "{0}. Сіздің қызығушылықтарыңыз", "{0}. Your interests"],
+  ["Опишите понятия и группы участников. Подбор идёт по базе ЕНУ {0}–{1} ({2}D{3} «{Q0}»).", "Ұғымдар мен қатысушылар топтарын сипаттаңыз. Іріктеу ЕҰУ-дың {0}–{1} жылдардағы базасы бойынша жүреді ({2}D{3} «{Q0}»).", "Describe concepts and participant groups. Matching uses the ENU database for {0}–{1} ({2}D{3} «{Q0}»)."],
+  ["Интересующие понятия", "Қызықтыратын ұғымдар", "Concepts of interest"],
+  ["Перечислите через запятую или пробел.", "Үтір немесе бос орын арқылы тізіп жазыңыз.", "List them separated by commas or spaces."],
+  ["Направления", "Бағыттар", "Areas"],
+  ["Участники", "Қатысушылар", "Participants"],
+  ["цифровая грамотность и медиа", "цифрлық сауаттылық және медиа", "digital literacy and media"],
+  ["инклюзивное образование", "инклюзивті білім беру", "inclusive education"],
+  ["психология личности", "тұлға психологиясы", "personality psychology"],
+  ["мышление и рефлексия", "ойлау және рефлексия", "thinking and reflection"],
+  ["менеджмент и управление", "менеджмент және басқару", "management and leadership"],
+  ["языковая подготовка и дискурс", "тілдік даярлық және дискурс", "language training and discourse"],
+  ["профориентация и адаптация", "кәсіби бағдар және бейімделу", "career guidance and adaptation"],
+  ["экологическое образование", "экологиялық білім беру", "environmental education"],
+  ["этика и нравственное воспитание", "этика және адамгершілік тәрбие", "ethics and moral education"],
+  ["профессиональная компетентность", "кәсіби құзыреттілік", "professional competence"],
+  ["будущие педагоги-психологи", "болашақ педагог-психологтер", "future educational psychologists"],
+  ["студенты", "студенттер", "students"],
+  ["магистранты", "магистранттар", "master’s students"],
+  ["учащиеся", "оқушылар", "school pupils"],
+  ["учителя", "мұғалімдер", "teachers"],
+  ["родители", "ата-аналар", "parents"],
+  ["Подобрать темы из базы", "Базадан тақырып іріктеу", "Match topics from the database"],
+  ["Сформулировать свои темы с ИИ", "ЖИ-мен өз тақырыптарыңызды тұжырымдау", "Word your own topics with AI"],
+  ["Взять из паспорта", "Паспорттан алу", "Use my passport"],
+  ["Очистить", "Тазалау", "Clear"],
+  ["Здесь появятся до четырёх тем из базы с объектом, предметом, новизной и статистическим аппаратом.", "Мұнда объектісі, пәні, жаңалығы және статистикалық аппараты бар базадағы төрт тақырыпқа дейін пайда болады.", "Up to four topics from the database will appear here with the object, subject, novelty and statistical methods."],
+  ["Совпадений не найдено. Добавьте синонимы или выберите направление.", "Сәйкестік табылмады. Синонимдер қосыңыз немесе бағыт таңдаңыз.", "No matches found. Add synonyms or choose an area."],
+  ["ИИ формулирует варианты тем…", "ЖИ тақырып нұсқаларын тұжырымдап жатыр…", "AI is drafting topic options…"],
+  ["Варианты ИИ на основе ваших интересов", "Қызығушылықтарыңызға негізделген ЖИ нұсқалары", "AI options based on your interests"],
+  ["Вариант ИИ {0}", "ЖИ нұсқасы {0}", "AI option {0}"],
+  ["черновик — обсудите с руководителем", "нобай — жетекшімен талқылаңыз", "draft — discuss with your supervisor"],
+  ["База утверждённых тем ЕНУ", "ЕҰУ-дың бекітілген тақырыптар базасы", "ENU database of approved topics"],
+  ["Официальные темы диссертаций по специальности {0}D{1} «{Q0}», {2}–{3}.", "{0}D{1} «{Q0}» мамандығы бойынша диссертациялардың ресми тақырыптары, {2}–{3}.", "Official dissertation topics in specialty {0}D{1} «{Q0}», {2}–{3}."],
+  ["Учебный год", "Оқу жылы", "Academic year"],
+  ["Все годы ({0}–{1})", "Барлық жылдар ({0}–{1})", "All years ({0}–{1})"],
+  ["Поиск по названию", "Атауы бойынша іздеу", "Search by title"],
+  ["Например: цифровой", "Мысалы: цифрлық", "For example: digital"],
+  ["Найдено тем: {0}", "Табылған тақырып: {0}", "Topics found: {0}"],
+  ["По этим условиям тем не найдено.", "Бұл шарттар бойынша тақырып табылмады.", "No topics match these conditions."],
+  ["Направления в базе", "Базадағы бағыттар", "Areas in the database"],
+  ["Сколько утверждённых тем по каждому направлению", "Әр бағыт бойынша бекітілген тақырып саны", "Approved topics per area"],
+  ["Тема из базы", "Базадағы тақырып", "Topic from the database"],
+  ["Подходящие темы из базы", "Базадағы сәйкес тақырыптар", "Matching topics from the database"],
+  ["Официальная тема {0}–{1}", "Ресми тақырып {0}–{1}", "Official topic {0}–{1}"],
+  ["Литература", "Әдебиет", "Literature"],
+  ["Объект исследования", "Зерттеу объектісі", "Object of study"],
+  ["Предмет исследования", "Зерттеу пәні", "Subject of study"],
+  ["Научная новизна", "Ғылыми жаңалығы", "Scientific novelty"],
+  ["Статистический аппарат", "Статистикалық аппарат", "Statistical methods"],
+  ["Совпадение с вашими интересами:", "Қызығушылықтарыңызбен сәйкестік:", "Matches your interests:"],
+  ["Опишите интересующие понятия", "Қызықтыратын ұғымдарды сипаттаңыз", "Describe the concepts you are interested in"],
+  ["Выполнено этапов", "Орындалған кезеңдер", "Stages completed"],
+  ["выполнено", "орындалды", "done"],
+  ["Реализовано: {0}, не реализовано: {1}", "Іске асырылды: {0}, іске асырылмады: {1}", "Implemented: {0}, not implemented: {1}"],
+  ["Реализовано: {0}", "Іске асырылды: {0}", "Implemented: {0}"],
+  ["Не реализовано: {0}", "Іске асырылмады: {0}", "Not implemented: {0}"],
+  ["Не реализовано", "Іске асырылмаған", "Not implemented"],
+  ["Реализовано", "Іске асырылды", "Implemented"],
+  ["бета", "бета", "beta"],
+  ["Будущие педагоги-психологи", "Болашақ педагог-психологтер", "Future educational psychologists"],
+  ["Выпускники вузов", "ЖОО түлектері", "University graduates"],
+  ["Студенты", "Студенттер", "Students"],
+  ["Студенты университетов", "Университет студенттері", "University students"],
+  ["Будущие учителя", "Болашақ мұғалімдер", "Future teachers"],
+  ["Родители детей с цифровым аутизмом", "Цифрлық аутизмі бар балалардың ата-аналары", "Parents of children with digital autism"],
+  ["Учащиеся", "Оқушылар", "School pupils"],
+  ["Будущие педагоги", "Болашақ педагогтер", "Future teachers"],
+  ["Подростки", "Жасөспірімдер", "Adolescents"],
+  ["Учителя", "Мұғалімдер", "Teachers"],
+  ["Педагоги", "Педагогтер", "Educators"],
+  ["Преподаватели IT-дисциплин", "IT-пәндері оқытушылары", "IT instructors"],
+  ["Студенты вузов", "ЖОО студенттері", "University students"],
+  ["Обучающиеся", "Білім алушылар", "Learners"],
+  ["Будущие CLIL-педагоги", "Болашақ CLIL-педагогтер", "Future CLIL teachers"],
+  ["Студенты в неформальном образовании", "Бейресми білім берудегі студенттер", "Students in non-formal education"]
 ];
 /* Строки с именами и названиями внутри: [регулярное выражение, қазақша, English] */
 const I18N_PATTERNS = [
@@ -2491,6 +2927,8 @@ const IC = {
   arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
   back: '<path d="M19 12H5M11 6l-6 6 6 6"/>',
   file: '<path d="M14 2.5H6.5a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V8z"/><path d="M14 2.5V8h5.5M15.5 13h-7M15.5 17h-7M10.5 9h-2"/>',
+  bulb: '<path d="M9 18.5h6M10 21.5h4"/><path d="M12 2.5a6.5 6.5 0 0 0-3.9 11.7c.6.5.9 1.1.9 1.8v.5h6V16c0-.7.3-1.3.9-1.8A6.5 6.5 0 0 0 12 2.5z"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.5 6.5 0 0 1 3.5 5.8"/>',
   pie: '<path d="M21 15.5A9.5 9.5 0 1 1 8.5 3"/><path d="M21.5 12A9.5 9.5 0 0 0 12 2.5V12z"/>',
   pen: '<path d="M12 20.5h9"/><path d="M16.5 3.5a2.4 2.4 0 0 1 3.4 3.4L7.5 19.3 3 20.5l1.2-4.5z"/>',
   list: '<path d="m3.5 6.5 1.8 1.8L8.5 5M3.5 13l1.8 1.8L8.5 11.5M3.5 19.5l1.8 1.8 3.2-3.3M12 7h8.5M12 13.5h8.5M12 20h8.5"/>',
@@ -2650,6 +3088,7 @@ const S = {
     tk: { status: 'open', cat: 'all', q: '', sel: null },
     prompts: { cat: 'all', q: '', fav: false }, promptOut: {},
     beta: 'journal', betaOut: {},
+    tf: { res: null, sel: null, ai: null },
     chartTable: {}, reportText: null, mobileDetail: false
   }
 };
@@ -3280,6 +3719,7 @@ const VIEWS = { student: {}, staff: {} };
 const NAV = {
   student: [
     { id: 'passport', ru: 'Научный паспорт', en: 'AI Research Passport', ic: 'idcard' },
+    { id: 'topics', ru: 'Подбор темы', en: 'AI Topic Finder', ic: 'bulb' },
     { id: 'search', ru: 'Поиск литературы', en: 'Research Search Bot', ic: 'search' },
     { id: 'library', ru: 'Моя библиотека', en: 'Smart Library Bot', ic: 'book' },
     { id: 'assistant', ru: 'Виртуальный библиотекарь', en: 'AI Library Assistant ENU', ic: 'chat' },
@@ -3329,8 +3769,9 @@ function renderMain() {
   const main = document.getElementById('main');
   if (!main) return;
   const st = captureFocus();
-  const fn = VIEWS[S.role][curView()] || VIEWS[S.role][S.role === 'student' ? 'passport' : 'overview'];
-  main.innerHTML = fn();
+  const v = VIEWS[S.role][curView()] ? curView() : (S.role === 'student' ? 'passport' : 'overview');
+  const app = main.closest('.app'); if (app) app.dataset.sec = v;
+  main.innerHTML = VIEWS[S.role][v]();
   restoreFocus(st);
 }
 function renderTop() {
@@ -3349,7 +3790,7 @@ function renderTop() {
       : (Live.state === 'slow' || Live.state === 'error') ? `<span class="sys-chip wait" title="Общая база пока недоступна — данные могут быть неактуальны"><span class="dot"></span><span class="lbl">Нет связи с базой</span></span>`
         : `<span class="sys-chip" title="Данные демоверсии хранятся в этом браузере"><span class="dot"></span><span class="lbl">Локальный режим</span></span>`;
   top.innerHTML = `
-    <button class="brand" data-act="about" title="О проекте">${BRAND}<span><span class="brand-name" style="display:block">Smart Research Library <span class="ver">1.0</span></span><span class="brand-sub" style="display:block">Научная библиотека ЕНУ им. Л. Н. Гумилёва</span></span><span class="demo-flag">Демо</span></button>
+    <button class="brand" data-act="about" title="О проекте">${BRAND}<span><span class="brand-name">Smart Research Library <span class="ver">1.0</span></span><span class="brand-sub">Научная библиотека ЕНУ им. Л. Н. Гумилёва</span></span><span class="demo-flag">Демо</span></button>
     <div class="grow"></div>
     <div class="role-switch" role="group" aria-label="Выбор кабинета">
       <button data-act="role" data-role="student" aria-pressed="${student}">${ic('grad')}<span class="lbl-long">Магистрант / Докторант</span><span class="lbl-short">Исследователь</span></button>
@@ -3401,16 +3842,17 @@ function renderNav() {
     if (S.role === 'student' && id === 'assistant') { const n = myTickets().filter(ticketUnread).length; return n ? `<span class="ni-badge" title="Новые ответы">${n}</span>` : ''; }
     return '';
   };
-  const item = it => `<a class="nav-item" href="#${S.role === 'staff' ? 'staff-' + it.id : it.id}" data-act="nav" data-view="${it.id}" ${it.id === cur ? 'aria-current="page"' : ''}>${ic(it.ic)}<span class="ni-text"><span class="ni-ru">${esc(it.ru)}</span><span class="ni-en">${esc(it.en)}</span></span>${badge(it.id)}</a>`;
+  const item = it => `<a class="nav-item" href="#${S.role === 'staff' ? 'staff-' + it.id : it.id}" data-act="nav" data-view="${it.id}" ${it.id === cur ? 'aria-current="page"' : ''}><span class="ni-ic">${ic(it.ic)}</span><span class="ni-text"><span class="ni-ru">${esc(it.ru)}</span><span class="ni-en">${esc(it.en)}</span></span>${badge(it.id)}</a>`;
   nav.innerHTML = `<div class="nav-title">${S.role === 'student' ? 'Кабинет исследователя' : 'Кабинет сотрудника'}</div>`
     + NAV[S.role].map(item).join('')
     + (S.role === 'student' ? `<div class="nav-sep"></div>${item(NAV.roadmap)}` : '')
-    + `<div class="nav-foot"><button class="nav-item" data-act="scenario">${ic('play')}<span class="ni-text"><span class="ni-ru">Сценарий показа</span></span></button><button class="nav-item" data-act="about">${ic('info')}<span class="ni-text"><span class="ni-ru">О проекте</span></span></button></div>`;
+    + `<div class="nav-foot"><button class="nav-item" data-act="scenario"><span class="ni-ic">${ic('play')}</span><span class="ni-text"><span class="ni-ru">Сценарий показа</span></span></button><button class="nav-item" data-act="about"><span class="ni-ic">${ic('info')}</span><span class="ni-text"><span class="ni-ru">О проекте</span></span></button></div>`;
 }
 
 /* ---------- Shared fragments ---------- */
 function pageHead(eyebrow, title, lede, actions = '') {
-  return `<header class="page-head"><div><div class="eyebrow">${esc(eyebrow)}</div><h1>${esc(title)}</h1>${lede ? `<p class="lede">${lede}</p>` : ''}</div>${actions ? `<div class="page-actions">${actions}</div>` : ''}</header>`;
+  const v = curView(), it = (NAV[S.role] || []).concat(S.role === 'student' ? [NAV.roadmap] : []).find(x => x.id === v);
+  return `<header class="page-head hero"><div class="hero-motif" aria-hidden="true"></div><div class="hero-main">${it ? `<div class="hero-ic" aria-hidden="true">${ic(it.ic)}</div>` : ''}<div class="hero-text"><div class="eyebrow">${esc(eyebrow)}</div><h1>${esc(title)}</h1>${lede ? `<p class="lede">${lede}</p>` : ''}</div></div>${actions ? `<div class="page-actions">${actions}</div>` : ''}</header>`;
 }
 function panel(title, sub, body, o = {}) {
   return `<section class="panel ${o.cls || ''}"${o.id ? ` id="${o.id}"` : ''}><div class="panel-head"><div><h2>${title}</h2>${sub ? `<div class="sub">${sub}</div>` : ''}</div>${o.actions ? `<div class="toolbar">${o.actions}</div>` : ''}</div><div class="panel-body ${o.flush ? 'flush' : ''} ${o.stack ? 'stack' : ''}">${body}</div>${o.foot ? `<div class="panel-foot">${o.foot}</div>` : ''}</section>`;
@@ -3455,7 +3897,7 @@ function passportCard(p) {
     const off = toggle && vis[key] === false;
     if (prev && off) return '';
     const btn = toggle && !prev ? `<button class="pp-vis ${off ? 'off' : ''}" data-act="pp-vis" data-key="${key}" aria-pressed="${!off}" title="${off ? 'Скрыто от других исследователей — открыть' : 'Видно другим исследователям — скрыть'}">${ic(off ? 'eyeoff' : 'eye')}<span class="sr-only">${off ? 'Скрыто' : 'Открыто'}: ${label}</span></button>` : '<span></span>';
-    return `<div class="pp-row ${off ? 'is-hidden' : ''}"><div class="pp-k">${label}</div><div class="pp-v">${html || '<span class="muted">не указано</span>'}</div>${btn}</div>`;
+    return `<div class="pp-row ${off ? 'is-hidden' : ''}"><div class="pp-k">${label}</div><div class="pp-v">${html || '<span class="missing">не указано</span>'}</div>${btn}</div>`;
   };
   const list = arr => (arr && arr.length ? `<ul>${arr.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '');
   const def = parseMonth(p.defense);
@@ -3484,7 +3926,7 @@ VIEWS.student.passport = function () {
   const ups = upcomingItems(4);
   const tks = myTickets().slice(0, 3);
   const js = recommendJournals(3);
-  const hint = !S.me.hintDismissed ? `<div class="note brass note-hint">${ic('info')}<div class="note-text">Это демоверсия конкурсного проекта. Вверху переключаются два кабинета: исследователя (магистранта, докторанта) и сотрудника библиотеки. Пошаговый сценарий показа — в меню.</div><button class="btn sm" data-act="scenario">${ic('play')} Сценарий показа</button><button class="btn sm ghost" data-act="hint-off" aria-label="Скрыть подсказку">${ic('x')}</button></div>` : '';
+  const hint = !S.me.hintDismissed ? `<div class="note brass note-hint">${ic('info')}<div class="note-text">Это демоверсия конкурсного проекта. Вверху переключаются два кабинета: исследователя (магистранта, докторанта) и сотрудника библиотеки. Пошаговый сценарий показа — в меню.</div><button class="btn sm" data-act="scenario"><span class="ni-ic">${ic('play')}</span> Сценарий показа</button><button class="btn sm ghost" data-act="hint-off" aria-label="Скрыть подсказку">${ic('x')}</button></div>` : '';
   return `<div class="page">${hint}
     ${pageHead('AI Research Passport', 'Научный паспорт', 'Профиль исследователя — основа для рекомендаций публикаций, журналов, мероприятий и научного плана. Вы сами решаете, какие сведения видят другие исследователи.',
     `<button class="btn" data-act="pp-preview" aria-pressed="${S.ui.ppPreview}">${ic(S.ui.ppPreview ? 'eyeoff' : 'eye')} ${S.ui.ppPreview ? 'Обычный вид' : 'Как видят другие'}</button><button class="btn primary" data-act="pp-edit">${ic('edit')} Редактировать паспорт</button>`)}
@@ -3697,9 +4139,9 @@ VIEWS.student.planner = function () {
     const a = new Date(info.start.getFullYear(), info.start.getMonth() + i * 6, 1), b = new Date(info.start.getFullYear(), info.start.getMonth() + i * 6 + 6, 0);
     const items = ms.filter(m => semesterOf(m.due, info.start) === i);
     if (!items.length) continue;
-    sems.push(`<div class="sem ${i === curSem ? 'now' : ''}"><div><div class="sem-title">${i + 1} семестр ${i === curSem ? '<span class="tag accent">сейчас</span>' : ''}</div><div class="sem-dates">${fmtMonShortY(+a)} – ${fmtMonShortY(+b)} · ${Math.floor(i / 2) + 1} курс</div></div><div>${items.map(m => {
+    sems.push(`<div class="sem ${i === curSem ? 'now' : ''}"><div><div class="sem-title">${i + 1} семестр ${i === curSem ? '<span class="tag accent">сейчас</span>' : ''}<span class="sem-count ${items.every(m => m.done) ? 'ok' : 'todo'}" title="Выполнено этапов">${items.filter(m => m.done).length}/${items.length}</span></div><div class="sem-dates">${fmtMonShortY(+a)} – ${fmtMonShortY(+b)} · ${Math.floor(i / 2) + 1} курс</div></div><div>${items.map(m => {
       const over = !m.done && m.due < now, soonC = !m.done && !over && m.due - now < 30 * DAY;
-      return `<div class="ms ${m.done ? 'done' : ''}"><input type="checkbox" id="ms-${m.k}" data-ms="${m.k}" ${m.done ? 'checked' : ''} aria-label="Выполнено: ${esc(m.t)}"><div><label class="ms-title" for="ms-${m.k}">${esc(m.t)}</label><div class="ms-meta"><span class="tag">${esc(TRACKS[m.tr])}</span>${over ? '<span class="tag" style="color:var(--danger)">срок прошёл</span>' : soonC ? '<span class="tag brass">скоро</span>' : ''}</div></div><div class="ms-due ${over ? 'over' : soonC ? 'soon' : ''}">${esc(fmtDS(m.due))} ${new Date(m.due).getFullYear()}</div></div>`;
+      return `<div class="ms ${m.done ? 'done' : 'todo'} ${over ? 'over' : ''}"><input type="checkbox" id="ms-${m.k}" data-ms="${m.k}" ${m.done ? 'checked' : ''} aria-label="Выполнено: ${esc(m.t)}"><div><label class="ms-title" for="ms-${m.k}">${esc(m.t)}</label><div class="ms-meta"><span class="tag">${esc(TRACKS[m.tr])}</span>${m.done ? `<span class="tag done">${ic('check')} выполнено</span>` : over ? '<span class="tag todo">срок прошёл</span>' : soonC ? '<span class="tag brass">скоро</span>' : ''}</div></div><div class="ms-due ${over ? 'over' : soonC ? 'soon' : ''}">${esc(fmtDS(m.due))} ${new Date(m.due).getFullYear()}</div></div>`;
     }).join('')}</div></div>`);
   }
   const meetings = pl.meetings.slice().sort((a, b) => b.at - a.at);
@@ -3751,8 +4193,12 @@ VIEWS.student.prompts = function () {
 };
 
 /* ---------- Roadmap & beta modules ---------- */
+function roadSum() {
+  const d = ROADMAP.filter(r => r.beta).length, t = ROADMAP.length - d;
+  return `<div class="panel-body road-sum"><div class="road-bar" role="img" aria-label="Реализовано: ${d}, не реализовано: ${t}">${'<i class="d" style="flex:1"></i>'.repeat(d)}${'<i class="t" style="flex:1"></i>'.repeat(t)}</div><div class="road-legend"><span><i style="background:var(--s-done)"></i>Реализовано: ${d}</span><span><i style="background:var(--s-todo)"></i>Не реализовано: ${t}</span></div></div>`;
+}
 VIEWS.student.roadmap = function () {
-  const grid = `<div class="road-grid">${ROADMAP.map(r => `<div class="road"><div class="road-head"><span class="road-ic">${ic(r.ic)}</span><div><div class="road-title">${esc(r.ru)}</div><div class="road-en">${String(r.n).padStart(2, '0')} · ${esc(r.en)}</div></div></div><p>${esc(r.d)}</p><div class="toolbar" style="margin-top:auto;padding-top:6px">${r.beta ? `<span class="tag brass">Бета</span><button class="btn xs" data-act="beta-tab" data-v="${r.id}">Попробовать ${ic('arrow')}</button>` : '<span class="tag">Следующий этап</span>'}${r.prompts ? `<button class="btn xs" data-act="p-goto" data-v="${esc(r.prompts)}">Промпты ${ic('arrow')}</button>` : ''}</div></div>`).join('')}</div>`;
+  const grid = `<div class="road-grid">${ROADMAP.map(r => `<div class="road ${r.beta ? 'done' : 'todo'}"><div class="road-head"><span class="road-ic">${ic(r.ic)}</span><div><div class="road-title">${esc(r.ru)}</div><div class="road-en">${String(r.n).padStart(2, '0')} · ${esc(r.en)}</div></div></div><p>${esc(r.d)}</p><div class="toolbar" style="margin-top:auto;padding-top:6px">${r.beta ? `<span class="tag done">${ic('check')} Реализовано · бета</span><button class="btn xs" data-act="beta-tab" data-v="${r.id}">Попробовать ${ic('arrow')}</button>` : `<span class="tag todo">${ic('x')} Не реализовано</span>`}${r.prompts ? `<button class="btn xs" data-act="p-goto" data-v="${esc(r.prompts)}">Промпты ${ic('arrow')}</button>` : ''}</div></div>`).join('')}</div>`;
   const tab = S.ui.beta;
   const tabs = [['journal', 'AI Journal Finder'], ['reviewer', 'AI Reviewer Simulator'], ['translator', 'AI Academic Translator']];
   const out = S.ui.betaOut[tab];
@@ -3784,7 +4230,113 @@ VIEWS.student.roadmap = function () {
   }
   const betaPanel = panel('Бета-модули', aiOff ? 'Бета-модули работают через ИИ Claude — откройте демоверсию в приложении Claude, чтобы попробовать' : 'Работают через ИИ Claude', `<div class="seg" role="group" aria-label="Модуль">${tabs.map(([k, l]) => `<button data-act="beta-tab" data-v="${k}" aria-pressed="${tab === k}">${l}</button>`).join('')}</div>${tool}${result ? `<div class="divider"></div>${result}` : ''}`, { stack: true, id: 'beta' });
   return `<div class="page">${pageHead('Roadmap', 'Направления развития платформы', 'Модули следующего этапа Smart Research Library. Три из них уже можно попробовать в бета-режиме.')}
-    ${panel('Модули следующего этапа', 'Нумерация — по структуре проекта (14 модулей)', grid, { flush: true, cls: 'clip' })}${betaPanel}</div>`;
+    ${panel('Модули следующего этапа', 'Нумерация — по структуре проекта (14 модулей)', roadSum() + grid, { flush: true, cls: 'clip' })}${betaPanel}</div>`;
+};
+
+/* ---------- AI Topic Finder ---------- */
+const TF_YEARS = [['all', 'Все годы (2019–2025)'], ['2024', '2024–2025'], ['2022', '2022–2023'], ['2021', '2021–2022'], ['2019', '2019–2020']];
+const TF_GROUPS = ['будущие педагоги-психологи', 'студенты', 'магистранты', 'учащиеся', 'учителя', 'родители'];
+function tfNovelty(t) {
+  const n = t.subj, q = `«${n}»`;
+  const T = {
+    ai: [`Новизна: ${q} рассматривается в контексте ИИ-инструментов в образовании (адаптивные платформы, генеративный ИИ). Исследование выявляет условия доверия к таким инструментам и их этические риски.`, `Жаңалығы: ${q} білім берудегі ЖИ құралдары (бейімделгіш платформалар, генеративті ЖИ) контекстінде қарастырылады. Зерттеу осындай құралдарға деген сенім шарттарын және олардың этикалық тәуекелдерін анықтайды.`, `Novelty: ${q} is examined in the context of AI tools in education (adaptive platforms, generative AI). The study identifies the conditions for trust in such tools and their ethical risks.`],
+    digital: [`Новизна: ${q} анализируется в условиях цифровой трансформации вуза и школы: онлайн- и гибридное обучение, цифровая грамотность и информационная безопасность.`, `Жаңалығы: ${q} ЖОО мен мектептің цифрлық трансформациясы жағдайында талданады: онлайн және гибридті оқыту, цифрлық сауаттылық және ақпараттық қауіпсіздік.`, `Novelty: ${q} is analysed in the context of the digital transformation of universities and schools: online and hybrid learning, digital literacy and information security.`],
+    inclusive: [`Новизна: ${q} рассматривается в инклюзивной образовательной среде с учётом разнообразия потребностей обучающихся и доступности цифровых ресурсов.`, `Жаңалығы: ${q} білім алушылар қажеттіліктерінің әртүрлілігі мен цифрлық ресурстардың қолжетімділігін ескере отырып, инклюзивті білім беру ортасында қарастырылады.`, `Novelty: ${q} is examined in an inclusive learning environment, taking into account the diversity of learners’ needs and the accessibility of digital resources.`],
+    psychology: [`Новизна: уточняются структура и условия развития направления ${q} с учётом вызовов цифровой среды (социальные сети, дистанционное обучение) и инклюзивного подхода.`, `Жаңалығы: цифрлық орта сын-қатерлерін (әлеуметтік желілер, қашықтан оқыту) және инклюзивті тәсілді ескере отырып, ${q} бағытының құрылымы мен даму шарттары нақтыланады.`, `Novelty: the structure and conditions for developing ${q} are refined, taking into account the challenges of the digital environment (social media, distance learning) and an inclusive approach.`],
+    thinking: [`Новизна: ${q} исследуется через цифровые и диалоговые практики (коучинг, рефлексия в онлайн-среде), что отличает подход от традиционных методик.`, `Жаңалығы: ${q} цифрлық және диалогтық тәжірибелер (коучинг, онлайн ортадағы рефлексия) арқылы зерттеледі, бұл тәсілді дәстүрлі әдістемелерден ерекшелейді.`, `Novelty: ${q} is studied through digital and dialogic practices (coaching, reflection in an online environment), which sets the approach apart from traditional methods.`],
+    management: [`Новизна: ${q} рассматривается с учётом цифровой трансформации образования и требований к компетенциям, связанным с ИИ и инклюзивностью.`, `Жаңалығы: ${q} білім берудің цифрлық трансформациясы мен ЖИ және инклюзивтілікке байланысты құзыреттерге қойылатын талаптарды ескере отырып қарастырылады.`, `Novelty: ${q} is examined in light of the digital transformation of education and the requirements for competencies related to AI and inclusion.`],
+    language: [`Новизна: ${q} связывается с цифровыми средами и ИИ-поддержкой (автоматическая обратная связь, мультимедийные материалы).`, `Жаңалығы: ${q} цифрлық ортамен және ЖИ қолдауымен (автоматты кері байланыс, мультимедиялық материалдар) байланыстырылады.`, `Novelty: ${q} is linked to digital environments and AI support (automated feedback, multimedia materials).`],
+    career: [`Новизна: ${q} рассматривается в условиях цифровых сервисов профориентации и ИИ-рекомендаций с учётом требований рынка труда.`, `Жаңалығы: ${q} еңбек нарығының талаптарын ескере отырып, кәсіби бағдар берудің цифрлық сервистері мен ЖИ ұсынымдары жағдайында қарастырылады.`, `Novelty: ${q} is examined in the context of digital career-guidance services and AI recommendations, taking labour-market requirements into account.`],
+    ecology: [`Новизна: ${q} рассматривается с учётом цифровых форматов обучения и целей устойчивого развития, включая ИИ-поддержку образовательных программ.`, `Жаңалығы: ${q} оқытудың цифрлық форматтары мен тұрақты даму мақсаттарын, соның ішінде білім беру бағдарламаларын ЖИ арқылы қолдауды ескере отырып қарастырылады.`, `Novelty: ${q} is examined in light of digital learning formats and the Sustainable Development Goals, including AI support for educational programmes.`],
+    ethics: [`Новизна: ${q} исследуется в контексте этики использования ИИ и цифровых сред, влияющих на нравственное воспитание обучающихся.`, `Жаңалығы: ${q} білім алушылардың адамгершілік тәрбиесіне әсер ететін ЖИ мен цифрлық ортаны пайдалану этикасы контекстінде зерттеледі.`, `Novelty: ${q} is studied in the context of the ethics of using AI and digital environments that affect learners’ moral education.`],
+    professional: [`Новизна: ${q} рассматривается с учётом цифровой трансформации образования и новых требований к компетенциям педагога, включая ИИ и инклюзивность.`, `Жаңалығы: ${q} білім берудің цифрлық трансформациясы мен педагог құзыреттеріне қойылатын жаңа талаптарды, соның ішінде ЖИ мен инклюзивтілікті ескере отырып қарастырылады.`, `Novelty: ${q} is examined in light of the digital transformation of education and new requirements for teacher competencies, including AI and inclusion.`]
+  };
+  return L3(...T[t.domain]);
+}
+function tfStats(t) {
+  const base = L3('Описательная статистика, проверка нормальности распределения (Шапиро–Уилка), альфа Кронбаха для шкал.', 'Сипаттамалық статистика, үлестірімнің қалыптылығын тексеру (Шапиро–Уилк), шкалалар үшін Кронбах альфасы.', 'Descriptive statistics, normality testing (Shapiro–Wilk), Cronbach’s alpha for scales.');
+  const cmp = L3('t-критерий или U Манна–Уитни; ANOVA для трёх и более групп; корреляция Пирсона; при большой выборке структурное моделирование (SEM).', 't-критерий немесе Манн–Уитни U; үш және одан көп топ үшін ANOVA; Пирсон корреляциясы; іріктеме үлкен болса құрылымдық модельдеу (SEM).', 't-test or Mann–Whitney U; ANOVA for three or more groups; Pearson correlation; structural equation modelling (SEM) for large samples.');
+  const D = {
+    ai: L3('Корреляция Пирсона или Спирмена; регрессия (влияние частоты использования ИИ-инструментов на компетентность); при формирующем эксперименте ANOVA с повторными измерениями.', 'Пирсон немесе Спирмен корреляциясы; регрессия (ЖИ құралдарын пайдалану жиілігінің құзыреттілікке әсері); қалыптастырушы экспериментте қайталама өлшемді ANOVA.', 'Pearson or Spearman correlation; regression (effect of AI-tool use frequency on competence); repeated-measures ANOVA for a formative experiment.'),
+    digital: L3('Корреляция Пирсона или Спирмена; регрессия (влияние цифровой среды на результат); при формирующем эксперименте ANOVA с повторными измерениями.', 'Пирсон немесе Спирмен корреляциясы; регрессия (цифрлық ортаның нәтижеге әсері); қалыптастырушы экспериментте қайталама өлшемді ANOVA.', 'Pearson or Spearman correlation; regression (effect of the digital environment on outcomes); repeated-measures ANOVA for a formative experiment.'),
+    inclusive: L3('U Манна–Уитни или t-критерий для сравнения групп; хи-квадрат для категориальных ответов; ANOVA при трёх и более группах.', 'Топтарды салыстыру үшін Манн–Уитни U немесе t-критерий; категориялық жауаптар үшін хи-квадрат; үш және одан көп топ болса ANOVA.', 'Mann–Whitney U or t-test to compare groups; chi-square for categorical responses; ANOVA for three or more groups.'),
+    psychology: L3('Факторный анализ (EFA/CFA) для проверки структуры шкалы; корреляция Спирмена; t-критерий или U Манна–Уитни для сравнения групп.', 'Шкала құрылымын тексеру үшін факторлық талдау (EFA/CFA); Спирмен корреляциясы; топтарды салыстыру үшін t-критерий немесе Манн–Уитни U.', 'Factor analysis (EFA/CFA) to test scale structure; Spearman correlation; t-test or Mann–Whitney U to compare groups.'),
+    thinking: L3('Парный t-критерий или критерий Уилкоксона (до/после); ANOVA с повторными измерениями; размер эффекта d Коэна.', 'Жұптық t-критерий немесе Уилкоксон критерийі (дейін/кейін); қайталама өлшемді ANOVA; Коэн d әсер мөлшері.', 'Paired t-test or Wilcoxon test (before/after); repeated-measures ANOVA; Cohen’s d effect size.'),
+    management: cmp, professional: cmp,
+    language: L3('Хи-квадрат для категориальных данных; парный t-критерий (до/после); корреляция Спирмена.', 'Категориялық деректер үшін хи-квадрат; жұптық t-критерий (дейін/кейін); Спирмен корреляциясы.', 'Chi-square for categorical data; paired t-test (before/after); Spearman correlation.'),
+    career: L3('Регрессия; ANOVA для сравнения групп; корреляция Пирсона.', 'Регрессия; топтарды салыстыру үшін ANOVA; Пирсон корреляциясы.', 'Regression; ANOVA to compare groups; Pearson correlation.'),
+    ecology: L3('t-критерий или U Манна–Уитни; ANOVA для трёх и более групп; корреляция Пирсона или Спирмена.', 't-критерий немесе Манн–Уитни U; үш және одан көп топ үшін ANOVA; Пирсон немесе Спирмен корреляциясы.', 't-test or Mann–Whitney U; ANOVA for three or more groups; Pearson or Spearman correlation.'),
+    ethics: L3('t-критерий или U Манна–Уитни; корреляция Спирмена; регрессия для предикторов нравственной позиции.', 't-критерий немесе Манн–Уитни U; Спирмен корреляциясы; адамгершілік ұстанымның предикторлары үшін регрессия.', 't-test or Mann–Whitney U; Spearman correlation; regression for predictors of moral stance.')
+  };
+  return [base, D[t.domain]];
+}
+/* Подбор: та же логика, что в PhD AI Navigator — слова запроса сверяются с ключами направления и с началом слов темы */
+function tfMatch(text, limit = 4) {
+  const words = [...new Set(String(text || '').toLowerCase().match(/[\p{L}\p{N}-]+/gu) || [])];
+  if (!words.length) return [];
+  const hit = (w, k) => w === k || (k.length >= 5 && w.startsWith(k));
+  return TF_TOPICS.map(t => {
+    const ru = t.ru.toLowerCase(), kk = t.kk.toLowerCase(), keys = TF_DOMAINS[t.domain].keys;
+    const terms = words.filter(w => keys.some(k => hit(w, k)) || (w.length >= 5 && (ru.includes(w.slice(0, 5)) || kk.includes(w.slice(0, 5)))));
+    return { t, terms };
+  }).filter(r => r.terms.length).sort((a, b) => b.terms.length - a.terms.length || b.t.y - a.t.y || a.t.no - b.t.no).slice(0, limit);
+}
+function tfCopyText(t) {
+  return [`Тема: ${t.ru}`, `Тема (каз.): ${t.kk}`, `Год: ${t.ay}`, `Объект исследования: ${t.obj}`, `Предмет исследования: ${t.subj}`, tfNovelty(t), 'Статистический аппарат:', ...tfStats(t)].join('\n');
+}
+const tfDomTag = d => `<span class="tf-dom" style="--dc:${TF_DOMAINS[d].c}"><i></i>${esc(TF_DOMAINS[d].ru)}</span>`;
+function tfCard(t, terms, o = {}) {
+  const [main, second] = LANG === 'kk' ? [t.kk, t.ru] : [t.ru, t.kk];
+  const blocks = [
+    ['tf-obj', 'users', 'Объект исследования', `<p>${esc(t.obj)}</p>`],
+    ['tf-subj', 'target', 'Предмет исследования', `<p>${esc(t.subj)}</p>`],
+    ['tf-nov', 'sparkle', 'Научная новизна', `<p class="no-i18n">${esc(tfNovelty(t))}</p>`],
+    ['tf-stat', 'pie', 'Статистический аппарат', `<ul class="no-i18n">${tfStats(t).map(s => `<li>${esc(s)}</li>`).join('')}</ul>`]
+  ];
+  return `<article class="tf-card${o.sel ? ' is-sel' : ''}" style="--dc:${TF_DOMAINS[t.domain].c}">
+    <div class="tf-card-top"><span class="tf-official yr-${t.y}">${ic('check')} Официальная тема ${esc(t.ay)}</span>${tfDomTag(t.domain)}<span class="tf-acts"><button class="btn xs" data-act="tf-copy" data-no="${t.no}">${ic('copy')} Копировать</button><button class="btn xs" data-act="tf-lit" data-no="${t.no}">${ic('search')} Литература</button></span></div>
+    <h3 class="tf-title no-i18n" lang="${LANG === 'kk' ? 'kk' : 'ru'}">${esc(main)}</h3><p class="tf-second no-i18n">${esc(second)}</p>
+    <div class="tf-blocks">${blocks.map(([c, i, h, b]) => `<div class="tf-block ${c}"><div class="tf-bh">${ic(i)}<span>${h}</span></div>${b}</div>`).join('')}</div>
+    ${terms && terms.length ? `<div class="tf-terms"><span>Совпадение с вашими интересами:</span>${terms.map(w => `<span class="tf-term no-i18n">${esc(w)}</span>`).join('')}</div>` : ''}
+  </article>`;
+}
+function tfAiCard(v, i) {
+  return `<article class="tf-card tf-ai" style="--dc:var(--accent)">
+    <div class="tf-card-top"><span class="tf-official ai">${ic('sparkle')} Вариант ИИ ${i + 1}</span><span class="tag">черновик — обсудите с руководителем</span><span class="tf-acts"><button class="btn xs" data-act="tf-ai-copy" data-i="${i}">${ic('copy')} Копировать</button></span></div>
+    <h3 class="tf-title no-i18n">${esc(v.title || '')}</h3>${v.title_kk ? `<p class="tf-second no-i18n">${esc(v.title_kk)}</p>` : ''}
+    <div class="tf-blocks no-i18n">${[['tf-obj', 'users', L3('Объект исследования', 'Зерттеу объектісі', 'Object of study'), v.object], ['tf-subj', 'target', L3('Предмет исследования', 'Зерттеу пәні', 'Subject of study'), v.subject], ['tf-nov', 'sparkle', L3('Научная новизна', 'Ғылыми жаңалығы', 'Scientific novelty'), v.novelty], ['tf-hyp', 'bulb', L3('Гипотеза', 'Болжам', 'Hypothesis'), v.hypothesis], ['tf-stat', 'pie', L3('Методы и статистика', 'Әдістер және статистика', 'Methods and statistics'), v.methods]].filter(x => x[3]).map(([c, i, h, b]) => `<div class="tf-block ${c}"><div class="tf-bh">${ic(i)}<span>${esc(h)}</span></div><p>${esc(b)}</p></div>`).join('')}</div>
+  </article>`;
+}
+VIEWS.student.topics = function () {
+  const st = S.ui.tf, q = dv('tf-q', ''), year = dv('tf-year', 'all'), find = (dv('tf-find', '') || '').trim().toLowerCase();
+  const res = st.res ? st.res.map(r => ({ t: TF_TOPICS.find(x => x.no === r.no), terms: r.terms })).filter(r => r.t) : null;
+  const sel = st.sel ? TF_TOPICS.find(x => x.no === st.sel) : null;
+  const base = TF_TOPICS.filter(t => (year === 'all' || String(t.y) === year) && (!find || t.ru.toLowerCase().includes(find) || t.kk.toLowerCase().includes(find)));
+  const doms = Object.keys(TF_DOMAINS).map(d => [d, TF_TOPICS.filter(t => t.domain === d).length]).sort((a, b) => b[1] - a[1]);
+  const maxD = doms[0][1];
+  const years = [...new Set(TF_TOPICS.map(t => t.ay))];
+  const interests = (S.me.passport.interests || []).join(', ');
+  const aiOut = st.ai;
+  const kpis = `<div class="kpis tf-kpis">${kpi('Утверждённых тем', TF_TOPICS.length, 'специальность 8D01103', 'file')}${kpi('Учебных лет', years.length, '2019–2025', 'calendar')}${kpi('Направлений', Object.keys(TF_DOMAINS).length, 'по ключевым понятиям', 'layers')}${kpi('Подобрано для вас', res ? res.length : '—', res ? 'из базы ЕНУ' : 'опишите интересы', 'target')}</div>`;
+  const step = panel('1. Ваши интересы', 'Опишите понятия и группы участников. Подбор идёт по базе ЕНУ 2019–2025 (8D01103 «Педагогика и психология»).', `
+    <label class="field"><span class="field-label">Интересующие понятия</span><textarea class="textarea" id="tf-q" data-draft="tf-q" rows="3" placeholder="цифровая грамотность, студенты педагогических вузов, мотивация">${esc(q)}</textarea><span class="field-hint">Перечислите через запятую или пробел.</span></label>
+    <div class="tf-chips"><span class="tf-chips-label">Направления</span>${Object.keys(TF_DOMAINS).map(d => `<button class="tf-chip" style="--dc:${TF_DOMAINS[d].c}" data-act="tf-add" data-v="${esc(TF_DOMAINS[d].ru)}">${esc(TF_DOMAINS[d].ru)}</button>`).join('')}</div>
+    <div class="tf-chips"><span class="tf-chips-label">Участники</span>${TF_GROUPS.map(g => `<button class="tf-chip plain" data-act="tf-add" data-v="${esc(g)}">${esc(g)}</button>`).join('')}</div>
+    <div class="toolbar"><button class="btn primary" data-act="tf-run">${ic('search')} Подобрать темы из базы</button><button class="btn ai" data-act="tf-ai" ${aiOut && aiOut.state === 'loading' ? 'disabled' : ''}>${ic('sparkle')} ${aiOut && aiOut.state === 'loading' ? 'ИИ пишет…' : 'Сформулировать свои темы с ИИ'}</button>${interests ? `<button class="btn ghost" data-act="tf-passport">${ic('idcard')} Взять из паспорта</button>` : ''}${q ? `<button class="btn ghost" data-act="tf-clear">${ic('x')} Очистить</button>` : ''}</div>`, { cls: 'tf-step', stack: true });
+  const results = res === null
+    ? `<div class="tf-empty">${ic('bulb')}<p>Здесь появятся до четырёх тем из базы с объектом, предметом, новизной и статистическим аппаратом.</p></div>`
+    : res.length ? res.map(r => tfCard(r.t, r.terms)).join('') : `<div class="tf-empty">${ic('search')}<p>Совпадений не найдено. Добавьте синонимы или выберите направление.</p></div>`;
+  const aiBlock = !aiOut ? '' : aiOut.state === 'loading' ? `<div class="tf-empty">${ic('sparkle')}<p>ИИ формулирует варианты тем…</p></div>`
+    : aiOut.items && aiOut.items.length ? `<div class="tf-sec-title">${ic('sparkle')} Варианты ИИ на основе ваших интересов</div>${aiOut.items.map(tfAiCard).join('')}` : aiOut.note ? `<div class="note">${ic('info')}<div>${esc(aiOut.note)}</div></div>` : '';
+  const selBlock = sel && !(res || []).some(r => r.t.no === sel.no) ? `<div class="tf-sec-title">${ic('bookmark')} Тема из базы</div>${tfCard(sel, null, { sel: true })}` : '';
+  const list = base.length ? `<ul class="tf-list" data-keep-scroll="tf-list">${base.map(t => `<li><button class="tf-row${st.sel === t.no ? ' is-sel' : ''}" data-act="tf-pick" data-no="${t.no}" style="--dc:${TF_DOMAINS[t.domain].c}"><span class="tf-row-top"><span class="tf-yr yr-${t.y}">${esc(t.ay)}</span><span class="tf-row-dom"><i></i>${esc(TF_DOMAINS[t.domain].ru)}</span></span><span class="tf-row-ru no-i18n">${esc(LANG === 'kk' ? t.kk : t.ru)}</span><span class="tf-row-kk no-i18n">${esc(LANG === 'kk' ? t.ru : t.kk)}</span></button></li>`).join('')}</ul>` : '<div class="empty">По этим условиям тем не найдено.</div>';
+  const basePanel = panel('База утверждённых тем ЕНУ', 'Официальные темы диссертаций по специальности 8D01103 «Педагогика и психология», 2019–2025.', `
+    <div class="tf-filters"><label class="field"><span class="field-label">Учебный год</span><select class="select" id="tf-year">${TF_YEARS.map(([v, l]) => `<option value="${v}" ${v === year ? 'selected' : ''}>${l}</option>`).join('')}</select></label><label class="field"><span class="field-label">Поиск по названию</span><input class="input" id="tf-find" data-draft="tf-find" data-live="1" type="search" value="${esc(dv('tf-find', ''))}" placeholder="Например: цифровой"></label></div>
+    <div class="muted small">Найдено тем: ${base.length}</div>${list}`, { stack: true });
+  const domPanel = panel('Направления в базе', 'Сколько утверждённых тем по каждому направлению', `<div class="tf-doms">${doms.map(([d, n]) => `<button class="tf-dom-row" data-act="tf-add" data-v="${esc(TF_DOMAINS[d].ru)}" style="--dc:${TF_DOMAINS[d].c}"><span class="tf-dom-name">${esc(TF_DOMAINS[d].ru)}</span><span class="tf-dom-bar"><i style="width:${Math.round(n / maxD * 100)}%"></i></span><b>${n}</b></button>`).join('')}</div>`);
+  return `<div class="page">${pageHead('AI Topic Finder', 'Подбор темы диссертации', 'Уточните интересы — модуль подберёт 3–4 утверждённые темы ЕНУ с объектом, предметом, новизной и статистическим аппаратом. ИИ поможет сформулировать собственные варианты.')}
+    ${kpis}
+    <div class="split tf-split"><div class="col">${step}<div class="tf-results" id="tf-results">${selBlock}${res && res.length ? `<div class="tf-sec-title">${ic('target')} Подходящие темы из базы · ${res.length}</div>` : ''}${results}${aiBlock}</div></div><div class="col">${basePanel}${domPanel}</div></div></div>`;
 };
 /* =====================================================================
    9. Charts (single series: accent mark, text in text tokens, hover tooltips)
@@ -4364,6 +4916,28 @@ async function reportAI() {
   } catch (e) { S.ui.reportNote = aiErrorText(e); }
   S.ui.reportBusy = false; renderModal();
 }
+/* ---------- AI Topic Finder: собственные формулировки с ИИ ---------- */
+async function topicAi() {
+  const q = String(dv('tf-q', '')).trim() || (S.me.passport.interests || []).join(', ');
+  if (!q) { toast('Опишите интересующие понятия'); return; }
+  if (!(await aiReady())) { S.ui.tf.ai = { state: 'done', note: L3('ИИ недоступен в этом просмотре — откройте демоверсию в приложении Claude. Подбор из базы работает без ИИ.', 'Бұл көріністе ЖИ қолжетімсіз — демонұсқаны Claude қосымшасында ашыңыз. Базадан іріктеу ЖИ-сіз жұмыс істейді.', 'AI is unavailable in this view — open the demo in the Claude app. Matching from the database works without AI.') }; renderMain(); return; }
+  const near = tfMatch(q, 4).map((r, i) => `${i + 1}) ${r.t.ru}`).join('\n') || '—';
+  const lang = LANG === 'kk' ? 'казахском' : LANG === 'en' ? 'английском' : 'русском';
+  S.ui.tf.ai = { state: 'loading' }; renderMain();
+  try {
+    const r = await aiJson(`Ты — научный консультант докторантов ЕНУ им. Л. Н. Гумилёва по специальности 8D01103 «Педагогика и психология».
+Интересы докторанта: «${q.slice(0, 600)}».
+Близкие утверждённые темы ЕНУ (не повторяй их дословно, предложи новые формулировки):
+${near}
+Предложи 3 формулировки темы диссертации. Для каждой укажи: title — тема на русском; title_kk — тема на казахском; object — объект исследования; subject — предмет исследования; novelty — научная новизна (1–2 предложения); hypothesis — гипотеза (1 предложение); methods — дизайн и статистический аппарат (1 предложение).
+Поля object, subject, novelty, hypothesis, methods пиши на ${lang} языке. Не придумывай публикации, авторов, DOI, ссылки и результаты исследований.
+Ответь только JSON: {"topics":[{"title":"","title_kk":"","object":"","subject":"","novelty":"","hypothesis":"","methods":""}]}`, { tier: 'default', cache: false });
+    const items = r && Array.isArray(r.topics) ? r.topics.filter(x => x && x.title).slice(0, 4) : null;
+    if (!items || !items.length) throw { code: 'invalid_json' };
+    S.ui.tf.ai = { state: 'done', items };
+  } catch (e) { aiFail(e); S.ui.tf.ai = { state: 'done', note: aiErrorText(e) || L3('Не удалось получить ответ ИИ. Попробуйте ещё раз.', 'ЖИ жауабын алу мүмкін болмады. Қайталап көріңіз.', 'Couldn’t get an AI response. Please try again.') }; }
+  renderMain();
+}
 async function runBeta() {
   const tab = S.ui.beta;
   if (!(await aiReady())) { toast('ИИ недоступен в этом просмотре'); return; }
@@ -4547,6 +5121,25 @@ const ACT = {
     renderModal();
     toast(P.lang === 'kk' ? 'Өрістер мысалмен толтырылды — журнал мен деректерді өзіңіз қосыңыз' : 'Поля заполнены примером — журнал и данные добавьте сами');
   },
+  'tf-run': () => {
+    const q = String(dv('tf-q', '')).trim();
+    if (!q) { toast('Опишите интересующие понятия'); return; }
+    S.ui.tf.res = tfMatch(q).map(r => ({ no: r.t.no, terms: r.terms }));
+    S.ui.tf.sel = null; renderMain();
+    const el = document.getElementById('tf-results'); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  },
+  'tf-add': el => {
+    const cur = String(dv('tf-q', '')).trim(), v = el.dataset.v;
+    if (cur.toLowerCase().includes(v.toLowerCase())) return;
+    S.ui.drafts['tf-q'] = cur ? `${cur}, ${v}` : v; renderMain();
+  },
+  'tf-passport': () => { S.ui.drafts['tf-q'] = (S.me.passport.interests || []).join(', '); renderMain(); },
+  'tf-clear': () => { S.ui.drafts['tf-q'] = ''; S.ui.tf.res = null; S.ui.tf.ai = null; renderMain(); },
+  'tf-pick': el => { const no = +el.dataset.no; S.ui.tf.sel = S.ui.tf.sel === no ? null : no; renderMain(); if (S.ui.tf.sel) { const r = document.getElementById('tf-results'); if (r && r.scrollIntoView) r.scrollIntoView({ behavior: 'smooth', block: 'start' }); } },
+  'tf-copy': el => { const t = TF_TOPICS.find(x => x.no === +el.dataset.no); if (t) copyText(tfCopyText(t)); },
+  'tf-lit': el => { const t = TF_TOPICS.find(x => x.no === +el.dataset.no); if (!t) return; S.ui.drafts['s-q'] = t.subj; S.ui.search.q = t.subj; go('student', 'search'); },
+  'tf-ai': () => topicAi(),
+  'tf-ai-copy': el => { const v = ((S.ui.tf.ai || {}).items || [])[+el.dataset.i]; if (v) copyText([v.title, v.title_kk, `Объект: ${v.object}`, `Предмет: ${v.subject}`, `Новизна: ${v.novelty}`, `Гипотеза: ${v.hypothesis}`, `Методы: ${v.methods}`].filter(Boolean).join('\n')); },
   'p-goto': el => { S.ui.prompts.cat = el.dataset.v; S.ui.prompts.fav = false; go('student', 'prompts'); },
   'p-stop': () => { if (S.ui.modalCtl) S.ui.modalCtl.abort(); },
   'beta-tab': el => { S.ui.beta = el.dataset.v; if (!(S.role === 'student' && curView() === 'roadmap')) go('student', 'roadmap'); else renderMain(); const b = document.getElementById('beta'); if (b) b.scrollIntoView({ block: 'start' }); },
@@ -4672,6 +5265,7 @@ document.addEventListener('change', e => {
   if (el.dataset.tkcat) { patch('tickets', el.dataset.tkcat, { cat: el.value }); toast('Категория изменена'); return; }
   if (el.dataset.resShow) { patch('resources', el.dataset.resShow, { show: el.checked }); return; }
   const id = el.id;
+  if (id === 'tf-year') { S.ui.drafts['tf-year'] = el.value; renderMain(); return; }
   const filters = { 's-idx': ['search', 'idx'], 's-from': ['search', 'from'], 's-sort': ['search', 'sort'], 's-free': ['search', 'free'], 'tk-cat': ['tk', 'cat'], 'kb-cat': ['kb', 'cat'] };
   if (filters[id]) { const [g, k] = filters[id]; S.ui[g][k] = el.type === 'checkbox' ? el.checked : el.value; if (g === 'tk') S.ui.tk.sel = null; renderMain(); return; }
   if (id && (el.tagName === 'SELECT' || el.type === 'checkbox' || el.type === 'radio')) {

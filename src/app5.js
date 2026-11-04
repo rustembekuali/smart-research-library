@@ -270,6 +270,28 @@ async function reportAI() {
   } catch (e) { S.ui.reportNote = aiErrorText(e); }
   S.ui.reportBusy = false; renderModal();
 }
+/* ---------- AI Topic Finder: собственные формулировки с ИИ ---------- */
+async function topicAi() {
+  const q = String(dv('tf-q', '')).trim() || (S.me.passport.interests || []).join(', ');
+  if (!q) { toast('Опишите интересующие понятия'); return; }
+  if (!(await aiReady())) { S.ui.tf.ai = { state: 'done', note: L3('ИИ недоступен в этом просмотре — откройте демоверсию в приложении Claude. Подбор из базы работает без ИИ.', 'Бұл көріністе ЖИ қолжетімсіз — демонұсқаны Claude қосымшасында ашыңыз. Базадан іріктеу ЖИ-сіз жұмыс істейді.', 'AI is unavailable in this view — open the demo in the Claude app. Matching from the database works without AI.') }; renderMain(); return; }
+  const near = tfMatch(q, 4).map((r, i) => `${i + 1}) ${r.t.ru}`).join('\n') || '—';
+  const lang = LANG === 'kk' ? 'казахском' : LANG === 'en' ? 'английском' : 'русском';
+  S.ui.tf.ai = { state: 'loading' }; renderMain();
+  try {
+    const r = await aiJson(`Ты — научный консультант докторантов ЕНУ им. Л. Н. Гумилёва по специальности 8D01103 «Педагогика и психология».
+Интересы докторанта: «${q.slice(0, 600)}».
+Близкие утверждённые темы ЕНУ (не повторяй их дословно, предложи новые формулировки):
+${near}
+Предложи 3 формулировки темы диссертации. Для каждой укажи: title — тема на русском; title_kk — тема на казахском; object — объект исследования; subject — предмет исследования; novelty — научная новизна (1–2 предложения); hypothesis — гипотеза (1 предложение); methods — дизайн и статистический аппарат (1 предложение).
+Поля object, subject, novelty, hypothesis, methods пиши на ${lang} языке. Не придумывай публикации, авторов, DOI, ссылки и результаты исследований.
+Ответь только JSON: {"topics":[{"title":"","title_kk":"","object":"","subject":"","novelty":"","hypothesis":"","methods":""}]}`, { tier: 'default', cache: false });
+    const items = r && Array.isArray(r.topics) ? r.topics.filter(x => x && x.title).slice(0, 4) : null;
+    if (!items || !items.length) throw { code: 'invalid_json' };
+    S.ui.tf.ai = { state: 'done', items };
+  } catch (e) { aiFail(e); S.ui.tf.ai = { state: 'done', note: aiErrorText(e) || L3('Не удалось получить ответ ИИ. Попробуйте ещё раз.', 'ЖИ жауабын алу мүмкін болмады. Қайталап көріңіз.', 'Couldn’t get an AI response. Please try again.') }; }
+  renderMain();
+}
 async function runBeta() {
   const tab = S.ui.beta;
   if (!(await aiReady())) { toast('ИИ недоступен в этом просмотре'); return; }
@@ -453,6 +475,25 @@ const ACT = {
     renderModal();
     toast(P.lang === 'kk' ? 'Өрістер мысалмен толтырылды — журнал мен деректерді өзіңіз қосыңыз' : 'Поля заполнены примером — журнал и данные добавьте сами');
   },
+  'tf-run': () => {
+    const q = String(dv('tf-q', '')).trim();
+    if (!q) { toast('Опишите интересующие понятия'); return; }
+    S.ui.tf.res = tfMatch(q).map(r => ({ no: r.t.no, terms: r.terms }));
+    S.ui.tf.sel = null; renderMain();
+    const el = document.getElementById('tf-results'); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  },
+  'tf-add': el => {
+    const cur = String(dv('tf-q', '')).trim(), v = el.dataset.v;
+    if (cur.toLowerCase().includes(v.toLowerCase())) return;
+    S.ui.drafts['tf-q'] = cur ? `${cur}, ${v}` : v; renderMain();
+  },
+  'tf-passport': () => { S.ui.drafts['tf-q'] = (S.me.passport.interests || []).join(', '); renderMain(); },
+  'tf-clear': () => { S.ui.drafts['tf-q'] = ''; S.ui.tf.res = null; S.ui.tf.ai = null; renderMain(); },
+  'tf-pick': el => { const no = +el.dataset.no; S.ui.tf.sel = S.ui.tf.sel === no ? null : no; renderMain(); if (S.ui.tf.sel) { const r = document.getElementById('tf-results'); if (r && r.scrollIntoView) r.scrollIntoView({ behavior: 'smooth', block: 'start' }); } },
+  'tf-copy': el => { const t = TF_TOPICS.find(x => x.no === +el.dataset.no); if (t) copyText(tfCopyText(t)); },
+  'tf-lit': el => { const t = TF_TOPICS.find(x => x.no === +el.dataset.no); if (!t) return; S.ui.drafts['s-q'] = t.subj; S.ui.search.q = t.subj; go('student', 'search'); },
+  'tf-ai': () => topicAi(),
+  'tf-ai-copy': el => { const v = ((S.ui.tf.ai || {}).items || [])[+el.dataset.i]; if (v) copyText([v.title, v.title_kk, `Объект: ${v.object}`, `Предмет: ${v.subject}`, `Новизна: ${v.novelty}`, `Гипотеза: ${v.hypothesis}`, `Методы: ${v.methods}`].filter(Boolean).join('\n')); },
   'p-goto': el => { S.ui.prompts.cat = el.dataset.v; S.ui.prompts.fav = false; go('student', 'prompts'); },
   'p-stop': () => { if (S.ui.modalCtl) S.ui.modalCtl.abort(); },
   'beta-tab': el => { S.ui.beta = el.dataset.v; if (!(S.role === 'student' && curView() === 'roadmap')) go('student', 'roadmap'); else renderMain(); const b = document.getElementById('beta'); if (b) b.scrollIntoView({ block: 'start' }); },
@@ -578,6 +619,7 @@ document.addEventListener('change', e => {
   if (el.dataset.tkcat) { patch('tickets', el.dataset.tkcat, { cat: el.value }); toast('Категория изменена'); return; }
   if (el.dataset.resShow) { patch('resources', el.dataset.resShow, { show: el.checked }); return; }
   const id = el.id;
+  if (id === 'tf-year') { S.ui.drafts['tf-year'] = el.value; renderMain(); return; }
   const filters = { 's-idx': ['search', 'idx'], 's-from': ['search', 'from'], 's-sort': ['search', 'sort'], 's-free': ['search', 'free'], 'tk-cat': ['tk', 'cat'], 'kb-cat': ['kb', 'cat'] };
   if (filters[id]) { const [g, k] = filters[id]; S.ui[g][k] = el.type === 'checkbox' ? el.checked : el.value; if (g === 'tk') S.ui.tk.sel = null; renderMain(); return; }
   if (id && (el.tagName === 'SELECT' || el.type === 'checkbox' || el.type === 'radio')) {

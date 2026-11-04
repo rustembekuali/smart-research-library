@@ -279,6 +279,8 @@ const IC = {
   arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
   back: '<path d="M19 12H5M11 6l-6 6 6 6"/>',
   file: '<path d="M14 2.5H6.5a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V8z"/><path d="M14 2.5V8h5.5M15.5 13h-7M15.5 17h-7M10.5 9h-2"/>',
+  bulb: '<path d="M9 18.5h6M10 21.5h4"/><path d="M12 2.5a6.5 6.5 0 0 0-3.9 11.7c.6.5.9 1.1.9 1.8v.5h6V16c0-.7.3-1.3.9-1.8A6.5 6.5 0 0 0 12 2.5z"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.5 6.5 0 0 1 3.5 5.8"/>',
   pie: '<path d="M21 15.5A9.5 9.5 0 1 1 8.5 3"/><path d="M21.5 12A9.5 9.5 0 0 0 12 2.5V12z"/>',
   pen: '<path d="M12 20.5h9"/><path d="M16.5 3.5a2.4 2.4 0 0 1 3.4 3.4L7.5 19.3 3 20.5l1.2-4.5z"/>',
   list: '<path d="m3.5 6.5 1.8 1.8L8.5 5M3.5 13l1.8 1.8L8.5 11.5M3.5 19.5l1.8 1.8 3.2-3.3M12 7h8.5M12 13.5h8.5M12 20h8.5"/>',
@@ -438,6 +440,7 @@ const S = {
     tk: { status: 'open', cat: 'all', q: '', sel: null },
     prompts: { cat: 'all', q: '', fav: false }, promptOut: {},
     beta: 'journal', betaOut: {},
+    tf: { res: null, sel: null, ai: null },
     chartTable: {}, reportText: null, mobileDetail: false
   }
 };
