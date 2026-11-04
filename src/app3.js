@@ -81,12 +81,33 @@ function renderTop() {
       <button data-act="role" data-role="staff" aria-pressed="${!student}">${ic('building')}<span class="lbl-long">Сотрудник библиотеки</span><span class="lbl-short">Библиотекарь</span></button>
     </div>
     <div class="grow"></div>
-    <div class="top-right">${aiChip}${liveChip}${themeSwitch()}
+    <div class="top-right">${aiChip}${liveChip}${langSwitch()}${themeSwitch()}
       ${student ? `<div class="bell-wrap"><button class="icon-btn" data-act="bell" aria-haspopup="true" aria-expanded="${S.ui.bell}" aria-label="Уведомления${unread ? ': новых ' + unread : ''}">${ic('bell')}${unread ? `<span class="count">${unread}</span>` : ''}</button>${S.ui.bell ? bellDropdown(notes) : ''}</div>` : ''}
       <div class="who">${student
       ? `<div class="avatar">${esc(initials(p.name))}</div><div class="who-text"><div class="who-name">${esc(shortName(p.name))}</div><div class="who-role">${esc(p.status)} · ${p.course} курс</div></div>`
       : `<div class="avatar staff">${ic('building')}</div><div class="who-text"><div class="who-name">Библиотекарь-консультант</div><div class="who-role">Поддержка исследований</div></div>`}</div>
     </div>`;
+  requestAnimationFrame(fitTopbar);
+}
+/* Верхняя панель подстраивается под длину подписей на выбранном языке:
+   сначала прячутся подписи статусов, затем длинные названия кабинетов, подзаголовок, метка «Демо» и сами статусы. */
+const TOP_STEPS = ['t-chips', 't-roles', 't-sub', 't-flag', 't-nochip'];
+function fitTopbar() {
+  const bar = document.getElementById('topbar');
+  if (!bar) return;
+  TOP_STEPS.forEach(c => bar.classList.remove(c));
+  if (getComputedStyle(bar).flexWrap !== 'nowrap') return;
+  const R = s => { const e = bar.querySelector(s); return e ? e.getBoundingClientRect() : null; };
+  const tight = () => {
+    const flag = R('.demo-flag'), brand = R('.brand'), rs = R('.role-switch'), tr = R('.top-right'), b = bar.getBoundingClientRect();
+    if (!rs || !tr) return false;
+    const left = Math.max(brand ? brand.right : 0, flag && flag.width ? flag.right : 0);
+    return left + 8 > rs.left || rs.right + 8 > tr.left || tr.right > b.right;
+  };
+  for (const c of TOP_STEPS) { if (!tight()) break; bar.classList.add(c); }
+}
+function langSwitch() {
+  return `<div class="lang-switch no-i18n" role="group" aria-label="Тіл · Язык · Language">${[['kk', 'ҚАЗ', 'Қазақша'], ['ru', 'РУС', 'Русский'], ['en', 'ENG', 'English']].map(([l, s, n]) => `<button data-act="lang" data-v="${l}" aria-pressed="${LANG === l}" title="${n}" lang="${l}">${s}</button>`).join('')}</div>`;
 }
 function themeSwitch() {
   const auto = `По времени суток: дневная с ${THEME_DAY_FROM}:00, вечерняя с ${THEME_EVENING_FROM}:00`;
@@ -336,19 +357,29 @@ VIEWS.student.library = function () {
 /* ---------- AI Library Assistant ENU ---------- */
 function welcomeMsg() {
   const first = S.me.passport.name.split(' ')[0];
-  return `<div class="msg bot">${BOT_AVA}<div class="answer"><div class="md"><p>Здравствуйте, ${esc(first)}! Я виртуальный библиотекарь научной библиотеки ЕНУ. Отвечаю на вопросы о научных базах данных, библиографических менеджерах, поиске литературы и услугах библиотеки — на русском, казахском или английском.</p><p>Ответы строятся на утверждённой базе знаний. Если подтверждённого ответа нет, передам вопрос сотруднику библиотеки.</p></div></div></div>`;
+  return `<div class="msg bot">${BOT_AVA}<div class="answer"><div class="md">${L3(`<p>Здравствуйте, ${esc(first)}! Я виртуальный библиотекарь научной библиотеки ЕНУ. Отвечаю на вопросы о научных базах данных, библиографических менеджерах, поиске литературы и услугах библиотеки — на русском, казахском или английском.</p><p>Ответы строятся на утверждённой базе знаний. Если подтверждённого ответа нет, передам вопрос сотруднику библиотеки.</p>`, `<p>Сәлеметсіз бе, ${esc(first)}! Мен — ЕҰУ ғылыми кітапханасының виртуалды кітапханашысымын. Ғылыми дерекқорлар, библиографиялық менеджерлер, әдебиет іздеу және кітапхана қызметтері туралы сұрақтарға қазақ, орыс немесе ағылшын тілінде жауап беремін.</p><p>Жауаптар бекітілген білім базасына негізделеді. Расталған жауап болмаса, сұрақты кітапхана қызметкеріне жіберемін.</p>`, `<p>Hello, ${esc(first)}! I’m the virtual librarian of the ENU Research Library. I answer questions about research databases, reference managers, literature search and library services in Kazakh, Russian or English.</p><p>Answers come from the approved knowledge base. If there is no confirmed answer, I’ll pass your question to a library staff member.</p>`)}</div></div></div>`;
+}
+function noKbText(long) {
+  return long
+    ? L3('В утверждённой базе знаний пока нет ответа на этот вопрос. Передайте его библиотекарю — ответ придёт в историю обращений, а типовой ответ после проверки попадёт в базу знаний.', 'Бекітілген білім базасында бұл сұраққа әзірге жауап жоқ. Оны кітапханашыға жіберіңіз — жауап өтініштер тарихына келеді, ал үлгілік жауап тексерілгеннен кейін білім базасына енеді.', 'The approved knowledge base has no answer to this question yet. Send it to a librarian — the reply will appear in your request history, and a standard answer will be added to the knowledge base after review.')
+    : L3('В утверждённой базе знаний пока нет ответа на этот вопрос. Передайте его библиотекарю — ответ придёт в историю обращений.', 'Бекітілген білім базасында бұл сұраққа әзірге жауап жоқ. Оны кітапханашыға жіберіңіз — жауап өтініштер тарихына келеді.', 'The approved knowledge base has no answer to this question yet. Send it to a librarian — the reply will appear in your request history.');
+}
+function chatMsgText(m) {
+  if (m.sys) return noKbText(m.sys === 'nokb-long');
+  if (m.kind === 'none' && /^В утверждённой базе знаний пока нет ответа/.test(m.text || '')) return noKbText(/типовой ответ/.test(m.text));
+  return m.text;
 }
 function renderChatMsg(m) {
   if (m.role === 'user') return `<div class="msg user"><div class="bubble">${esc(m.text)}</div></div>`;
   if (m.kind === 'ticket') {
     const t = byId('tickets', m.ticketId);
-    return `<div class="msg bot">${BOT_AVA}<div class="answer sys"><div class="answer-head"><span class="pill ${t ? t.status : 'waiting'}">${STATUS[t ? t.status : 'waiting']}</span><span>Обращение №${t ? t.num : '—'} передано сотруднику библиотеки</span></div><div class="md"><p>Категория: ${esc(t ? t.cat : '')}. Ответ появится в истории обращений, а вы получите уведомление.</p></div><div class="answer-actions"><button class="btn sm" data-act="open-ticket" data-id="${esc(m.ticketId)}">Открыть обращение</button></div></div></div>`;
+    return `<div class="msg bot">${BOT_AVA}<div class="answer sys"><div class="answer-head"><span class="pill ${t ? t.status : 'waiting'}">${STATUS[t ? t.status : 'waiting']}</span><span>Обращение №${t ? t.num : '—'} передано сотруднику библиотеки</span></div><div class="md"><p>${L3(`Категория: ${esc(t ? t.cat : '')}. Ответ появится в истории обращений, а вы получите уведомление.`, `Санат: ${esc(trS(t ? t.cat : ''))}. Жауап өтініштер тарихында пайда болады, ал сізге хабарландыру келеді.`, `Category: ${esc(trS(t ? t.cat : ''))}. The reply will appear in your request history and you will be notified.`)}</p></div><div class="answer-actions"><button class="btn sm" data-act="open-ticket" data-id="${esc(m.ticketId)}">Открыть обращение</button></div></div></div>`;
   }
   const head = m.kind === 'kb' ? `<span class="pill approved">Подтверждённый ответ</span><span>по базе знаний библиотеки${m.ai ? ' · сформулировал ИИ' : ''}</span>`
     : m.kind === 'ai' ? '<span class="pill ai">Предварительный ответ ИИ</span><span>не подтверждён библиотекой</span>'
       : '<span class="pill draft">Нет подтверждённого ответа</span>';
   const entry = m.orig ? byId('kb', m.orig) : null;
-  const body = m.state === 'pending' ? `<div class="thinking">${m.kind === 'kb' ? 'Нашёл инструкцию в базе знаний, формулирую ответ…' : 'Ищу в базе знаний…'}</div>` : `<div class="md ${m.state === 'streaming' ? 'streaming' : ''}" id="mb-${m.id}">${md(m.text)}</div>`;
+  const body = m.state === 'pending' ? `<div class="thinking">${m.kind === 'kb' ? 'Нашёл инструкцию в базе знаний, формулирую ответ…' : 'Ищу в базе знаний…'}</div>` : `<div class="md ${m.state === 'streaming' ? 'streaming' : ''}" id="mb-${m.id}">${md(chatMsgText(m))}</div>`;
   const orig = m.kind === 'kb' && m.ai && entry && m.state === 'done' ? `<details class="orig"><summary>Исходная инструкция из базы знаний</summary><div class="md">${md(entry.a)}</div></details>` : '';
   const srcs = m.kind === 'kb' && entry ? `<div class="answer-src"><span>Источник:</span><button class="tag accent" data-act="kb-view" data-id="${esc(entry.id)}">${ic('database')} ${esc(entry.q)}</button>${(entry.src || []).map(srcOf).filter(Boolean).map(srcTag).join('')}</div>` : '';
   const note = m.note ? `<div class="hint" style="margin-top:6px">${esc(m.note)}</div>` : '';

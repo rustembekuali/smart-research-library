@@ -5,7 +5,7 @@
   "description": "Smart Research Library 1.0 — демо цифровой научной библиотеки ЕНУ им. Л. Н. Гумилёва",
   "scripts": {
     "build": "sh build.sh",
-    "test": "node tests/smoke.js && node tests/scenario.js && node tests/scenario.js mock && node tests/prompts.js && node tests/dark.js && node tests/theme.js"
+    "test": "node tests/smoke.js && node tests/scenario.js && node tests/scenario.js mock && node tests/prompts.js && node tests/dark.js && node tests/theme.js && node tests/i18n.js"
   },
   "devDependencies": {
     "playwright": "^1.63.0"

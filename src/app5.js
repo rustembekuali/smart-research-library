@@ -98,12 +98,12 @@ async function sendAssistant(text) {
       const r = await aiText(generalPrompt(q), { tier: 'default', cache: false, onText: ({ text }) => { const mm = msgRef(); mm.text = text; updateMsgDom(mm); } });
       msgRef().text = r.text;
     } else {
-      msgRef().text = 'В утверждённой базе знаний пока нет ответа на этот вопрос. Передайте его библиотекарю — ответ придёт в историю обращений, а типовой ответ после проверки попадёт в базу знаний.';
+      { const m = msgRef(); m.sys = 'nokb-long'; m.text = noKbText(true); }
     }
   } catch (e) {
     const m = msgRef();
     if (confirmed) { m.text = best.e.a; m.ai = false; }
-    else { m.kind = 'none'; m.text = 'В утверждённой базе знаний пока нет ответа на этот вопрос. Передайте его библиотекарю — ответ придёт в историю обращений.'; }
+    else { m.kind = 'none'; m.sys = 'nokb'; m.text = noKbText(false); }
     m.note = aiErrorText(e);
   }
   msgRef().state = 'done';
@@ -440,6 +440,7 @@ const ACT = {
   'p-open': el => openModal('prompt', { id: el.dataset.id }),
   'p-favtoggle': el => { const f = S.me.favPrompts || (S.me.favPrompts = []), i = f.indexOf(el.dataset.id); if (i >= 0) f.splice(i, 1); else f.push(el.dataset.id); persist(); render(); },
   'p-run': el => runPrompt(el.dataset.id),
+  lang: el => setLang(el.dataset.v),
   theme: el => {
     const m = el.dataset.v;
     setThemeMode(m); renderTop();
@@ -647,6 +648,11 @@ document.addEventListener('focusout', () => { const t = tipEl(); if (t) t.hidden
 function boot() {
   loadState();
   applyTheme();
+  document.documentElement.lang = LANG;
+  i18nObserve();
+  let fitT = 0;
+  window.addEventListener('resize', () => { clearTimeout(fitT); fitT = setTimeout(fitTopbar, 80); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fitTopbar());
   setInterval(() => { if (themeModeVal === 'auto') applyTheme(); }, 60000);
   const h = parseHash();
   if (h) { S.role = h[0]; S.view[h[0]] = h[1]; }

@@ -90,6 +90,150 @@ function md(text) {
   return html;
 }
 
+/* ---------- Язык интерфейса: қазақша · русский · English ----------
+   Шаблоны написаны по-русски; переводчик меняет видимый текст и подписи (title, placeholder, aria-label).
+   Числа, даты, «кавычки» и относительное время подставляются в ключ как {0}, {D0}, {R0}, {Q0}.
+   Содержимое (обращения, ответы базы знаний, тексты промптов) остаётся на языке автора. */
+const LANGS = ['kk', 'ru', 'en'];
+let LANG = (() => { try { const v = localStorage.getItem('srl-lang'); return LANGS.includes(v) ? v : 'ru'; } catch (e) { return 'ru'; } })();
+const L3 = (ru, kk, en) => LANG === 'kk' ? kk : LANG === 'en' ? en : ru;
+const I18N = { kk: new Map(), en: new Map() };
+(typeof I18N_ROWS !== 'undefined' ? I18N_ROWS : []).forEach(([ru, kk, en]) => { const k = String(ru).trim(); if (kk) I18N.kk.set(k, kk); if (en) I18N.en.set(k, en); });
+const CYR = /[А-Яа-яЁё]/;
+const RU_MON_G = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+const RU_MON_N = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'];
+const RU_MON_S = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+const RU_WD = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+const KK_MON = ['қаңтар', 'ақпан', 'наурыз', 'сәуір', 'мамыр', 'маусым', 'шілде', 'тамыз', 'қыркүйек', 'қазан', 'қараша', 'желтоқсан'];
+const KK_MON_S = ['қаң', 'ақп', 'нау', 'сәу', 'мам', 'мау', 'шіл', 'там', 'қыр', 'қаз', 'қар', 'жел'];
+const KK_WD = ['жс', 'дс', 'сс', 'ср', 'бс', 'жм', 'сб'];
+const EN_MON = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const EN_MON_S = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const EN_WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const I18N_DATE_RX = new RegExp(`(\\d{1,2}) (${RU_MON_G.join('|')})(?: (\\d{4}))?(?![а-я])|(\\d{1,2}) (${RU_MON_S.join('|')})(?![а-я])|(${RU_MON_N.join('|')}) (\\d{4})|(${RU_MON_S.join('|')}) (\\d{4})`, 'g');
+const I18N_REL_RX = /только что|вчера|(\d+) мин назад|(\d+) ч назад|(\d+) (?:день|дня|дней) назад|(\d+) ч (\d+) мин|(\d+) мин(?![а-я])/g;
+function i18nDate(m) {
+  const [, d1, mg, y1, d2, ms, mn, y3, ms4, y4] = m;
+  if (d1 && mg === 'мая' && y1) return L3(m[0], `${d1} ${KK_MON_S[4]} ${y1}`, `${d1} ${EN_MON_S[4]} ${y1}`); // «28 мая 2026» — краткая форма, как «28 мар 2026»
+  if (d1) { const i = RU_MON_G.indexOf(mg); return L3(m[0], y1 ? `${y1} ж. ${d1} ${KK_MON[i]}` : `${d1} ${KK_MON[i]}`, y1 ? `${d1} ${EN_MON[i]} ${y1}` : `${d1} ${EN_MON[i]}`); }
+  if (d2) { const i = RU_MON_S.indexOf(ms); return L3(m[0], `${d2} ${KK_MON_S[i]}`, `${d2} ${EN_MON_S[i]}`); }
+  if (mn) { const i = RU_MON_N.indexOf(mn); return L3(m[0], `${y3} ж. ${KK_MON[i]}`, `${EN_MON[i]} ${y3}`); }
+  const i = RU_MON_S.indexOf(ms4); return L3(m[0], `${KK_MON_S[i]} ${y4}`, `${EN_MON_S[i]} ${y4}`);
+}
+function i18nRel(m) {
+  if (m[0] === 'только что') return L3(m[0], 'жаңа ғана', 'just now');
+  if (m[0] === 'вчера') return L3(m[0], 'кеше', 'yesterday');
+  if (m[1]) return L3(m[0], `${m[1]} мин бұрын`, `${m[1]} min ago`);
+  if (m[2]) return L3(m[0], `${m[2]} сағ бұрын`, `${m[2]} h ago`);
+  if (m[3]) return L3(m[0], `${m[3]} күн бұрын`, `${m[3]} days ago`);
+  if (m[4]) return L3(m[0], `${m[4]} сағ ${m[5]} мин`, `${m[4]} h ${m[5]} min`);
+  return L3(m[0], `${m[6]} мин`, `${m[6]} min`);
+}
+/* Ключ перевода: текст с подстановками вместо чисел, дат, времени и «цитат» */
+function i18nKey(t) {
+  const D = [], R = [], Q = [], N = [], W = [];
+  let k = t.replace(I18N_DATE_RX, (...a) => { D.push(i18nDate(a)); return `{D${D.length - 1}}`; });
+  k = k.replace(I18N_REL_RX, (...a) => { R.push(i18nRel(a)); return `{R${R.length - 1}}`; });
+  k = k.replace(/«([^«»]+)»/g, (m, q) => { Q.push(trS(q)); return `«{Q${Q.length - 1}}»`; });
+  k = k.replace(/(^|[\s(])(вс|пн|вт|ср|чт|пт|сб)(?=,)/g, (m, pre, w) => { W.push(L3(w, KK_WD[RU_WD.indexOf(w)], EN_WD[RU_WD.indexOf(w)])); return `${pre}{W${W.length - 1}}`; });
+  k = k.replace(/\{[DRQW]\d+\}|\d+(?:[.,]\d+)?/g, m => { if (m[0] === '{') return m; N.push(m); return `{${N.length - 1}}`; });
+  return { k, D, R, Q, N, W };
+}
+function trS(s) {
+  if (LANG === 'ru' || s == null) return s;
+  const str = String(s), t = str.trim();
+  if (!t || !CYR.test(t)) return s;
+  const out = trCore(t);
+  if (out == null) return s;
+  return str.match(/^\s*/)[0] + out + str.match(/\s*$/)[0];
+}
+function trCore(t) {
+  const map = I18N[LANG];
+  let out = map.get(t);
+  if (out != null) return out;
+  if (LANG === 'kk' && /[әғқңөұүһі]/i.test(t)) return t; // уже по-казахски
+  let i = RU_MON_S.indexOf(t); if (i >= 0) return L3(t, KK_MON_S[i], EN_MON_S[i]);
+  i = RU_WD.indexOf(t); if (i >= 0) return L3(t, KK_WD[i], EN_WD[i]);
+  i = RU_MON_N.indexOf(t); if (i >= 0) return L3(t, KK_MON[i], EN_MON[i]);
+  if (out == null) {
+    const x = i18nKey(t), tpl = map.get(x.k);
+    if (tpl != null) out = tpl.replace(/\{([DRQW]?)(\d+)\}/g, (m, kind, i) => (kind === 'D' ? x.D : kind === 'R' ? x.R : kind === 'Q' ? x.Q : kind === 'W' ? x.W : x.N)[+i] ?? m);
+    else if (x.k !== t && /^(?:\{[DRQW]?\d+\}|[\s·,.:;—–()-])+$/.test(x.k)) out = x.k.replace(/\{([DRQW]?)(\d+)\}/g, (m, kind, i) => (kind === 'D' ? x.D : kind === 'R' ? x.R : kind === 'Q' ? x.Q : kind === 'W' ? x.W : x.N)[+i] ?? m);
+  }
+  if (out == null) for (const [re, kk, en] of (typeof I18N_PATTERNS !== 'undefined' ? I18N_PATTERNS : [])) {
+    const m = t.match(re);
+    if (m) { const f = LANG === 'kk' ? kk : en; out = typeof f === 'function' ? f(...m.slice(1)) : f; break; }
+  }
+  /* Составные подписи «A · B · C»: каждая часть переводится отдельно */
+  if (out == null && t.includes(' · ')) {
+    const parts = t.split(' · '), tp = parts.map(x => CYR.test(x) ? trCore(x.trim()) : x);
+    if (tp.some((x, j) => x != null && x !== parts[j])) out = tp.map((x, j) => x == null ? parts[j] : x).join(' · ');
+  }
+  /* «Подпись: значение» — если подпись есть в словаре */
+  if (out == null) {
+    const c = t.indexOf(': ');
+    if (c > 0 && c < 60) { let lab = map.get(t.slice(0, c + 1)); if (lab == null && /^[\d\s.,%:–-]+$/.test(t.slice(c + 2))) { const l2 = trCore(t.slice(0, c)); if (l2 != null) lab = l2 + ':'; } if (lab != null) { const v = t.slice(c + 2), vt = CYR.test(v) ? trCore(v) : null; out = lab + ' ' + (vt == null ? v : vt); } }
+  }
+  return out;
+}
+const I18N_SKIP = 'script,style,textarea,pre,code,.tpl,.md,.no-i18n';
+const I18N_ATTRS = ['title', 'placeholder', 'aria-label', 'data-tip', 'data-tipv'];
+const I18N_ORIG = new WeakMap(), I18N_SET = new WeakMap(), I18N_AREC = new WeakMap();
+function i18nText(n) {
+  const cur = n.nodeValue;
+  if (!I18N_ORIG.has(n) && !CYR.test(cur)) return;
+  let orig = I18N_ORIG.get(n);
+  if (orig === undefined || cur !== I18N_SET.get(n)) { orig = cur; I18N_ORIG.set(n, orig); }
+  const out = LANG === 'ru' ? orig : trS(orig);
+  I18N_SET.set(n, out);
+  if (out !== cur) {
+    const p = n.parentNode;
+    if (p && p.nodeName === 'OPTION' && !p.hasAttribute('value')) p.setAttribute('value', orig.trim());
+    n.nodeValue = out;
+  }
+}
+function i18nAttrs(el) {
+  for (const a of I18N_ATTRS) {
+    const cur = el.getAttribute(a);
+    if (cur == null) continue;
+    let rec = I18N_AREC.get(el);
+    if (!(rec && rec[a]) && !CYR.test(cur)) continue;
+    if (!rec) { rec = {}; I18N_AREC.set(el, rec); }
+    if (!rec[a] || cur !== rec[a].set) rec[a] = { orig: cur, set: cur };
+    const out = LANG === 'ru' ? rec[a].orig : trS(rec[a].orig);
+    rec[a].set = out;
+    if (out !== cur) el.setAttribute(a, out);
+  }
+}
+function i18nTree(root) {
+  if (!root) return;
+  if (root.nodeType === 3) { const p = root.parentElement; if (!p || !p.closest(I18N_SKIP)) i18nText(root); return; }
+  if (root.nodeType !== 1) return;
+  // В зонах без перевода (поля ввода, код, шаблоны) содержимое не трогаем, но подсказки и подписи переводим
+  const skipped = n => { if (!n.matches('.no-i18n')) i18nAttrs(n); return 2; };
+  if (root.closest(I18N_SKIP)) { if (root.matches(I18N_SKIP) && !root.closest('.no-i18n')) i18nAttrs(root); return; }
+  const w = document.createTreeWalker(root, 5, { acceptNode: n => n.nodeType === 1 && n.matches(I18N_SKIP) ? skipped(n) : 1 });
+  for (let n = w.currentNode; n; n = w.nextNode()) { if (n.nodeType === 3) i18nText(n); else i18nAttrs(n); }
+}
+function i18nObserve() {
+  new MutationObserver(ms => {
+    if (LANG === 'ru') return;
+    for (const m of ms) {
+      if (m.type === 'childList') m.addedNodes.forEach(i18nTree);
+      else if (m.type === 'characterData') { const p = m.target.parentElement; if (!p || !p.closest(I18N_SKIP)) i18nText(m.target); }
+      else if (m.type === 'attributes') i18nAttrs(m.target);
+    }
+  }).observe(document.documentElement, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: I18N_ATTRS });
+}
+function setLang(l) {
+  if (!LANGS.includes(l)) return;
+  LANG = l;
+  try { localStorage.setItem('srl-lang', l); } catch (e) { }
+  document.documentElement.lang = l;
+  render();
+  i18nTree(document.body);
+}
+
 /* ---------- Тема: дневная, вечерняя или по времени суток ---------- */
 const THEME_KEY = 'srl-theme', THEME_DAY_FROM = 7, THEME_EVENING_FROM = 19;
 let themeModeVal = (() => { try { const v = localStorage.getItem(THEME_KEY); return ['day', 'evening', 'auto'].includes(v) ? v : 'day'; } catch (e) { return 'day'; } })();
