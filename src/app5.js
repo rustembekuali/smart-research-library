@@ -23,11 +23,12 @@ async function copyText(text, opening) {
 }
 function clearDrafts(prefix) { Object.keys(S.ui.drafts).forEach(k => { if (k.startsWith(prefix)) delete S.ui.drafts[k]; }); }
 const splitList = (s, sep) => String(s || '').split(sep).map(x => x.trim()).filter(Boolean);
-function hashFor(role, view) { return role === 'staff' ? 'staff-' + view : view; }
+function hashFor(role, view) { return role === 'staff' ? 'staff-' + view : role === 'expert' ? 'expert-' + view : view; }
 function parseHash() {
   const h = (location.hash || '').slice(1);
   if (!h) return null;
   if (h.startsWith('staff-')) { const v = h.slice(6); return VIEWS.staff[v] ? ['staff', v] : null; }
+  if (h.startsWith('expert-')) { const v = h.slice(7); return VIEWS.expert[v] ? ['expert', v] : null; }
   return VIEWS.student[h] ? ['student', h] : null;
 }
 function go(role, view) {
@@ -360,6 +361,7 @@ const ACT = {
   'notif-open': el => {
     const k = el.dataset.key; S.ui.bell = false;
     if (k.startsWith('t:')) openTicket(k.slice(2));
+    else if (k.startsWith('cm:')) { const id = k.slice(3); cmMarkSeen(id); S.ui.cmFilter = 'all'; persist(); go('student', 'commission'); setTimeout(() => { const el = document.getElementById('cm-r-' + id); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60); }
     else { const id = k.slice(2); if (!S.me.readNotices.includes(id)) S.me.readNotices.push(id); persist(); render(); }
   },
   'hint-off': () => { S.me.hintDismissed = true; persist(); renderMain(); },
@@ -578,6 +580,7 @@ const ACT = {
   'res-del': async el => { closeModal(); await removeDoc('resources', el.dataset.id); toast('Ресурс удалён'); },
   'notice-del': el => removeDoc('notices', el.dataset.id)
 };
+Object.assign(ACT, CM_ACT);
 
 /* =====================================================================
    13. Event delegation & boot
@@ -619,6 +622,7 @@ document.addEventListener('change', e => {
   if (el.dataset.tkcat) { patch('tickets', el.dataset.tkcat, { cat: el.value }); toast('Категория изменена'); return; }
   if (el.dataset.resShow) { patch('resources', el.dataset.resShow, { show: el.checked }); return; }
   const id = el.id;
+  if (id === 'cm-me') { S.ui.cmExpert = el.value; S.ui.cmReturn = null; S.ui.cmCh = null; render(); return; }
   if (id === 'tf-year') { S.ui.drafts['tf-year'] = el.value; renderMain(); return; }
   const filters = { 's-idx': ['search', 'idx'], 's-from': ['search', 'from'], 's-sort': ['search', 'sort'], 's-free': ['search', 'free'], 'tk-cat': ['tk', 'cat'], 'kb-cat': ['kb', 'cat'] };
   if (filters[id]) { const [g, k] = filters[id]; S.ui[g][k] = el.type === 'checkbox' ? el.checked : el.value; if (g === 'tk') S.ui.tk.sel = null; renderMain(); return; }
@@ -635,6 +639,7 @@ document.addEventListener('submit', e => {
   const k = f.dataset.form;
   if (k === 'search') { S.ui.search.q = String(dv('s-q')).trim(); renderMain(); }
   else if (k === 'chat') sendAssistant(dv('chat-input'));
+  else if (k === 'cm-remark') cmSubmitRemark();
   else if (k === 'meeting') {
     const at = Date.parse(dv('mt-at', '')), topic = String(dv('mt-topic')).trim();
     if (!at || !topic) { toast('Укажите дату и тему встречи'); return; }

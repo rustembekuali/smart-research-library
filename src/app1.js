@@ -428,7 +428,7 @@ const LS_KEY = 'srl-enu-demo-v1';
 const COLLS = ['tickets', 'messages', 'kb', 'notices', 'events', 'slots', 'resources'];
 const S = {
   role: 'student',
-  view: { student: 'passport', staff: 'overview' },
+  view: { student: 'passport', staff: 'overview', expert: 'review' },
   me: null,
   local: null,
   remote: { tickets: [], messages: [], kb: [], notices: [], events: [], slots: [], resources: [] },

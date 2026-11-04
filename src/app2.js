@@ -377,6 +377,7 @@ function studentNotifications() {
   const EV = { reply: 'Библиотекарь ответил на ваш вопрос', taken: 'Библиотекарь взял вопрос в работу', resolved: 'Обращение отмечено как решённое' };
   myTickets().forEach(t => { if (t.lastEventAt) out.push({ key: 't:' + t.id, kind: 'ticket', tid: t.id, at: t.lastEventAt, title: `Обращение №${t.num} · ${STATUS[t.status]}`, text: EV[t.lastEvent] || 'Статус обращения обновлён', unread: ticketUnread(t) }); });
   all('notices').filter(audienceOk).forEach(n => out.push({ key: 'n:' + n.id, kind: 'notice', nid: n.id, at: n.at, title: n.title, text: n.text, unread: !(S.me.readNotices || []).includes(n.id) }));
+  if (typeof cmNotifications === 'function') out.push(...cmNotifications());
   return out.sort((a, b) => b.at - a.at).slice(0, 12);
 }
 function niceMax(v) { if (v <= 5) return 5; const p = Math.pow(10, Math.floor(Math.log10(v))); for (const m of [1, 2, 2.5, 4, 5, 10]) if (m * p >= v) return m * p; return 10 * p; }

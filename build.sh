@@ -6,7 +6,8 @@ mkdir -p dist
 {
   cat src/head.html
   printf '<script>\n'
-  cat src/data.js src/topics.js src/i18n.js src/app1.js src/app2.js src/app3.js src/app4.js src/app5.js
+  cat src/data.js src/topics.js src/i18n.js src/app1.js src/app2.js src/app3.js src/app4.js src/commission.js src/app5.js
   printf '\n</script>\n</body>\n</html>\n'
 } > dist/index.html
+cp public/* dist/
 wc -c dist/index.html

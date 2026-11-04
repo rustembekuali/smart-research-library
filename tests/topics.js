@@ -54,7 +54,7 @@ const check = (ok, msg) => { if (!ok) fail.push(msg); console.log((ok ? 'ok   ' 
   check(await col('.ms.done') !== await col('.ms.todo'), 'этапы планера: выполненные и невыполненные разного цвета');
   await page.evaluate(() => go('student', 'roadmap'));
   await page.waitForTimeout(200);
-  check(await page.$$eval('.road.done', e => e.length) === 3 && await page.$$eval('.road.todo', e => e.length) === 5, 'дорожная карта: 3 реализовано, 5 нет');
+  check(await page.$$eval('.road.done', e => e.length) === 3 && await page.$$eval('.road.todo', e => e.length) === 9, 'дорожная карта: 3 реализовано, 9 нет');
 
   // Шапка каждого раздела в своём цвете
   const accents = new Set();

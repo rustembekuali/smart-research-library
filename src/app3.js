@@ -10,6 +10,7 @@ const NAV = {
     { id: 'library', ru: 'Моя библиотека', en: 'Smart Library Bot', ic: 'book' },
     { id: 'assistant', ru: 'Виртуальный библиотекарь', en: 'AI Library Assistant ENU', ic: 'chat' },
     { id: 'planner', ru: 'Научный планер', en: 'AI Academic Planner', ic: 'calendar' },
+    { id: 'commission', ru: 'Экспертная комиссия', en: 'AI Expert Commission', ic: 'users' },
     { id: 'prompts', ru: 'Библиотека промптов', en: 'AI Prompt Library', ic: 'sparkle' }
   ],
   roadmap: { id: 'roadmap', ru: 'Развитие платформы', en: 'Roadmap · бета-модули', ic: 'layers' },
@@ -80,13 +81,15 @@ function renderTop() {
     <div class="grow"></div>
     <div class="role-switch" role="group" aria-label="Выбор кабинета">
       <button data-act="role" data-role="student" aria-pressed="${student}">${ic('grad')}<span class="lbl-long">Магистрант / Докторант</span><span class="lbl-short">Исследователь</span></button>
-      <button data-act="role" data-role="staff" aria-pressed="${!student}">${ic('building')}<span class="lbl-long">Сотрудник библиотеки</span><span class="lbl-short">Библиотекарь</span></button>
+      <button data-act="role" data-role="staff" aria-pressed="${S.role === 'staff'}">${ic('building')}<span class="lbl-long">Сотрудник библиотеки</span><span class="lbl-short">Библиотекарь</span></button>
+      <button data-act="role" data-role="expert" aria-pressed="${S.role === 'expert'}">${ic('users')}<span class="lbl-long">Эксперт комиссии</span><span class="lbl-short">Эксперт</span></button>
     </div>
     <div class="grow"></div>
     <div class="top-right">${aiChip}${liveChip}${langSwitch()}${themeSwitch()}
       ${student ? `<div class="bell-wrap"><button class="icon-btn" data-act="bell" aria-haspopup="true" aria-expanded="${S.ui.bell}" aria-label="Уведомления${unread ? ': новых ' + unread : ''}">${ic('bell')}${unread ? `<span class="count">${unread}</span>` : ''}</button>${S.ui.bell ? bellDropdown(notes) : ''}</div>` : ''}
       <div class="who">${student
       ? `<div class="avatar">${esc(initials(p.name))}</div><div class="who-text"><div class="who-name">${esc(shortName(p.name))}</div><div class="who-role">${esc(p.status)} · ${p.course} курс</div></div>`
+      : S.role === 'expert' ? (e => e ? `<div class="avatar expert no-i18n">${esc(cmInitials(e.name))}</div><div class="who-text"><div class="who-name no-i18n">${esc(e.name.replace(/ \(демо\)$/, ''))}</div><div class="who-role">${CM_ROLES[e.role].ru}</div></div>` : '')(cmMe())
       : `<div class="avatar staff">${ic('building')}</div><div class="who-text"><div class="who-name">Библиотекарь-консультант</div><div class="who-role">Поддержка исследований</div></div>`}</div>
     </div>`;
   requestAnimationFrame(fitTopbar);
@@ -126,10 +129,12 @@ function renderNav() {
   const badge = id => {
     if (S.role === 'staff' && id === 'tickets') { const n = all('tickets').filter(t => t.status === 'waiting').length; return n ? `<span class="ni-badge" title="Ожидают ответа">${n}</span>` : ''; }
     if (S.role === 'student' && id === 'assistant') { const n = myTickets().filter(ticketUnread).length; return n ? `<span class="ni-badge" title="Новые ответы">${n}</span>` : ''; }
+    if (S.role === 'student' && id === 'commission') { const n = cmState().remarks.filter(r => r.st === 'open' || r.st === 'returned').length; return n ? `<span class="ni-badge todo" title="Нужно исправить">${n}</span>` : ''; }
+    if (S.role === 'expert' && id === 'review') { const me = cmMe(), n = me ? cmState().remarks.filter(r => r.ex === me.id && r.st === 'fixed').length : 0; return n ? `<span class="ni-badge" title="На проверке">${n}</span>` : ''; }
     return '';
   };
-  const item = it => `<a class="nav-item" href="#${S.role === 'staff' ? 'staff-' + it.id : it.id}" data-act="nav" data-view="${it.id}" ${it.id === cur ? 'aria-current="page"' : ''}><span class="ni-ic">${ic(it.ic)}</span><span class="ni-text"><span class="ni-ru">${esc(it.ru)}</span><span class="ni-en">${esc(it.en)}</span></span>${badge(it.id)}</a>`;
-  nav.innerHTML = `<div class="nav-title">${S.role === 'student' ? 'Кабинет исследователя' : 'Кабинет сотрудника'}</div>`
+  const item = it => `<a class="nav-item" href="#${hashFor(S.role, it.id)}" data-act="nav" data-view="${it.id}" ${it.id === cur ? 'aria-current="page"' : ''}><span class="ni-ic">${ic(it.ic)}</span><span class="ni-text"><span class="ni-ru">${esc(it.ru)}</span><span class="ni-en">${esc(it.en)}</span></span>${badge(it.id)}</a>`;
+  nav.innerHTML = `<div class="nav-title">${S.role === 'student' ? 'Кабинет исследователя' : S.role === 'expert' ? 'Кабинет эксперта' : 'Кабинет сотрудника'}</div>`
     + NAV[S.role].map(item).join('')
     + (S.role === 'student' ? `<div class="nav-sep"></div>${item(NAV.roadmap)}` : '')
     + `<div class="nav-foot"><button class="nav-item" data-act="scenario"><span class="ni-ic">${ic('play')}</span><span class="ni-text"><span class="ni-ru">Сценарий показа</span></span></button><button class="nav-item" data-act="about"><span class="ni-ic">${ic('info')}</span><span class="ni-text"><span class="ni-ru">О проекте</span></span></button></div>`;
@@ -516,7 +521,7 @@ VIEWS.student.roadmap = function () {
   }
   const betaPanel = panel('Бета-модули', aiOff ? 'Бета-модули работают через ИИ Claude — откройте демоверсию в приложении Claude, чтобы попробовать' : 'Работают через ИИ Claude', `<div class="seg" role="group" aria-label="Модуль">${tabs.map(([k, l]) => `<button data-act="beta-tab" data-v="${k}" aria-pressed="${tab === k}">${l}</button>`).join('')}</div>${tool}${result ? `<div class="divider"></div>${result}` : ''}`, { stack: true, id: 'beta' });
   return `<div class="page">${pageHead('Roadmap', 'Направления развития платформы', 'Модули следующего этапа Smart Research Library. Три из них уже можно попробовать в бета-режиме.')}
-    ${panel('Модули следующего этапа', 'Нумерация — по структуре проекта (14 модулей)', roadSum() + grid, { flush: true, cls: 'clip' })}${betaPanel}</div>`;
+    ${panel('Модули следующего этапа', 'Нумерация — по структуре проекта', roadSum() + grid, { flush: true, cls: 'clip' })}${betaPanel}</div>`;
 };
 
 /* ---------- AI Topic Finder ---------- */

@@ -4,6 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Smart Research Library 1.0</title>
+<meta name="description" content="Цифровая научная библиотека для магистрантов и докторантов: научный паспорт, подбор темы, поиск литературы, экспертная комиссия и виртуальный библиотекарь. Демоверсия конкурсного проекта.">
+<meta name="theme-color" content="#2F45B5">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect width='36' height='36' rx='9' fill='%232F45B5'/%3E%3Crect x='8' y='11' width='4.6' height='16' rx='1.2' fill='%23fff'/%3E%3Crect x='14.4' y='8' width='4.6' height='19' rx='1.2' fill='%23fff' opacity='.82'/%3E%3Crect x='21' y='12.5' width='4.6' height='14.5' rx='1.2' fill='%23fff' opacity='.64' transform='rotate(14 21 27)'/%3E%3Cpath d='M28.4 4.6l.95 2.35 2.35.95-2.35.95-.95 2.35-.95-2.35-2.35-.95 2.35-.95z' fill='%23F4C65A'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Smart Research Library 1.0">
+<meta property="og:description" content="Цифровая научная библиотека для магистрантов и докторантов — демоверсия конкурсного проекта.">
+<meta property="og:image" content="https://smart-research-library.pages.dev/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
 <script>
 /* Тема до первой отрисовки: дневная по умолчанию, вечерняя или по времени суток (7:00–19:00 — дневная) */
 (function () { var m = 'day'; try { m = localStorage.getItem('srl-theme') || 'day'; } catch (e) { } var h = new Date().getHours(); var dark = m === 'evening' || (m === 'auto' && (h < 7 || h >= 19)); document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light'); })();
@@ -889,6 +898,86 @@ b, strong { font-weight: 800; }
   .hero-ic svg.i { width: 22px; height: 22px; }
   .tf-blocks, .tf-filters { grid-template-columns: minmax(0, 1fr); }
 }
+:root { --s-commission: #BE185D; --s-commission-h: #9D174D; --s-commission-soft: #FCE7F1; --s-review: #5B21B6; --s-review-h: #4C1D95; --s-review-soft: #EEE7FD; --s-summary: #0E7490; --s-summary-h: #155E75; --s-summary-soft: #DFF1F6; }
+:root[data-theme="dark"] { --s-commission: #F9A8D4; --s-commission-h: #FBCFE8; --s-commission-soft: #3B1528; --s-review: #C4B5FD; --s-review-h: #DDD6FE; --s-review-soft: #261A47; --s-summary: #67E8F9; --s-summary-h: #A5F3FC; --s-summary-soft: #0E2C33; }
+.app[data-sec="commission"] { --accent: var(--s-commission); --accent-hover: var(--s-commission-h); --accent-soft: var(--s-commission-soft); --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Ccircle cx='20' cy='20' r='11' fill='none' stroke='%23000' stroke-width='1.4'/%3E%3Ccircle cx='20' cy='20' r='6' fill='none' stroke='%23000' stroke-width='1'/%3E%3Cpath d='M44 40l4 4 8-9' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"); }
+.app[data-sec="review"] { --accent: var(--s-review); --accent-hover: var(--s-review-h); --accent-soft: var(--s-review-soft); --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='26'%3E%3Cpath d='M2 9h36M2 19h24' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); }
+.app[data-sec="summary"] { --accent: var(--s-summary); --accent-hover: var(--s-summary-h); --accent-soft: var(--s-summary-soft); --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cg fill='%23000'%3E%3Crect x='4' y='22' width='7' height='16' rx='1.5'/%3E%3Crect x='15' y='10' width='7' height='28' rx='1.5'/%3E%3Crect x='26' y='17' width='7' height='21' rx='1.5'/%3E%3C/g%3E%3C/svg%3E"); }
+.nav-item[data-view="commission"] { --c: var(--s-commission); --c-soft: var(--s-commission-soft); }
+.nav-item[data-view="review"] { --c: var(--s-review); --c-soft: var(--s-review-soft); }
+.nav-item[data-view="summary"] { --c: var(--s-summary); --c-soft: var(--s-summary-soft); }
+/* ---------- AI Expert Commission ---------- */
+.avatar.expert { background: var(--s-review-soft); color: var(--s-review); }
+.ni-badge.todo { background: var(--s-todo-soft); color: var(--s-todo); }
+.cm-split { grid-template-columns: minmax(0, 1fr) 420px; }
+.cm-list { display: flex; flex-direction: column; gap: 10px; }
+.cm-remark { --rc: var(--accent); position: relative; border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px 12px 18px; background: var(--surface); display: flex; flex-direction: column; gap: 8px; overflow: hidden; scroll-margin-top: 90px; }
+.cm-remark::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--s-todo); }
+.cm-remark.st-fixed::before { background: var(--warn); }
+.cm-remark.st-accepted::before { background: var(--s-done); }
+.cm-remark.st-open, .cm-remark.st-returned { background: color-mix(in srgb, var(--s-todo-soft) 35%, var(--surface)); }
+.cm-remark.st-accepted { background: color-mix(in srgb, var(--s-done-soft) 35%, var(--surface)); }
+.cm-remark-top { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
+.cm-text { font-size: 14px; color: var(--ink); font-weight: 600; }
+.cm-remark-foot { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+.cm-acts { display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.cm-fix, .cm-ret { font-size: 12.5px; border-radius: 10px; padding: 8px 10px; color: var(--ink-2); }
+.cm-fix { background: color-mix(in srgb, var(--s-done-soft) 70%, transparent); }
+.cm-ret { background: var(--s-todo-soft); }
+.cm-fix b { color: var(--s-done); } .cm-ret b { color: var(--s-todo); }
+.cm-fix p, .cm-ret p { margin-top: 3px; color: var(--ink); }
+.cm-ai { border-radius: 12px; padding: 10px 12px; background: linear-gradient(135deg, var(--brass-soft), color-mix(in srgb, var(--brass-soft) 50%, var(--surface))); font-size: 13px; color: var(--ink); }
+.cm-ai-h { display: flex; align-items: center; gap: 6px; font-weight: 800; color: var(--brass); margin-bottom: 4px; }
+.cm-ai ol { margin: 6px 0 0; padding-left: 20px; display: grid; gap: 3px; }
+.cm-return-form { display: flex; gap: 6px; align-items: flex-end; width: 100%; }
+.cm-return-form .textarea { min-height: 54px; flex: 1; }
+.cm-who { --rc: var(--accent); display: inline-flex; align-items: center; gap: 9px; min-width: 0; }
+.cm-ava { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; flex: none; color: var(--rc); background: color-mix(in srgb, var(--rc) 14%, transparent); }
+.cm-who.sm .cm-ava { width: 24px; height: 24px; border-radius: 7px; }
+.cm-who.sm .cm-ava svg.i { width: 14px; height: 14px; }
+.cm-who-t { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
+.cm-who-t b { font-size: 13.5px; }
+.cm-who-t span { font-size: 11.5px; color: var(--ink-3); }
+.cm-who.sm .cm-who-t { flex-direction: row; gap: 6px; align-items: baseline; flex-wrap: wrap; }
+.cm-who.sm .cm-who-t b { font-size: 12.5px; }
+:root[data-theme="dark"] .cm-ava { color: color-mix(in srgb, var(--rc) 45%, #fff); }
+.cm-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.cm-table th { text-align: left; font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-3); font-weight: 800; padding: 0 6px 8px; border-bottom: 1px solid var(--line); }
+.cm-table td { padding: 9px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.cm-table th:not(:first-child), .cm-table td:not(:first-child) { text-align: right; width: 72px; font-family: var(--font-mono); }
+.cm-table tfoot td { font-weight: 800; border-bottom: 0; }
+.cm-table td.ok { color: var(--s-done); font-weight: 800; } .cm-table td.left { color: var(--s-todo); font-weight: 800; }
+.cm-role-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--rc); margin-right: 7px; }
+.cm-bar { display: flex; gap: 2px; height: 7px; margin-top: 6px; border-radius: 999px; overflow: hidden; min-width: 10px; }
+.cm-bar i { display: block; height: 100%; }
+.cm-bar .ok { background: var(--s-done); } .cm-bar .chk { background: var(--warn); } .cm-bar .left { background: var(--s-todo); }
+.cm-legend { margin-top: 10px; }
+.cm-ex { display: flex; gap: 10px; justify-content: space-between; align-items: flex-start; padding: 12px 18px; }
+.cm-ex-main { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.cm-ex-meta, .cm-ex-ch { display: flex; flex-wrap: wrap; gap: 5px; }
+.cm-chip { font-size: 11.5px; padding: 1px 7px; border-radius: 6px; background: var(--surface-2); color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--line); }
+.cm-ex-acts { display: flex; gap: 4px; flex: none; }
+.cm-ch { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 18px; }
+.cm-ch-ic { width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; }
+.cm-ch-ic svg.i { width: 15px; height: 15px; }
+.cm-ch-ic.done { color: var(--s-done); background: var(--s-done-soft); } .cm-ch-ic.todo { color: var(--s-todo); background: var(--s-todo-soft); } .cm-ch-ic.none { color: var(--ink-3); background: var(--surface-2); }
+.cm-ch-t { font-size: 13px; font-weight: 700; line-height: 1.35; }
+.cm-as { min-width: 280px; }
+.cm-as .field-label, .cm-new .field-label, .cm-fs .field-label { font-size: 12.5px; font-weight: 700; color: var(--ink-2); }
+.cm-topic { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); }
+.cm-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.cm-tabs button { position: relative; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 12px; font: 700 12.5px/1.2 var(--font-body); color: var(--ink-2); cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+.cm-tabs button[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.cm-tabs .ni-badge { margin: 0; height: 18px; min-width: 18px; font-size: 11px; line-height: 18px; }
+.cm-chapter { border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: var(--surface); }
+.cm-chapter-h { display: flex; gap: 8px; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; font-family: var(--font-display); }
+.cm-doc { font: 500 14.5px/1.75 Georgia, "Times New Roman", serif; color: var(--ink); }
+.cm-doc.old { color: var(--ink-3); margin-top: 6px; }
+.cm-tag-btn { border: 0; cursor: pointer; font: inherit; font-size: 12px; }
+.cm-tag-btn:hover { box-shadow: inset 0 0 0 1px var(--accent); color: var(--accent); }
+.cm-fs { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.cm-fs .check { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; }
+@media (max-width: 1180px) { .cm-split { grid-template-columns: minmax(0, 1fr); } }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
@@ -1464,7 +1553,11 @@ const ROADMAP = [
   { id: 'journal', n: 8, en: 'AI Journal Finder', ru: 'Подбор журнала', ic: 'target', d: 'Анализ аннотации и подбор журналов с фильтрами. Индексацию, квартиль и стоимость проверяют по официальным источникам; принятие статьи не гарантируется.', beta: true },
   { id: 'reviewer', n: 9, en: 'AI Reviewer Simulator', ru: 'Виртуальный рецензент', ic: 'clip', d: 'Предварительная рецензия: актуальность, методология, статистика, обсуждение, выводы.', beta: true },
   { id: 'translator', n: 10, en: 'AI Academic Translator', ru: 'Академический перевод', ic: 'globe', d: 'Перевод между казахским, русским и английским с сохранением терминологии.', beta: true },
-  { id: 'collab', n: 11, en: 'AI Research Collaboration', ru: 'Совместные исследования', ic: 'network', d: 'Поиск соавторов по открытым данным научных паспортов и совместные проекты.' }
+  { id: 'collab', n: 11, en: 'AI Research Collaboration', ru: 'Совместные исследования', ic: 'network', d: 'Поиск соавторов по открытым данным научных паспортов и совместные проекты.' },
+  { id: 'dashboard', n: 12, en: 'AI Dissertation Dashboard', ru: 'Панель диссертации', ic: 'chart', d: 'Графики выполнения индивидуального плана, написания глав, публикаций и исправления замечаний экспертов. Готовность текста и готовность к защите показываются отдельно.' },
+  { id: 'archive', n: 13, en: 'AI Research Archive', ru: 'Научный архив за три года', ic: 'database', d: 'Защищённое хранилище: документы докторанта, версии глав, литература, данные, публикации, заключения экспертов и материалы защиты — с поиском, экспортом и историей изменений.' },
+  { id: 'report', n: 14, en: 'AI Academic Report', ru: 'Автоматические отчёты', ic: 'file', d: 'Ежемесячный, семестровый, годовой отчёт и отчёт для предзащиты из подтверждённых данных платформы; неподтверждённые сведения отмечаются для проверки.' },
+  { id: 'evidence', n: 15, en: 'Research Evidence Map', ru: 'Режим предзащиты', ic: 'network', d: 'Интерактивная карта исследования для комиссии: от научного результата к главе, таблице, статистическому анализу и исходному документу.' }
 ];
 
 const SAMPLES = {
@@ -2632,7 +2725,148 @@ const I18N_ROWS = [
   ["Студенты вузов", "ЖОО студенттері", "University students"],
   ["Обучающиеся", "Білім алушылар", "Learners"],
   ["Будущие CLIL-педагоги", "Болашақ CLIL-педагогтер", "Future CLIL teachers"],
-  ["Студенты в неформальном образовании", "Бейресми білім берудегі студенттер", "Students in non-formal education"]
+  ["Студенты в неформальном образовании", "Бейресми білім берудегі студенттер", "Students in non-formal education"],
+  // AI Expert Commission и кабинет эксперта
+  ["Эксперт комиссии", "Комиссия сарапшысы", "Commission expert"],
+  ["Эксперт", "Сарапшы", "Expert"],
+  ["Экспертная комиссия", "Сараптамалық комиссия", "Expert commission"],
+  ["Нужно исправить", "Түзету керек", "Needs fixing"],
+  ["Научный руководитель, зарубежный консультант, профессора и эксперты работают с главами диссертации на одной платформе. Каждое замечание проходит путь до подтверждённого исправления.", "Ғылыми жетекші, шетелдік кеңесші, профессорлар мен сарапшылар диссертация тарауларымен бір платформада жұмыс істейді. Әр ескерту расталған түзетуге дейін бақыланады.", "The supervisor, foreign consultant, professors and experts work on the dissertation chapters in one place. Every remark is tracked until its fix is confirmed."],
+  ["Пригласить эксперта", "Сарапшыны шақыру", "Invite an expert"],
+  ["Кабинет эксперта", "Сарапшы кабинеті", "Expert workspace"],
+  ["ИИ объясняет замечания и предварительно анализирует текст, но не принимает решение о допуске к защите или присуждении степени — это полномочия экспертов и диссертационного совета. Эксперты, замечания и числа в демоверсии условные.", "ЖИ ескертулерді түсіндіреді және мәтінді алдын ала талдайды, бірақ қорғауға жіберу немесе дәреже беру туралы шешім қабылдамайды — бұл сарапшылар мен диссертациялық кеңестің өкілеттігі. Демонұсқадағы сарапшылар, ескертулер мен сандар шартты.", "AI explains remarks and pre-analyses the text, but it does not decide on admission to the defence or the award of a degree — that is for the experts and the dissertation council. Experts, remarks and numbers in the demo are illustrative."],
+  ["Замечаний всего", "Барлық ескерту", "Total remarks"],
+  ["{0} экспертов с доступом", "{0} сарапшының қолжетімділігі бар", "{0} experts with access"],
+  ["Исправлено", "Түзетілді", "Fixed"],
+  ["подтверждено экспертами", "сарапшылар растаған", "confirmed by experts"],
+  ["На проверке", "Тексерілуде", "Under review"],
+  ["ждут подтверждения эксперта", "сарапшының растауын күтуде", "awaiting expert confirmation"],
+  ["Осталось", "Қалды", "Remaining"],
+  ["не подтверждено", "расталмаған", "not confirmed"],
+  ["все замечания закрыты", "барлық ескерту жабылды", "all remarks closed"],
+  ["Замечания экспертов", "Сарапшылардың ескертулері", "Expert remarks"],
+  ["Эксперт оставляет замечание → вы исправляете и прикрепляете новую версию → эксперт подтверждает", "Сарапшы ескерту қалдырады → сіз түзетіп, жаңа нұсқаны тіркейсіз → сарапшы растайды", "The expert leaves a remark → you fix it and attach a new version → the expert confirms"],
+  ["Фильтр замечаний", "Ескертулер сүзгісі", "Remark filter"],
+  ["Профессор кафедры", "Кафедра профессоры", "Department professor"],
+  ["Глава {0}", "{0}-тарау", "Chapter {0}"],
+  ["Разобрать с ИИ", "ЖИ-мен талдау", "Analyse with AI"],
+  ["Отметить исправленным", "Түзетілді деп белгілеу", "Mark as fixed"],
+  ["Внешний эксперт", "Сыртқы сарапшы", "External expert"],
+  ["Внутренний эксперт", "Ішкі сарапшы", "Internal expert"],
+  ["Зарубежный научный консультант", "Шетелдік ғылыми кеңесші", "Foreign research consultant"],
+  ["Член комиссии предварительной защиты", "Алдын ала қорғау комиссиясының мүшесі", "Pre-defence committee member"],
+  ["Уполномоченный член диссертационного совета", "Диссертациялық кеңестің уәкілетті мүшесі", "Authorised dissertation council member"],
+  ["Возвращено на доработку", "Пысықтауға қайтарылды", "Returned for revision"],
+  ["На проверке у эксперта", "Сарапшыда тексерілуде", "Under expert review"],
+  ["Комментарий эксперта", "Сарапшының түсініктемесі", "Expert comment"],
+  ["Исправление докторанта", "Докторанттың түзетуі", "Doctoral student’s fix"],
+  ["версия {0}", "{0}-нұсқа", "version {0}"],
+  ["возвращено на доработку {D0}", "пысықтауға қайтарылды {D0}", "returned for revision {D0}"],
+  ["на проверке у эксперта {D0}", "сарапшыда тексерілуде {D0}", "under expert review {D0}"],
+  ["исправлено {D0}", "түзетілді {D0}", "fixed {D0}"],
+  ["Предварительный ИИ-анализ по экспертным критериям", "Сараптамалық критерийлер бойынша алдын ала ЖИ-талдау", "Preliminary AI analysis by expert criteria"],
+  ["Методологическая обоснованность", "Әдіснамалық негізділік", "Methodological soundness"],
+  ["Достоверность результатов", "Нәтижелердің дұрыстығы", "Reliability of results"],
+  ["Соответствие выводов исследовательским задачам", "Қорытындылардың зерттеу міндеттеріне сәйкестігі", "Alignment of conclusions with research objectives"],
+  ["Что анализировать", "Нені талдау керек", "What to analyse"],
+  ["Вся диссертация (последние версии)", "Бүкіл диссертация (соңғы нұсқалар)", "Whole dissertation (latest versions)"],
+  ["Введение", "Кіріспе", "Introduction"],
+  ["Заключение", "Қорытынды", "Conclusion"],
+  ["Глава {0}. Теоретические основы цифрового сопровождения исследовательской подготовки докторантов", "{0}-тарау. Докторанттардың зерттеушілік даярлығын цифрлық сүйемелдеудің теориялық негіздері", "Chapter {0}. Theoretical foundations of digital support for doctoral research training"],
+  ["Глава {0}. Методология и организация исследования", "{0}-тарау. Зерттеу әдіснамасы және ұйымдастырылуы", "Chapter {0}. Research methodology and design"],
+  ["Глава {0}. Опытно-экспериментальная проверка модели сопровождения", "{0}-тарау. Сүйемелдеу моделін тәжірибелік-эксперименттік тексеру", "Chapter {0}. Experimental testing of the support model"],
+  ["Проанализировать", "Талдау", "Analyse"],
+  ["ИИ даёт только предварительный анализ. Решение о допуске к защите и присуждении степени принимают эксперты и диссертационный совет.", "ЖИ тек алдын ала талдау береді. Қорғауға жіберу және дәреже беру туралы шешімді сарапшылар мен диссертациялық кеңес қабылдайды.", "AI gives only a preliminary analysis. Admission to the defence and the award of a degree are decided by the experts and the dissertation council."],
+  ["ИИ анализирует текст по экспертным критериям…", "ЖИ мәтінді сараптамалық критерийлер бойынша талдап жатыр…", "AI is analysing the text by expert criteria…"],
+  ["ИИ разбирает замечание…", "ЖИ ескертуді талдап жатыр…", "AI is analysing the remark…"],
+  ["ИИ объясняет замечание", "ЖИ ескертуді түсіндіреді", "AI explains the remark"],
+  ["Сводка для комиссии", "Комиссияға арналған жиынтық", "Commission summary"],
+  ["Замечания и их исправление по экспертам", "Сарапшылар бойынша ескертулер және оларды түзету", "Remarks and fixes by expert"],
+  ["Замечаний", "Ескерту", "Remarks"],
+  ["Всего", "Барлығы", "Total"],
+  ["Исправлено и подтверждено", "Түзетілді және расталды", "Fixed and confirmed"],
+  ["Состав комиссии и доступ", "Комиссия құрамы және қолжетімділік", "Commission members and access"],
+  ["У каждого эксперта — индивидуальный доступ к выбранным главам", "Әр сарапшының таңдалған тарауларға жеке қолжетімділігі бар", "Each expert has individual access to selected chapters"],
+  ["Пригласить", "Шақыру", "Invite"],
+  ["доступ активен", "қолжетімділік белсенді", "access active"],
+  ["Как эксперт", "Сарапшы ретінде", "As expert"],
+  ["Отозвать доступ", "Қолжетімділікті қайтарып алу", "Revoke access"],
+  ["приглашение отправлено", "шақыру жіберілді", "invitation sent"],
+  ["Принять (демо)", "Қабылдау (демо)", "Accept (demo)"],
+  ["В демоверсии эксперт принимает приглашение здесь", "Демонұсқада сарапшы шақыруды осында қабылдайды", "In the demo the expert accepts the invitation here"],
+  ["Код доступа", "Қолжетімділік коды", "Access code"],
+  ["Главы диссертации", "Диссертация тараулары", "Dissertation chapters"],
+  ["Последняя версия текста и открытые замечания", "Мәтіннің соңғы нұсқасы және ашық ескертулер", "Latest text version and open remarks"],
+  ["замечания закрыты", "ескертулер жабылды", "remarks closed"],
+  ["открыто: {0}", "ашық: {0}", "open: {0}"],
+  ["текст ещё не загружен", "мәтін әлі жүктелмеген", "text not uploaded yet"],
+  ["не начато", "басталмаған", "not started"],
+  ["Нумерация — по структуре проекта", "Нөмірлеу — жоба құрылымы бойынша", "Numbering follows the project structure"],
+  ["Панель диссертации", "Диссертация панелі", "Dissertation dashboard"],
+  ["Графики выполнения индивидуального плана, написания глав, публикаций и исправления замечаний экспертов. Готовность текста и готовность к защите показываются отдельно.", "Жеке жоспардың орындалуы, тарауларды жазу, жарияланымдар мен сарапшы ескертулерін түзету графиктері. Мәтіннің дайындығы мен қорғауға дайындық бөлек көрсетіледі.", "Charts of individual-plan progress, chapter writing, publications and fixes to expert remarks. Text readiness and defence readiness are shown separately."],
+  ["Научный архив за три года", "Үш жылдық ғылыми мұрағат", "Three-year research archive"],
+  ["Защищённое хранилище: документы докторанта, версии глав, литература, данные, публикации, заключения экспертов и материалы защиты — с поиском, экспортом и историей изменений.", "Қорғалған қойма: докторант құжаттары, тарау нұсқалары, әдебиет, деректер, жарияланымдар, сарапшы қорытындылары және қорғау материалдары — іздеу, экспорт және өзгерістер тарихымен.", "A secure store for student documents, chapter versions, literature, data, publications, expert reports and defence materials — with search, export and change history."],
+  ["Автоматические отчёты", "Автоматты есептер", "Automatic reports"],
+  ["Ежемесячный, семестровый, годовой отчёт и отчёт для предзащиты из подтверждённых данных платформы; неподтверждённые сведения отмечаются для проверки.", "Платформаның расталған деректерінен ай сайынғы, семестрлік, жылдық есеп және алдын ала қорғауға арналған есеп; расталмаған мәліметтер тексеруге белгіленеді.", "Monthly, semester, annual and pre-defence reports built from confirmed platform data; unconfirmed details are flagged for checking."],
+  ["Режим предзащиты", "Алдын ала қорғау режимі", "Pre-defence mode"],
+  ["Интерактивная карта исследования для комиссии: от научного результата к главе, таблице, статистическому анализу и исходному документу.", "Комиссияға арналған зерттеудің интерактивті картасы: ғылыми нәтижеден тарауға, кестеге, статистикалық талдауға және бастапқы құжатқа дейін.", "An interactive research map for the committee: from a scientific result to the chapter, table, statistical analysis and source document."],
+  ["Рецензирование глав", "Тарауларды рецензиялау", "Chapter review"],
+  ["Сводка комиссии", "Комиссия жиынтығы", "Commission summary"],
+  ["Индивидуальный доступ к главам диссертации: читайте последнюю версию, оставляйте замечания и подтверждайте исправления.", "Диссертация тарауларына жеке қолжетімділік: соңғы нұсқаны оқыңыз, ескерту қалдырыңыз және түзетулерді растаңыз.", "Individual access to dissertation chapters: read the latest version, leave remarks and confirm fixes."],
+  ["Вы вошли как", "Сіз кірдіңіз:", "Signed in as"],
+  ["Диссертация докторанта", "Докторанттың диссертациясы", "Doctoral dissertation"],
+  ["Предыдущая версия", "Алдыңғы нұсқа", "Previous version"],
+  ["Новое замечание к главе", "Тарауға жаңа ескерту", "New remark on the chapter"],
+  ["Например: необходимо уточнить критерии отбора участников исследования", "Мысалы: зерттеуге қатысушыларды іріктеу критерийлерін нақтылау қажет", "For example: the criteria for selecting study participants need to be clarified"],
+  ["Отправить замечание", "Ескертуді жіберу", "Send remark"],
+  ["Докторант получит уведомление", "Докторант хабарлама алады", "The student will be notified"],
+  ["Докторант ещё не загрузил текст этой главы.", "Докторант бұл тараудың мәтінін әлі жүктемеген.", "The student has not uploaded this chapter yet."],
+  ["Нет экспертов с активным доступом — пригласите эксперта в кабинете докторанта.", "Белсенді қолжетімділігі бар сарапшы жоқ — докторант кабинетінде сарапшыны шақырыңыз.", "No experts with active access — invite one from the student workspace."],
+  ["Мои замечания", "Менің ескертулерім", "My remarks"],
+  ["Всего {0}", "Барлығы {0}", "Total {0}"],
+  ["исправлено {0}", "түзетілді {0}", "fixed {0}"],
+  ["осталось {0}", "қалды {0}", "remaining {0}"],
+  ["Замечаний пока нет", "Әзірге ескерту жоқ", "No remarks yet"],
+  ["Открыть главу", "Тарауды ашу", "Open chapter"],
+  ["Подтвердить исправление", "Түзетуді растау", "Confirm fix"],
+  ["Вернуть на доработку", "Пысықтауға қайтару", "Return for revision"],
+  ["Что ещё нужно исправить", "Тағы не түзету керек", "What still needs fixing"],
+  ["Сколько замечаний оставил каждый эксперт, сколько исправлено и сколько осталось. ИИ помогает с предварительным анализом, решения принимает комиссия.", "Әр сарапшы қанша ескерту қалдырды, қаншасы түзетілді және қаншасы қалды. ЖИ алдын ала талдауға көмектеседі, шешімді комиссия қабылдайды.", "How many remarks each expert left, how many are fixed and how many remain. AI helps with preliminary analysis; the committee makes the decisions."],
+  ["Что видит комиссия", "Комиссия не көреді", "What the committee sees"],
+  ["Эксперт проверит новую версию текста", "Сарапшы мәтіннің жаңа нұсқасын тексереді", "The expert will check the new version"],
+  ["Типовой план действий (без ИИ)", "Әрекеттердің үлгілік жоспары (ЖИ-сіз)", "Standard action plan (without AI)"],
+  ["Комментарий", "Түсініктеме", "Comment"],
+  ["Вернуть", "Қайтару", "Return"],
+  ["Что исправлено", "Не түзетілді", "What was fixed"],
+  ["Кратко: что и где изменено", "Қысқаша: не және қай жерде өзгерді", "Briefly: what changed and where"],
+  ["Новая версия текста главы (сейчас v{0})", "Тарау мәтінінің жаңа нұсқасы (қазір v{0})", "New version of the chapter text (currently v{0})"],
+  ["Сохранится как новая версия — эксперт увидит её вместе с предыдущей.", "Жаңа нұсқа ретінде сақталады — сарапшы оны алдыңғысымен бірге көреді.", "Saved as a new version — the expert will see it alongside the previous one."],
+  ["Отправить эксперту", "Сарапшыға жіберу", "Send to expert"],
+  ["Эксперт получит индивидуальный код доступа к выбранным главам", "Сарапшы таңдалған тарауларға жеке қолжетімділік кодын алады", "The expert receives an individual access code for the selected chapters"],
+  ["Имя и учёная степень", "Аты-жөні және ғылыми дәрежесі", "Name and academic degree"],
+  ["Например: д.п.н., профессор …", "Мысалы: п.ғ.д., профессор …", "For example: Dr Sc., Professor …"],
+  ["Роль в комиссии", "Комиссиядағы рөлі", "Role on the committee"],
+  ["Доступ к главам", "Тарауларға қолжетімділік", "Chapter access"],
+  ["Доступ членов диссертационного совета предоставляется в соответствии с официальными процедурами университета.", "Диссертациялық кеңес мүшелеріне қолжетімділік университеттің ресми рәсімдеріне сәйкес беріледі.", "Access for dissertation council members follows the university’s official procedures."],
+  ["Отправить приглашение", "Шақыру жіберу", "Send invitation"],
+  ["Новое замечание", "Жаңа ескерту", "New remark"],
+  ["Замечание возвращено", "Ескерту қайтарылды", "Remark returned"],
+  ["Исправление подтверждено", "Түзету расталды", "Fix confirmed"],
+  ["Нет текста для анализа", "Талдауға мәтін жоқ", "No text to analyse"],
+  ["Опишите, что исправлено", "Не түзетілгенін сипаттаңыз", "Describe what was fixed"],
+  ["Добавьте текст новой версии", "Жаңа нұсқаның мәтінін қосыңыз", "Add the text of the new version"],
+  ["Исправление отправлено эксперту на проверку", "Түзету сарапшыға тексеруге жіберілді", "Fix sent to the expert for review"],
+  ["Укажите имя эксперта", "Сарапшының атын көрсетіңіз", "Enter the expert’s name"],
+  ["Выберите хотя бы одну главу", "Кем дегенде бір тарауды таңдаңыз", "Select at least one chapter"],
+  ["Приглашение с кодом доступа отправлено", "Қолжетімділік коды бар шақыру жіберілді", "Invitation with access code sent"],
+  ["Эксперт принял приглашение — доступ активен", "Сарапшы шақыруды қабылдады — қолжетімділік белсенді", "The expert accepted — access is active"],
+  ["У эксперта есть незакрытые замечания — сначала завершите их", "Сарапшының жабылмаған ескертулері бар — алдымен оларды аяқтаңыз", "The expert has open remarks — close them first"],
+  ["Доступ эксперта отозван", "Сарапшының қолжетімділігі қайтарылды", "Expert access revoked"],
+  ["Исправление подтверждено — докторант получит уведомление", "Түзету расталды — докторант хабарлама алады", "Fix confirmed — the student will be notified"],
+  ["Напишите, что ещё нужно исправить", "Тағы не түзету керектігін жазыңыз", "Write what still needs fixing"],
+  ["Замечание возвращено на доработку", "Ескерту пысықтауға қайтарылды", "Remark returned for revision"],
+  ["Напишите замечание", "Ескертуді жазыңыз", "Write a remark"],
+  ["Замечание отправлено — докторант получил уведомление", "Ескерту жіберілді — докторант хабарлама алды", "Remark sent — the student has been notified"]
 ];
 /* Строки с именами и названиями внутри: [регулярное выражение, қазақша, English] */
 const I18N_PATTERNS = [
@@ -3076,7 +3310,7 @@ const LS_KEY = 'srl-enu-demo-v1';
 const COLLS = ['tickets', 'messages', 'kb', 'notices', 'events', 'slots', 'resources'];
 const S = {
   role: 'student',
-  view: { student: 'passport', staff: 'overview' },
+  view: { student: 'passport', staff: 'overview', expert: 'review' },
   me: null,
   local: null,
   remote: { tickets: [], messages: [], kb: [], notices: [], events: [], slots: [], resources: [] },
@@ -3691,6 +3925,7 @@ function studentNotifications() {
   const EV = { reply: 'Библиотекарь ответил на ваш вопрос', taken: 'Библиотекарь взял вопрос в работу', resolved: 'Обращение отмечено как решённое' };
   myTickets().forEach(t => { if (t.lastEventAt) out.push({ key: 't:' + t.id, kind: 'ticket', tid: t.id, at: t.lastEventAt, title: `Обращение №${t.num} · ${STATUS[t.status]}`, text: EV[t.lastEvent] || 'Статус обращения обновлён', unread: ticketUnread(t) }); });
   all('notices').filter(audienceOk).forEach(n => out.push({ key: 'n:' + n.id, kind: 'notice', nid: n.id, at: n.at, title: n.title, text: n.text, unread: !(S.me.readNotices || []).includes(n.id) }));
+  if (typeof cmNotifications === 'function') out.push(...cmNotifications());
   return out.sort((a, b) => b.at - a.at).slice(0, 12);
 }
 function niceMax(v) { if (v <= 5) return 5; const p = Math.pow(10, Math.floor(Math.log10(v))); for (const m of [1, 2, 2.5, 4, 5, 10]) if (m * p >= v) return m * p; return 10 * p; }
@@ -3724,6 +3959,7 @@ const NAV = {
     { id: 'library', ru: 'Моя библиотека', en: 'Smart Library Bot', ic: 'book' },
     { id: 'assistant', ru: 'Виртуальный библиотекарь', en: 'AI Library Assistant ENU', ic: 'chat' },
     { id: 'planner', ru: 'Научный планер', en: 'AI Academic Planner', ic: 'calendar' },
+    { id: 'commission', ru: 'Экспертная комиссия', en: 'AI Expert Commission', ic: 'users' },
     { id: 'prompts', ru: 'Библиотека промптов', en: 'AI Prompt Library', ic: 'sparkle' }
   ],
   roadmap: { id: 'roadmap', ru: 'Развитие платформы', en: 'Roadmap · бета-модули', ic: 'layers' },
@@ -3794,13 +4030,15 @@ function renderTop() {
     <div class="grow"></div>
     <div class="role-switch" role="group" aria-label="Выбор кабинета">
       <button data-act="role" data-role="student" aria-pressed="${student}">${ic('grad')}<span class="lbl-long">Магистрант / Докторант</span><span class="lbl-short">Исследователь</span></button>
-      <button data-act="role" data-role="staff" aria-pressed="${!student}">${ic('building')}<span class="lbl-long">Сотрудник библиотеки</span><span class="lbl-short">Библиотекарь</span></button>
+      <button data-act="role" data-role="staff" aria-pressed="${S.role === 'staff'}">${ic('building')}<span class="lbl-long">Сотрудник библиотеки</span><span class="lbl-short">Библиотекарь</span></button>
+      <button data-act="role" data-role="expert" aria-pressed="${S.role === 'expert'}">${ic('users')}<span class="lbl-long">Эксперт комиссии</span><span class="lbl-short">Эксперт</span></button>
     </div>
     <div class="grow"></div>
     <div class="top-right">${aiChip}${liveChip}${langSwitch()}${themeSwitch()}
       ${student ? `<div class="bell-wrap"><button class="icon-btn" data-act="bell" aria-haspopup="true" aria-expanded="${S.ui.bell}" aria-label="Уведомления${unread ? ': новых ' + unread : ''}">${ic('bell')}${unread ? `<span class="count">${unread}</span>` : ''}</button>${S.ui.bell ? bellDropdown(notes) : ''}</div>` : ''}
       <div class="who">${student
       ? `<div class="avatar">${esc(initials(p.name))}</div><div class="who-text"><div class="who-name">${esc(shortName(p.name))}</div><div class="who-role">${esc(p.status)} · ${p.course} курс</div></div>`
+      : S.role === 'expert' ? (e => e ? `<div class="avatar expert no-i18n">${esc(cmInitials(e.name))}</div><div class="who-text"><div class="who-name no-i18n">${esc(e.name.replace(/ \(демо\)$/, ''))}</div><div class="who-role">${CM_ROLES[e.role].ru}</div></div>` : '')(cmMe())
       : `<div class="avatar staff">${ic('building')}</div><div class="who-text"><div class="who-name">Библиотекарь-консультант</div><div class="who-role">Поддержка исследований</div></div>`}</div>
     </div>`;
   requestAnimationFrame(fitTopbar);
@@ -3840,10 +4078,12 @@ function renderNav() {
   const badge = id => {
     if (S.role === 'staff' && id === 'tickets') { const n = all('tickets').filter(t => t.status === 'waiting').length; return n ? `<span class="ni-badge" title="Ожидают ответа">${n}</span>` : ''; }
     if (S.role === 'student' && id === 'assistant') { const n = myTickets().filter(ticketUnread).length; return n ? `<span class="ni-badge" title="Новые ответы">${n}</span>` : ''; }
+    if (S.role === 'student' && id === 'commission') { const n = cmState().remarks.filter(r => r.st === 'open' || r.st === 'returned').length; return n ? `<span class="ni-badge todo" title="Нужно исправить">${n}</span>` : ''; }
+    if (S.role === 'expert' && id === 'review') { const me = cmMe(), n = me ? cmState().remarks.filter(r => r.ex === me.id && r.st === 'fixed').length : 0; return n ? `<span class="ni-badge" title="На проверке">${n}</span>` : ''; }
     return '';
   };
-  const item = it => `<a class="nav-item" href="#${S.role === 'staff' ? 'staff-' + it.id : it.id}" data-act="nav" data-view="${it.id}" ${it.id === cur ? 'aria-current="page"' : ''}><span class="ni-ic">${ic(it.ic)}</span><span class="ni-text"><span class="ni-ru">${esc(it.ru)}</span><span class="ni-en">${esc(it.en)}</span></span>${badge(it.id)}</a>`;
-  nav.innerHTML = `<div class="nav-title">${S.role === 'student' ? 'Кабинет исследователя' : 'Кабинет сотрудника'}</div>`
+  const item = it => `<a class="nav-item" href="#${hashFor(S.role, it.id)}" data-act="nav" data-view="${it.id}" ${it.id === cur ? 'aria-current="page"' : ''}><span class="ni-ic">${ic(it.ic)}</span><span class="ni-text"><span class="ni-ru">${esc(it.ru)}</span><span class="ni-en">${esc(it.en)}</span></span>${badge(it.id)}</a>`;
+  nav.innerHTML = `<div class="nav-title">${S.role === 'student' ? 'Кабинет исследователя' : S.role === 'expert' ? 'Кабинет эксперта' : 'Кабинет сотрудника'}</div>`
     + NAV[S.role].map(item).join('')
     + (S.role === 'student' ? `<div class="nav-sep"></div>${item(NAV.roadmap)}` : '')
     + `<div class="nav-foot"><button class="nav-item" data-act="scenario"><span class="ni-ic">${ic('play')}</span><span class="ni-text"><span class="ni-ru">Сценарий показа</span></span></button><button class="nav-item" data-act="about"><span class="ni-ic">${ic('info')}</span><span class="ni-text"><span class="ni-ru">О проекте</span></span></button></div>`;
@@ -4230,7 +4470,7 @@ VIEWS.student.roadmap = function () {
   }
   const betaPanel = panel('Бета-модули', aiOff ? 'Бета-модули работают через ИИ Claude — откройте демоверсию в приложении Claude, чтобы попробовать' : 'Работают через ИИ Claude', `<div class="seg" role="group" aria-label="Модуль">${tabs.map(([k, l]) => `<button data-act="beta-tab" data-v="${k}" aria-pressed="${tab === k}">${l}</button>`).join('')}</div>${tool}${result ? `<div class="divider"></div>${result}` : ''}`, { stack: true, id: 'beta' });
   return `<div class="page">${pageHead('Roadmap', 'Направления развития платформы', 'Модули следующего этапа Smart Research Library. Три из них уже можно попробовать в бета-режиме.')}
-    ${panel('Модули следующего этапа', 'Нумерация — по структуре проекта (14 модулей)', roadSum() + grid, { flush: true, cls: 'clip' })}${betaPanel}</div>`;
+    ${panel('Модули следующего этапа', 'Нумерация — по структуре проекта', roadSum() + grid, { flush: true, cls: 'clip' })}${betaPanel}</div>`;
 };
 
 /* ---------- AI Topic Finder ---------- */
@@ -4645,6 +4885,338 @@ MODALS.scenario = () => {
   return modalShell('Сценарий показа', 'Около 7 минут: взаимодействие двух кабинетов — центральная часть демонстрации', `<ol class="scenario">${steps.map(([r, v, t, d, then], i) => `<li><b>${esc(t)}</b> — ${esc(d)} <button class="link-btn" data-act="goto" data-role="${r}" data-view="${v}" ${then ? `data-then="${then}"` : ''}>Перейти ${ic('arrow')}</button></li>`).join('')}</ol>${Live.state === 'live' ? '<div class="note">' + ic('info') + '<div>Общая база подключена: откройте демоверсию на втором устройстве как сотрудник — обращение появится там сразу.</div></div>' : ''}`, `<button class="btn primary" data-act="modal-close">Закрыть</button>`, true);
 };
 /* =====================================================================
+   AI Expert Commission — виртуальная экспертная комиссия
+   Докторант приглашает экспертов, каждый получает индивидуальный доступ к главам,
+   оставляет замечания, докторант исправляет (ИИ объясняет замечание и предлагает шаги),
+   эксперт подтверждает исправление. ИИ не принимает решений о допуске к защите.
+   ===================================================================== */
+const CM_ROLES = {
+  sup: { ru: 'Научный руководитель', c: '#15803D', ic: 'grad' },
+  foreign: { ru: 'Зарубежный научный консультант', c: '#0369A1', ic: 'globe' },
+  prof: { ru: 'Профессор кафедры', c: '#7C3AED', ic: 'building' },
+  internal: { ru: 'Внутренний эксперт', c: '#0F766E', ic: 'user' },
+  external: { ru: 'Внешний эксперт', c: '#C2410C', ic: 'users' },
+  predef: { ru: 'Член комиссии предварительной защиты', c: '#B45309', ic: 'clip' },
+  council: { ru: 'Уполномоченный член диссертационного совета', c: '#A21CAF', ic: 'star' }
+};
+const CM_CHAPTERS = [
+  { id: 'intro', ru: 'Введение' },
+  { id: 'ch1', ru: 'Глава 1. Теоретические основы цифрового сопровождения исследовательской подготовки докторантов' },
+  { id: 'ch2', ru: 'Глава 2. Методология и организация исследования' },
+  { id: 'ch3', ru: 'Глава 3. Опытно-экспериментальная проверка модели сопровождения' },
+  { id: 'concl', ru: 'Заключение' }
+];
+const CM_ST = { open: 'Нужно исправить', fixed: 'На проверке у эксперта', accepted: 'Исправлено', returned: 'Возвращено на доработку' };
+const CM_CRITERIA = ['Научная новизна', 'Методологическая обоснованность', 'Достоверность результатов', 'Соответствие выводов исследовательским задачам'];
+const cmCh = id => CM_CHAPTERS.find(c => c.id === id) || { id, ru: id };
+const cmShortCh = id => { const t = cmCh(id).ru; const i = t.indexOf('.'); return i > 0 && t.startsWith('Глава') ? t.slice(0, i) : t; };
+
+function cmSeed(now, p) {
+  const D = n => now - n * DAY;
+  const v = (n, days, text) => ({ v: n, at: D(days), text });
+  const r = (id, ex, ch, days, st, text, extra = {}) => Object.assign({ id, ex, ch, at: D(days), st, text, fix: null, ret: null, ai: null, hist: [{ st: 'open', at: D(days) }] }, extra);
+  const acc = (rr, fixDays, okDays, note) => { rr.fix = { note, v: 1, at: D(fixDays) }; rr.hist.push({ st: 'fixed', at: D(fixDays) }, { st: 'accepted', at: D(okDays) }); return rr; };
+  const R = [
+    acc(r('r1', 'ex1', 'intro', 160, 'accepted', 'Сформулируйте цель исследования одним предложением и согласуйте её с задачами.'), 150, 148, 'Цель переписана одним предложением, задачи пронумерованы и выводятся из цели.'),
+    acc(r('r2', 'ex1', 'intro', 158, 'accepted', 'Гипотеза сформулирована слишком общо — укажите условия, которые можно проверить.'), 149, 147, 'Гипотеза уточнена: добавлены проверяемые условия сопровождения.'),
+    acc(r('r3', 'ex1', 'ch1', 120, 'accepted', 'Раздел 1.2 перегружен цитатами — добавьте собственный сравнительный анализ подходов.'), 110, 105, 'Добавлена сравнительная таблица подходов и авторский вывод.'),
+    acc(r('r4', 'ex1', 'ch1', 118, 'accepted', 'Уточните понятие «цифровое сопровождение» и разведите его с понятием «цифровая поддержка».'), 109, 104, 'Дано рабочее определение, различие показано в п. 1.1.'),
+    acc(r('r5', 'ex1', 'ch2', 70, 'accepted', 'Опишите этапы опытно-экспериментальной работы и сроки каждого этапа.'), 62, 60, 'Добавлена таблица этапов с задачами и сроками.'),
+    r('r6', 'ex1', 'ch3', 9, 'open', 'Добавьте сравнение контрольной и экспериментальной групп на констатирующем этапе.'),
+    acc(r('r7', 'ex2', 'intro', 140, 'accepted', 'Please clarify the research gap in relation to international studies on doctoral support.'), 131, 128, 'Research gap reformulated with reference to the international review in Chapter 1.'),
+    acc(r('r8', 'ex2', 'ch1', 100, 'accepted', 'Add an international perspective: how research-support services for doctoral students are organised in other universities.'), 90, 86, 'Section 1.3 added with an overview of international practice.'),
+    acc(r('r9', 'ex2', 'ch2', 66, 'accepted', 'Report the reliability of each scale (Cronbach’s alpha).'), 58, 55, 'Reliability coefficients added to Table 2.2.'),
+    r('r10', 'ex3', 'ch2', 2, 'open', 'Необходимо уточнить критерии отбора участников исследования.'),
+    acc(r('r11', 'ex3', 'ch1', 95, 'accepted', 'Вывод к первой главе повторяет введение — сформулируйте его через результаты теоретического анализа.'), 88, 84, 'Вывод переписан: три положения, вытекающие из анализа.'),
+    r('r12', 'ex3', 'ch2', 20, 'fixed', 'Обоснуйте объём выборки.', { fix: { note: 'Добавлено обоснование объёма выборки через расчёт статистической мощности, параметры — в таблице 2.1.', v: 2, at: D(4) }, hist: [{ st: 'open', at: D(20) }, { st: 'fixed', at: D(4) }] }),
+    acc(r('r13', 'ex3', 'ch3', 30, 'accepted', 'Согласуйте названия таблиц с текстом главы.'), 25, 23, 'Названия таблиц и ссылки в тексте приведены в соответствие.'),
+    acc(r('r14', 'ex4', 'ch2', 60, 'accepted', 'Свяжите методы статистической обработки с гипотезой: какой критерий проверяет какое предположение?'), 52, 50, 'Добавлена таблица «гипотеза — показатель — критерий».'),
+    r('r15', 'ex4', 'ch3', 24, 'returned', 'Интерпретация корреляции выходит за пределы данных: корреляция не доказывает влияние.', { fix: { note: 'Переписан вывод к п. 3.2.', v: 1, at: D(12) }, ret: { text: 'Формулировка в п. 3.2 всё ещё причинная — «свидетельствует о влиянии». Замените на описание связи.', at: D(3) }, hist: [{ st: 'open', at: D(24) }, { st: 'fixed', at: D(12) }, { st: 'returned', at: D(3) }] }),
+    acc(r('r16', 'ex4', 'ch3', 28, 'accepted', 'Добавьте раздел об ограничениях исследования.'), 22, 20, 'Ограничения описаны в конце главы 3.')
+  ];
+  return {
+    v: 1,
+    experts: [
+      { id: 'ex1', role: 'sup', name: (p && p.sup) || 'Научный руководитель (демо)', st: 'active', code: 'EXP-1042', ch: CM_CHAPTERS.map(c => c.id), at: D(200) },
+      { id: 'ex2', role: 'foreign', name: ((p && p.cons) || 'Dr. L. Mendes (демо)').split(',')[0] + ' (демо)', st: 'active', code: 'EXP-2087', ch: ['intro', 'ch1', 'ch2'], at: D(180) },
+      { id: 'ex3', role: 'prof', name: 'профессор А. Б. Ахметова (демо)', st: 'active', code: 'EXP-3315', ch: ['ch1', 'ch2', 'ch3'], at: D(130) },
+      { id: 'ex4', role: 'external', name: 'к.п.н. Д. С. Омаров (демо)', st: 'active', code: 'EXP-4560', ch: ['ch2', 'ch3'], at: D(75) },
+      { id: 'ex5', role: 'predef', name: 'PhD Г. Т. Сейткали (демо)', st: 'invited', code: 'EXP-5873', ch: CM_CHAPTERS.map(c => c.id), at: D(1) }
+    ],
+    versions: {
+      intro: [v(1, 165, 'Актуальность исследования определяется ростом требований к исследовательской подготовке докторантов и цифровизацией научных библиотек. Цель исследования — теоретически обосновать и экспериментально проверить модель сопровождения исследовательской подготовки докторантов с помощью цифровых сервисов научной библиотеки и инструментов искусственного интеллекта. Гипотеза: сопровождение будет результативным, если сервисы библиотеки встроены в индивидуальный план докторанта и связаны с этапами исследования.')],
+      ch1: [v(1, 125, 'В главе рассматриваются подходы к понятию исследовательской подготовки докторантов и роль научной библиотеки в её сопровождении. Уточняется понятие «цифровое сопровождение» как системы библиотечных сервисов, консультаций и ИИ-инструментов, встроенных в этапы исследования. Предложена структурно-функциональная модель сопровождения.')],
+      ch2: [v(1, 75, 'Исследование проводилось на базе ЕНУ им. Л. Н. Гумилёва. В нём участвовали докторанты педагогических специальностей. Использовались анкетирование, тест исследовательских умений и анализ продуктов исследовательской деятельности. Данные обрабатывались методами описательной и индуктивной статистики.'),
+        v(2, 4, 'Исследование проводилось на базе ЕНУ им. Л. Н. Гумилёва. В нём участвовали докторанты педагогических специальностей. Объём выборки обоснован предварительным расчётом статистической мощности для сравнения двух независимых групп; параметры расчёта приведены в таблице 2.1. Использовались анкетирование, тест исследовательских умений и анализ продуктов исследовательской деятельности. Данные обрабатывались методами описательной и индуктивной статистики.')],
+      ch3: [v(1, 32, 'На формирующем этапе экспериментальная группа работала с цифровыми сервисами библиотеки по индивидуальному плану. Сравнение групп на контрольном этапе выполнено с помощью t-критерия Стьюдента. Выявлена положительная связь между частотой использования сервисов и уровнем исследовательских умений; это свидетельствует о влиянии сервисов на подготовку.')],
+      concl: []
+    },
+    remarks: R,
+    seen: R.filter(x => !['r10', 'r15'].includes(x.id)).map(x => x.id + ':' + x.st),
+    analysis: null
+  };
+}
+function cmState() {
+  if (!S.me.cm || S.me.cm.v !== 1 || !Array.isArray(S.me.cm.remarks)) S.me.cm = cmSeed(Date.now(), S.me.passport);
+  return S.me.cm;
+}
+function cmInitials(name) {
+  const w = String(name || '').replace(/\(демо\)/g, '').split(/[\s,]+/).filter(x => x && !/^(д\.п\.н\.|к\.п\.н\.|phd|dr\.?|профессор)$/i.test(x));
+  if (!w.length) return '?';
+  const last = w[w.length - 1], first = w[0];
+  return ((w.length > 1 ? first[0] : '') + last[0]).toUpperCase();
+}
+const cmExpert = id => cmState().experts.find(e => e.id === id);
+const cmLatest = ch => { const a = cmState().versions[ch] || []; return a[a.length - 1] || null; };
+const cmOpen = r => r.st !== 'accepted';
+function cmStats(list) {
+  const t = list.length, ok = list.filter(r => r.st === 'accepted').length, chk = list.filter(r => r.st === 'fixed').length;
+  return { t, ok, chk, left: t - ok };
+}
+function cmMe() {
+  const c = cmState(), act = c.experts.filter(e => e.st === 'active');
+  if (!act.some(e => e.id === S.ui.cmExpert)) S.ui.cmExpert = (act.find(e => e.role === 'prof') || act[0] || {}).id || null;
+  return cmExpert(S.ui.cmExpert);
+}
+/* Уведомления докторанта: новые и возвращённые замечания, подтверждённые исправления */
+function cmNotifications() {
+  const c = cmState(), out = [];
+  c.remarks.forEach(r => {
+    if (r.st === 'fixed') return;
+    const e = cmExpert(r.ex); if (!e) return;
+    const title = r.st === 'accepted' ? `Исправление подтверждено · ${CM_ROLES[e.role].ru}` : r.st === 'returned' ? `Замечание возвращено · ${CM_ROLES[e.role].ru}` : `Новое замечание · ${CM_ROLES[e.role].ru}`;
+    const at = r.hist[r.hist.length - 1].at;
+    out.push({ key: 'cm:' + r.id, kind: 'cm', at, title, text: `${cmShortCh(r.ch)}: ${r.st === 'returned' && r.ret ? r.ret.text : r.text}`, unread: !c.seen.includes(r.id + ':' + r.st) });
+  });
+  return out.sort((a, b) => b.at - a.at).slice(0, 6);
+}
+function cmMarkSeen(id) { const c = cmState(), r = c.remarks.find(x => x.id === id); if (r && !c.seen.includes(r.id + ':' + r.st)) c.seen.push(r.id + ':' + r.st); }
+
+/* ---------- Общие фрагменты ---------- */
+function cmPill(st) { const cls = { open: 'waiting', fixed: 'progress', accepted: 'resolved', returned: 'waiting' }[st]; return `<span class="pill ${cls}">${CM_ST[st]}</span>`; }
+function cmWho(e, small) { const R = CM_ROLES[e.role]; return `<span class="cm-who${small ? ' sm' : ''}" style="--rc:${R.c}"><span class="cm-ava">${ic(R.ic)}</span><span class="cm-who-t"><b class="no-i18n">${esc(e.name)}</b><span>${R.ru}</span></span></span>`; }
+function cmSummaryTable() {
+  const c = cmState(), rows = c.experts.filter(e => c.remarks.some(r => r.ex === e.id));
+  const tot = cmStats(c.remarks), maxT = Math.max(1, ...rows.map(e => c.remarks.filter(r => r.ex === e.id).length));
+  return `<table class="cm-table"><thead><tr><th>Эксперт</th><th>Замечаний</th><th>Исправлено</th><th>Осталось</th></tr></thead><tbody>${rows.map(e => {
+    const s = cmStats(c.remarks.filter(r => r.ex === e.id));
+    return `<tr><td><span class="cm-role-dot" style="--rc:${CM_ROLES[e.role].c}"></span>${CM_ROLES[e.role].ru}<div class="cm-bar" style="width:${Math.round(s.t / maxT * 100)}%"><i class="ok" style="flex:${s.ok}"></i><i class="chk" style="flex:${s.chk}"></i><i class="left" style="flex:${s.left - s.chk}"></i></div></td><td>${s.t}</td><td class="ok">${s.ok}</td><td class="${s.left ? 'left' : 'ok'}">${s.left}</td></tr>`;
+  }).join('')}</tbody><tfoot><tr><td>Всего</td><td>${tot.t}</td><td class="ok">${tot.ok}</td><td class="${tot.left ? 'left' : 'ok'}">${tot.left}</td></tr></tfoot></table>
+  <div class="road-legend cm-legend"><span><i style="background:var(--s-done)"></i>Исправлено и подтверждено</span><span><i style="background:var(--warn)"></i>На проверке у эксперта</span><span><i style="background:var(--s-todo)"></i>Нужно исправить</span></div>`;
+}
+function cmChaptersPanel() {
+  const c = cmState();
+  return panel('Главы диссертации', 'Последняя версия текста и открытые замечания', `<div class="row-list">${CM_CHAPTERS.map(ch => {
+    const last = cmLatest(ch.id), rs = c.remarks.filter(r => r.ch === ch.id), left = rs.filter(cmOpen).length;
+    return `<div class="cm-ch"><span class="cm-ch-ic ${!last ? 'none' : left ? 'todo' : 'done'}">${ic(!last ? 'clock' : left ? 'x' : 'check')}</span><div style="min-width:0"><div class="cm-ch-t">${esc(ch.ru)}</div><div class="mini-meta">${last ? `версия ${last.v} · ${esc(fmtD(last.at))}` : 'текст ещё не загружен'}</div></div><span class="tag ${!last ? '' : left ? 'todo' : 'done'}">${!last ? 'не начато' : left ? `открыто: ${left}` : 'замечания закрыты'}</span></div>`;
+  }).join('')}</div>`, { flush: true });
+}
+function cmAnalysisPanel() {
+  const c = cmState(), a = S.ui.cmAnalysis || c.analysis, ch = dv('cm-an-ch', 'all');
+  const opts = [['all', 'Вся диссертация (последние версии)']].concat(CM_CHAPTERS.filter(x => cmLatest(x.id)).map(x => [x.id, x.ru]));
+  let body = '';
+  if (a && a.state === 'loading') body = `<div class="tf-empty">${ic('sparkle')}<p>ИИ анализирует текст по экспертным критериям…</p></div>`;
+  else if (a && a.criteria) body = `${(a.criteria || []).map(k => { const sc = Math.max(0, Math.min(5, Math.round(+k.score || 0))); return `<div class="score-row"><div><b>${esc(k.name)}</b></div><div><div class="score-dots" aria-label="Оценка ${sc} из 5">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= sc ? 'on' : ''}"></i>`).join('')}</div><div class="hint">${sc} из 5</div></div><div class="small no-i18n"><div>${esc(k.comment || '')}</div>${k.fix ? `<div class="muted" style="margin-top:4px">${esc(k.fix)}</div>` : ''}</div></div>`; }).join('')}<div class="hint">${esc(a.scope || '')}</div>`;
+  else if (a && a.note) body = `<div class="note">${ic('info')}<div>${esc(a.note)}</div></div>`;
+  return panel('Предварительный ИИ-анализ по экспертным критериям', CM_CRITERIA.join(' · '), `
+    <div class="toolbar"><label class="sr-only" for="cm-an-ch">Что анализировать</label><select class="select" id="cm-an-ch" style="flex:1;min-width:220px">${opts.map(([v, l]) => `<option value="${v}" ${v === ch ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select><button class="btn ai" data-act="cm-analyze" ${a && a.state === 'loading' ? 'disabled' : ''}>${ic('sparkle')} Проанализировать</button></div>
+    ${body}
+    <div class="note brass">${ic('info')}<div>ИИ даёт только предварительный анализ. Решение о допуске к защите и присуждении степени принимают эксперты и диссертационный совет.</div></div>`, { stack: true });
+}
+function cmAiBlock(r) {
+  if (!r.ai) return '';
+  if (r.ai.state === 'loading') return `<div class="cm-ai"><div class="cm-ai-h">${ic('sparkle')} ИИ разбирает замечание…</div></div>`;
+  return `<div class="cm-ai"><div class="cm-ai-h">${ic('sparkle')} ${r.ai.tpl ? 'Типовой план действий (без ИИ)' : 'ИИ объясняет замечание'}</div>${r.ai.explain ? `<p class="no-i18n">${esc(r.ai.explain)}</p>` : ''}<ol class="${r.ai.tpl ? '' : 'no-i18n'}">${(r.ai.steps || []).map(s => `<li>${esc(s)}</li>`).join('')}</ol></div>`;
+}
+function cmRemarkCard(r, mode) {
+  const e = cmExpert(r.ex) || { name: '—', role: 'internal' };
+  const last = r.hist[r.hist.length - 1];
+  const fix = r.fix ? `<div class="cm-fix"><b>Исправление докторанта</b><span class="muted"> · </span><span>версия ${r.fix.v} · ${esc(fmtD(r.fix.at))}</span><p class="no-i18n">${esc(r.fix.note)}</p></div>` : '';
+  const ret = r.st === 'returned' && r.ret ? `<div class="cm-ret"><b>Комментарий эксперта</b> · ${esc(fmtD(r.ret.at))}<p class="no-i18n">${esc(r.ret.text)}</p></div>` : '';
+  let acts = '';
+  if (mode === 'student') {
+    acts = r.st === 'open' || r.st === 'returned'
+      ? `<button class="btn sm ai" data-act="cm-explain" data-id="${r.id}" ${r.ai && r.ai.state === 'loading' ? 'disabled' : ''}>${ic('sparkle')} Разобрать с ИИ</button><button class="btn sm primary" data-act="cm-fix" data-id="${r.id}">${ic('check')} Отметить исправленным</button>`
+      : r.st === 'fixed' ? `<span class="muted small">Эксперт проверит новую версию текста</span>` : '';
+  } else if (mode === 'expert' && r.st === 'fixed') {
+    acts = `<button class="btn sm primary" data-act="cm-accept" data-id="${r.id}">${ic('check')} Подтвердить исправление</button><button class="btn sm" data-act="cm-return-open" data-id="${r.id}">${ic('back')} Вернуть на доработку</button>`;
+    if (S.ui.cmReturn === r.id) acts += `<div class="cm-return-form"><label class="sr-only" for="cm-ret-text">Комментарий</label><textarea class="textarea" id="cm-ret-text" data-draft="cm-ret-text" rows="2" placeholder="Что ещё нужно исправить">${esc(dv('cm-ret-text'))}</textarea><button class="btn sm danger" data-act="cm-return" data-id="${r.id}">Вернуть</button></div>`;
+  }
+  return `<article class="cm-remark st-${r.st}" id="cm-r-${r.id}" style="--rc:${CM_ROLES[e.role].c}">
+    <div class="cm-remark-top">${mode === 'expert' ? `<button class="tag cm-tag-btn" data-act="cm-ch" data-v="${r.ch}" title="Открыть главу">${esc(cmShortCh(r.ch))}</button>` : `${cmWho(e, true)}<span class="tag">${esc(cmShortCh(r.ch))}</span>`}<span class="grow"></span>${cmPill(r.st)}</div>
+    <p class="cm-text no-i18n">${esc(r.text)}</p>
+    ${ret}${fix}${mode === 'student' ? cmAiBlock(r) : ''}
+    <div class="cm-remark-foot"><span class="mini-meta">${esc(fmtD(r.at))}${last.st !== 'open' ? ` · ${CM_ST[last.st].toLowerCase()} ${esc(fmtD(last.at))}` : ''}</span>${acts ? `<span class="cm-acts">${acts}</span>` : ''}</div>
+  </article>`;
+}
+
+/* ---------- Кабинет докторанта: Экспертная комиссия ---------- */
+VIEWS.student.commission = function () {
+  const c = cmState(), f = S.ui.cmFilter || 'todo', tot = cmStats(c.remarks);
+  const filters = [['todo', 'Нужно исправить', r => r.st === 'open' || r.st === 'returned'], ['fixed', 'На проверке', r => r.st === 'fixed'], ['accepted', 'Исправлено', r => r.st === 'accepted'], ['all', 'Все', () => true]];
+  const fx = filters.find(x => x[0] === f) || filters[0];
+  const list = c.remarks.filter(fx[2]).sort((a, b) => b.hist[b.hist.length - 1].at - a.hist[a.hist.length - 1].at);
+  const kpis = `<div class="kpis">${kpi('Замечаний всего', tot.t, `${c.experts.filter(e => e.st === 'active').length} экспертов с доступом`, 'clip')}${kpi('Исправлено', tot.ok, 'подтверждено экспертами', 'check')}${kpi('На проверке', tot.chk, 'ждут подтверждения эксперта', 'clock')}${kpi('Осталось', tot.left, tot.left ? 'не подтверждено' : 'все замечания закрыты', 'target', tot.left > 0)}</div>`;
+  const seg = `<div class="seg" role="group" aria-label="Фильтр замечаний">${filters.map(([k, l, fn]) => `<button data-act="cm-filter" data-v="${k}" aria-pressed="${f === k}">${l} · ${c.remarks.filter(fn).length}</button>`).join('')}</div>`;
+  const remarks = panel('Замечания экспертов', 'Эксперт оставляет замечание → вы исправляете и прикрепляете новую версию → эксперт подтверждает', `${seg}<div class="cm-list">${list.map(r => cmRemarkCard(r, 'student')).join('') || '<div class="empty">В этой выборке пусто</div>'}</div>`, { stack: true });
+  const experts = panel('Состав комиссии и доступ', 'У каждого эксперта — индивидуальный доступ к выбранным главам', `<div class="row-list">${c.experts.map(e => `<div class="cm-ex"><div class="cm-ex-main">${cmWho(e)}<div class="cm-ex-meta"><span class="tag ${e.st === 'active' ? 'done' : ''}">${e.st === 'active' ? 'доступ активен' : 'приглашение отправлено'}</span><span class="tag mono no-i18n" title="Код доступа">${esc(e.code)}</span></div><div class="cm-ex-ch">${e.ch.map(id => `<span class="cm-chip">${esc(cmShortCh(id))}</span>`).join('')}</div></div><div class="cm-ex-acts">${e.st === 'invited' ? `<button class="btn xs" data-act="cm-accept-invite" data-id="${e.id}" title="В демоверсии эксперт принимает приглашение здесь">Принять (демо)</button>` : `<button class="btn xs" data-act="cm-as-expert" data-id="${e.id}">${ic('eye')} Как эксперт</button>`}<button class="btn xs ghost" data-act="cm-revoke" data-id="${e.id}" aria-label="Отозвать доступ">${ic('trash')}</button></div></div>`).join('')}</div>`, { flush: true, actions: `<button class="btn sm" data-act="cm-invite">${ic('plus')} Пригласить</button>` });
+  return `<div class="page">${pageHead('AI Expert Commission', 'Экспертная комиссия', 'Научный руководитель, зарубежный консультант, профессора и эксперты работают с главами диссертации на одной платформе. Каждое замечание проходит путь до подтверждённого исправления.', `<button class="btn primary" data-act="cm-invite">${ic('plus')} Пригласить эксперта</button><button class="btn" data-act="cm-as-expert" data-id="">${ic('eye')} Кабинет эксперта</button>`)}
+    <div class="note brass">${ic('info')}<div>ИИ объясняет замечания и предварительно анализирует текст, но не принимает решение о допуске к защите или присуждении степени — это полномочия экспертов и диссертационного совета. Эксперты, замечания и числа в демоверсии условные.</div></div>
+    ${kpis}
+    <div class="split cm-split"><div class="col">${remarks}${cmAnalysisPanel()}</div><div class="col">${panel('Сводка для комиссии', 'Замечания и их исправление по экспертам', cmSummaryTable())}${experts}${cmChaptersPanel()}</div></div></div>`;
+};
+
+/* ---------- Кабинет эксперта ---------- */
+NAV.expert = [
+  { id: 'review', ru: 'Рецензирование глав', en: 'Expert review', ic: 'pen' },
+  { id: 'summary', ru: 'Сводка комиссии', en: 'Commission summary', ic: 'chart' }
+];
+VIEWS.expert = {};
+VIEWS.expert.review = function () {
+  const c = cmState(), me = cmMe(), p = S.me.passport;
+  if (!me) return `<div class="page">${pageHead('Expert Workspace', 'Кабинет эксперта', '')}<div class="empty">Нет экспертов с активным доступом — пригласите эксперта в кабинете докторанта.</div></div>`;
+  const chs = me.ch.filter(id => CM_CHAPTERS.some(x => x.id === id));
+  if (!chs.includes(S.ui.cmCh)) S.ui.cmCh = chs.find(id => c.remarks.some(r => r.ex === me.id && r.ch === id && r.st === 'fixed')) || chs.find(id => cmLatest(id)) || chs[0];
+  const ch = S.ui.cmCh, vers = c.versions[ch] || [], last = vers[vers.length - 1];
+  const mine = c.remarks.filter(r => r.ex === me.id).sort((a, b) => (a.st === 'fixed' ? -1 : 0) - (b.st === 'fixed' ? -1 : 0) || b.at - a.at);
+  const s = cmStats(mine);
+  const sel = `<label class="field cm-as"><span class="field-label">Вы вошли как</span><select class="select no-i18n" id="cm-me">${c.experts.filter(e => e.st === 'active').map(e => `<option value="${e.id}" ${e.id === me.id ? 'selected' : ''}>${esc(e.name)} — ${esc(trS(CM_ROLES[e.role].ru))}</option>`).join('')}</select></label>`;
+  const doc = panel('Диссертация докторанта', `${esc(p.name)} · ${esc(p.status)}, ${p.course} курс`, `
+    <div class="cm-topic"><span class="muted small">Тема</span><b class="no-i18n">${esc(p.topic)}</b></div>
+    <div class="cm-tabs" role="tablist">${chs.map(id => { const n = c.remarks.filter(r => r.ch === id && r.ex === me.id && r.st === 'fixed').length; return `<button role="tab" aria-selected="${id === ch}" data-act="cm-ch" data-v="${id}">${esc(cmShortCh(id))}${n ? `<span class="ni-badge">${n}</span>` : ''}</button>`; }).join('')}</div>
+    <div class="cm-chapter"><div class="cm-chapter-h"><b>${esc(cmCh(ch).ru)}</b>${last ? `<span class="tag mono">v${last.v} · ${esc(fmtD(last.at))}</span>` : ''}</div>${last ? `<p class="cm-doc no-i18n">${esc(last.text)}</p>` : '<div class="empty">Докторант ещё не загрузил текст этой главы.</div>'}
+      ${vers.length > 1 ? `<details class="more"><summary>Предыдущая версия · v${vers[vers.length - 2].v}</summary><p class="cm-doc old no-i18n">${esc(vers[vers.length - 2].text)}</p></details>` : ''}</div>
+    <form class="cm-new" data-form="cm-remark"><label class="field"><span class="field-label">Новое замечание к главе</span><textarea class="textarea" id="cm-new" data-draft="cm-new" rows="3" placeholder="Например: необходимо уточнить критерии отбора участников исследования">${esc(dv('cm-new'))}</textarea></label><div class="toolbar"><button class="btn primary" type="submit">${ic('send')} Отправить замечание</button><span class="muted small">Докторант получит уведомление</span></div></form>`, { stack: true });
+  const mineP = panel('Мои замечания', `Всего ${s.t} · исправлено ${s.ok} · осталось ${s.left}`, `<div class="cm-list">${mine.map(r => cmRemarkCard(r, 'expert')).join('') || '<div class="empty">Замечаний пока нет</div>'}</div>`, { stack: true });
+  return `<div class="page">${pageHead('Expert Workspace', 'Кабинет эксперта', 'Индивидуальный доступ к главам диссертации: читайте последнюю версию, оставляйте замечания и подтверждайте исправления.', sel)}
+    <div class="split cm-split"><div class="col">${doc}</div><div class="col">${mineP}</div></div></div>`;
+};
+VIEWS.expert.summary = function () {
+  return `<div class="page">${pageHead('Commission Dashboard', 'Сводка комиссии', 'Сколько замечаний оставил каждый эксперт, сколько исправлено и сколько осталось. ИИ помогает с предварительным анализом, решения принимает комиссия.')}
+    <div class="split cm-split"><div class="col">${panel('Что видит комиссия', 'Замечания и их исправление по экспертам', cmSummaryTable())}${cmAnalysisPanel()}</div><div class="col">${cmChaptersPanel()}</div></div></div>`;
+};
+
+/* ---------- Модальные окна ---------- */
+MODALS['cm-fix'] = d => {
+  const c = cmState(), r = c.remarks.find(x => x.id === d.id);
+  if (!r) return modalShell('Замечание', '', '<div class="empty">Запись не найдена</div>', '');
+  const last = cmLatest(r.ch);
+  return modalShell('Отметить исправленным', `${esc(cmCh(r.ch).ru)}`, `
+    <div class="note">${ic('clip')}<div class="no-i18n">${esc(r.text)}</div></div>
+    <label class="field"><span class="field-label">Что исправлено</span><textarea class="textarea" id="cmf-note" data-draft="cmf-note" rows="3" placeholder="Кратко: что и где изменено">${esc(dv('cmf-note'))}</textarea></label>
+    <label class="field"><span class="field-label">Новая версия текста главы${last ? ` (сейчас v${last.v})` : ''}</span><textarea class="textarea" id="cmf-text" data-draft="cmf-text" rows="8">${esc(dv('cmf-text', last ? last.text : ''))}</textarea><span class="field-hint">Сохранится как новая версия — эксперт увидит её вместе с предыдущей.</span></label>`,
+    `<button class="btn" data-act="modal-close">Отмена</button><button class="btn primary" data-act="cm-fix-save" data-id="${r.id}">${ic('check')} Отправить эксперту</button>`, true);
+};
+MODALS['cm-invite'] = () => modalShell('Пригласить эксперта', 'Эксперт получит индивидуальный код доступа к выбранным главам', `
+  <label class="field"><span class="field-label">Имя и учёная степень</span><input class="input" id="cmi-name" data-draft="cmi-name" value="${esc(dv('cmi-name'))}" placeholder="Например: д.п.н., профессор …"></label>
+  <label class="field"><span class="field-label">Роль в комиссии</span><select class="select" id="cmi-role">${Object.entries(CM_ROLES).map(([k, v]) => `<option value="${k}" ${dv('cmi-role', 'internal') === k ? 'selected' : ''}>${v.ru}</option>`).join('')}</select></label>
+  <fieldset class="cm-fs"><legend class="field-label">Доступ к главам</legend>${CM_CHAPTERS.map(ch => `<label class="check"><input type="checkbox" id="cmi-ch-${ch.id}" ${dv('cmi-ch-' + ch.id, true) ? 'checked' : ''}> ${esc(ch.ru)}</label>`).join('')}</fieldset>
+  <div class="note">${ic('info')}<div>Доступ членов диссертационного совета предоставляется в соответствии с официальными процедурами университета.</div></div>`,
+  `<button class="btn" data-act="modal-close">Отмена</button><button class="btn primary" data-act="cm-invite-save">${ic('send')} Отправить приглашение</button>`);
+
+/* ---------- ИИ ---------- */
+async function cmExplain(id) {
+  const c = cmState(), r = c.remarks.find(x => x.id === id);
+  if (!r) return;
+  const e = cmExpert(r.ex), last = cmLatest(r.ch);
+  const tpl = () => ({ tpl: true, explain: '', steps: [L3('Найдите в главе фрагмент, к которому относится замечание.', 'Ескерту қатысты тараудағы үзіндіні табыңыз.', 'Find the passage in the chapter that the remark refers to.'), L3('Сформулируйте, что требует эксперт: уточнить, добавить, переписать или обосновать.', 'Сарапшының не талап ететінін анықтаңыз: нақтылау, қосу, қайта жазу немесе негіздеу.', 'Decide what the expert is asking for: clarify, add, rewrite or justify.'), L3('Внесите правку и проверьте связанные разделы: задачи, выводы, таблицы.', 'Түзету енгізіп, байланысты бөлімдерді тексеріңіз: міндеттер, қорытындылар, кестелер.', 'Make the change and check related sections: aims, conclusions, tables.'), L3('Кратко опишите для эксперта, что и где изменено.', 'Сарапшыға не және қай жерде өзгергенін қысқаша сипаттаңыз.', 'Briefly describe for the expert what was changed and where.'), L3('Прикрепите новую версию текста и отметьте замечание исправленным.', 'Мәтіннің жаңа нұсқасын тіркеп, ескертуді түзетілді деп белгілеңіз.', 'Attach the new version of the text and mark the remark as fixed.')] });
+  if (!(await aiReady())) { r.ai = tpl(); persist(); renderMain(); return; }
+  r.ai = { state: 'loading' }; renderMain();
+  const lang = LANG === 'kk' ? 'казахском' : LANG === 'en' ? 'английском' : 'русском';
+  try {
+    const out = await aiJson(`Ты — научный консультант докторанта. Эксперт (${CM_ROLES[e.role].ru}) оставил замечание к разделу «${cmCh(r.ch).ru}»:
+«${r.text}»${r.st === 'returned' && r.ret ? `\nЭксперт вернул исправление с комментарием: «${r.ret.text}»` : ''}
+Фрагмент текста раздела: «${last ? last.text.slice(0, 3000) : 'текст не загружен'}»
+Объясни простыми словами, что требует эксперт (2–3 предложения), и предложи последовательность из 3–6 конкретных действий для устранения замечания. Не придумывай публикации, авторов, DOI и результаты исследований. Пиши на ${lang} языке.
+Ответь только JSON: {"explain":"...","steps":["...","..."]}`, { tier: 'quick', cache: false });
+    if (!out || !Array.isArray(out.steps)) throw { code: 'invalid_json' };
+    r.ai = { explain: String(out.explain || ''), steps: out.steps.map(String).slice(0, 8) };
+  } catch (err) { aiFail(err); r.ai = Object.assign(tpl(), { explain: aiErrorText(err) }); }
+  persist(); renderMain();
+}
+async function cmAnalyze() {
+  const ch = dv('cm-an-ch', 'all');
+  const parts = (ch === 'all' ? CM_CHAPTERS : [cmCh(ch)]).map(x => [x, cmLatest(x.id)]).filter(x => x[1]);
+  if (!parts.length) { toast('Нет текста для анализа'); return; }
+  const scope = L3(`Проанализировано: ${ch === 'all' ? 'вся диссертация (последние версии глав)' : cmCh(ch).ru}.`, `Талданды: ${ch === 'all' ? 'бүкіл диссертация (тараулардың соңғы нұсқалары)' : cmCh(ch).ru}.`, `Analysed: ${ch === 'all' ? 'the whole dissertation (latest chapter versions)' : cmCh(ch).ru}.`);
+  if (!(await aiReady())) { S.ui.cmAnalysis = { note: L3('ИИ недоступен в этом просмотре — откройте демоверсию в приложении Claude. Остальные функции комиссии работают без ИИ.', 'Бұл көріністе ЖИ қолжетімсіз — демонұсқаны Claude қосымшасында ашыңыз. Комиссияның басқа функциялары ЖИ-сіз жұмыс істейді.', 'AI is unavailable in this view — open the demo in the Claude app. Other commission features work without AI.') }; renderMain(); return; }
+  S.ui.cmAnalysis = { state: 'loading' }; renderMain();
+  const lang = LANG === 'kk' ? 'казахском' : LANG === 'en' ? 'английском' : 'русском';
+  try {
+    const out = await aiJson(`Ты — член экспертной комиссии предварительной защиты. Тема диссертации: «${S.me.passport.topic}».
+Проанализируй текст по четырём критериям: ${CM_CRITERIA.map(x => `«${x}»`).join(', ')}. Для каждого: оценка от 1 до 5, комментарий в 1–2 предложения по существу текста и конкретная рекомендация.
+Не принимай и не формулируй решение о допуске к защите. Не придумывай публикации, авторов, DOI и результаты. Названия критериев оставь как есть, остальное пиши на ${lang} языке.
+Ответь только JSON: {"criteria":[{"name":"Научная новизна","score":3,"comment":"...","fix":"..."}]}
+
+Текст:
+${parts.map(([x, v]) => `${x.ru} (версия ${v.v})\n${v.text}`).join('\n\n').slice(0, 14000)}`, { tier: 'default', cache: false });
+    if (!out || !Array.isArray(out.criteria)) throw { code: 'invalid_json' };
+    S.ui.cmAnalysis = { criteria: out.criteria.slice(0, 6), scope };
+    cmState().analysis = S.ui.cmAnalysis;
+  } catch (err) { aiFail(err); S.ui.cmAnalysis = { note: aiErrorText(err) || L3('Не удалось получить ответ ИИ. Попробуйте ещё раз.', 'ЖИ жауабын алу мүмкін болмады. Қайталап көріңіз.', 'Couldn’t get an AI response. Please try again.') }; }
+  persist(); renderMain();
+}
+
+/* ---------- Действия ---------- */
+const CM_ACT = {
+  'cm-filter': el => { S.ui.cmFilter = el.dataset.v; renderMain(); },
+  'cm-explain': el => cmExplain(el.dataset.id),
+  'cm-fix': el => { clearDrafts('cmf-'); cmMarkSeen(el.dataset.id); openModal('cm-fix', { id: el.dataset.id }); },
+  'cm-fix-save': el => {
+    const c = cmState(), r = c.remarks.find(x => x.id === el.dataset.id);
+    if (!r) return;
+    const note = String(dv('cmf-note')).trim(), last = cmLatest(r.ch), text = String(dv('cmf-text', last ? last.text : '')).trim();
+    if (!note) { toast('Опишите, что исправлено'); return; }
+    if (!text) { toast('Добавьте текст новой версии'); return; }
+    const vers = c.versions[r.ch] = c.versions[r.ch] || [];
+    let v = last ? last.v : 0;
+    if (!last || last.text !== text) { v += 1; vers.push({ v, at: Date.now(), text }); }
+    r.st = 'fixed'; r.fix = { note, v, at: Date.now() }; r.hist.push({ st: 'fixed', at: Date.now() }); r.ai = r.ai && r.ai.state === 'loading' ? null : r.ai;
+    clearDrafts('cmf-'); closeModal(); persist(); render(); toast('Исправление отправлено эксперту на проверку');
+  },
+  'cm-invite': () => { clearDrafts('cmi-'); openModal('cm-invite'); },
+  'cm-invite-save': () => {
+    const name = String(dv('cmi-name')).trim(), role = dv('cmi-role', 'internal');
+    const ch = CM_CHAPTERS.filter(x => dv('cmi-ch-' + x.id, true)).map(x => x.id);
+    if (!name) { toast('Укажите имя эксперта'); return; }
+    if (!ch.length) { toast('Выберите хотя бы одну главу'); return; }
+    const c = cmState();
+    c.experts.push({ id: uid('ex'), role, name, st: 'invited', code: 'EXP-' + String(1000 + Math.floor(Math.random() * 9000)), ch, at: Date.now() });
+    clearDrafts('cmi-'); closeModal(); persist(); renderMain(); toast('Приглашение с кодом доступа отправлено');
+  },
+  'cm-accept-invite': el => { const e = cmExpert(el.dataset.id); if (e) { e.st = 'active'; persist(); renderMain(); toast('Эксперт принял приглашение — доступ активен'); } },
+  'cm-revoke': el => {
+    const c = cmState(), e = cmExpert(el.dataset.id);
+    if (!e) return;
+    if (c.remarks.some(r => r.ex === e.id && cmOpen(r))) { toast('У эксперта есть незакрытые замечания — сначала завершите их'); return; }
+    c.experts = c.experts.filter(x => x.id !== e.id); persist(); renderMain(); toast('Доступ эксперта отозван');
+  },
+  'cm-as-expert': el => { if (el.dataset.id) S.ui.cmExpert = el.dataset.id; S.ui.cmCh = null; go('expert', 'review'); },
+  'cm-ch': el => { S.ui.cmCh = el.dataset.v; S.ui.cmReturn = null; renderMain(); },
+  'cm-accept': el => {
+    const r = cmState().remarks.find(x => x.id === el.dataset.id);
+    if (!r) return;
+    r.st = 'accepted'; r.hist.push({ st: 'accepted', at: Date.now() }); persist(); render(); toast('Исправление подтверждено — докторант получит уведомление');
+  },
+  'cm-return-open': el => { S.ui.cmReturn = S.ui.cmReturn === el.dataset.id ? null : el.dataset.id; renderMain(); },
+  'cm-return': el => {
+    const r = cmState().remarks.find(x => x.id === el.dataset.id), text = String(dv('cm-ret-text')).trim();
+    if (!r) return;
+    if (!text) { toast('Напишите, что ещё нужно исправить'); return; }
+    r.st = 'returned'; r.ret = { text, at: Date.now() }; r.hist.push({ st: 'returned', at: Date.now() });
+    S.ui.cmReturn = null; S.ui.drafts['cm-ret-text'] = ''; persist(); render(); toast('Замечание возвращено на доработку');
+  },
+  'cm-analyze': () => cmAnalyze()
+};
+function cmSubmitRemark() {
+  const me = cmMe(), text = String(dv('cm-new')).trim();
+  if (!me) return;
+  if (!text) { toast('Напишите замечание'); return; }
+  const now = Date.now();
+  cmState().remarks.push({ id: uid('r'), ex: me.id, ch: S.ui.cmCh, at: now, st: 'open', text, fix: null, ret: null, ai: null, hist: [{ st: 'open', at: now }] });
+  S.ui.drafts['cm-new'] = ''; persist(); render(); toast('Замечание отправлено — докторант получил уведомление');
+}
+/* =====================================================================
    12. Actions
    ===================================================================== */
 function toast(msg) {
@@ -4669,11 +5241,12 @@ async function copyText(text, opening) {
 }
 function clearDrafts(prefix) { Object.keys(S.ui.drafts).forEach(k => { if (k.startsWith(prefix)) delete S.ui.drafts[k]; }); }
 const splitList = (s, sep) => String(s || '').split(sep).map(x => x.trim()).filter(Boolean);
-function hashFor(role, view) { return role === 'staff' ? 'staff-' + view : view; }
+function hashFor(role, view) { return role === 'staff' ? 'staff-' + view : role === 'expert' ? 'expert-' + view : view; }
 function parseHash() {
   const h = (location.hash || '').slice(1);
   if (!h) return null;
   if (h.startsWith('staff-')) { const v = h.slice(6); return VIEWS.staff[v] ? ['staff', v] : null; }
+  if (h.startsWith('expert-')) { const v = h.slice(7); return VIEWS.expert[v] ? ['expert', v] : null; }
   return VIEWS.student[h] ? ['student', h] : null;
 }
 function go(role, view) {
@@ -5006,6 +5579,7 @@ const ACT = {
   'notif-open': el => {
     const k = el.dataset.key; S.ui.bell = false;
     if (k.startsWith('t:')) openTicket(k.slice(2));
+    else if (k.startsWith('cm:')) { const id = k.slice(3); cmMarkSeen(id); S.ui.cmFilter = 'all'; persist(); go('student', 'commission'); setTimeout(() => { const el = document.getElementById('cm-r-' + id); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60); }
     else { const id = k.slice(2); if (!S.me.readNotices.includes(id)) S.me.readNotices.push(id); persist(); render(); }
   },
   'hint-off': () => { S.me.hintDismissed = true; persist(); renderMain(); },
@@ -5224,6 +5798,7 @@ const ACT = {
   'res-del': async el => { closeModal(); await removeDoc('resources', el.dataset.id); toast('Ресурс удалён'); },
   'notice-del': el => removeDoc('notices', el.dataset.id)
 };
+Object.assign(ACT, CM_ACT);
 
 /* =====================================================================
    13. Event delegation & boot
@@ -5265,6 +5840,7 @@ document.addEventListener('change', e => {
   if (el.dataset.tkcat) { patch('tickets', el.dataset.tkcat, { cat: el.value }); toast('Категория изменена'); return; }
   if (el.dataset.resShow) { patch('resources', el.dataset.resShow, { show: el.checked }); return; }
   const id = el.id;
+  if (id === 'cm-me') { S.ui.cmExpert = el.value; S.ui.cmReturn = null; S.ui.cmCh = null; render(); return; }
   if (id === 'tf-year') { S.ui.drafts['tf-year'] = el.value; renderMain(); return; }
   const filters = { 's-idx': ['search', 'idx'], 's-from': ['search', 'from'], 's-sort': ['search', 'sort'], 's-free': ['search', 'free'], 'tk-cat': ['tk', 'cat'], 'kb-cat': ['kb', 'cat'] };
   if (filters[id]) { const [g, k] = filters[id]; S.ui[g][k] = el.type === 'checkbox' ? el.checked : el.value; if (g === 'tk') S.ui.tk.sel = null; renderMain(); return; }
@@ -5281,6 +5857,7 @@ document.addEventListener('submit', e => {
   const k = f.dataset.form;
   if (k === 'search') { S.ui.search.q = String(dv('s-q')).trim(); renderMain(); }
   else if (k === 'chat') sendAssistant(dv('chat-input'));
+  else if (k === 'cm-remark') cmSubmitRemark();
   else if (k === 'meeting') {
     const at = Date.parse(dv('mt-at', '')), topic = String(dv('mt-topic')).trim();
     if (!at || !topic) { toast('Укажите дату и тему встречи'); return; }
