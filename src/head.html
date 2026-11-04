@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Smart Research Library 1.0</title>
+<script>
+/* Тема до первой отрисовки: дневная по умолчанию, вечерняя или по времени суток (7:00–19:00 — дневная) */
+(function () { var m = 'day'; try { m = localStorage.getItem('srl-theme') || 'day'; } catch (e) { } var h = new Date().getHours(); var dark = m === 'evening' || (m === 'auto' && (h < 7 || h >= 19)); document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light'); })();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Literata:opsz,wght@7..72,500;7..72,600;7..72,700&display=swap" rel="stylesheet">
@@ -119,6 +123,11 @@ svg.i { width: 18px; height: 18px; flex: none; stroke: currentColor; fill: none;
 .panel.clip { overflow: hidden; }
 .road-grid { margin: -1px -1px -1px 0; }
 .top-right { display: flex; align-items: center; gap: 8px; }
+.theme-switch { display: inline-flex; padding: 3px; gap: 2px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; flex: none; }
+.theme-switch button { display: inline-grid; place-items: center; width: 30px; height: 28px; border: 0; border-radius: 999px; background: transparent; color: var(--ink-3); cursor: pointer; }
+.theme-switch button:hover { color: var(--ink); }
+.theme-switch button[aria-pressed="true"] { background: var(--surface); color: var(--accent); box-shadow: var(--shadow-1); }
+.theme-switch svg.i { width: 16px; height: 16px; }
 .sys-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-2); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; background: var(--surface); white-space: nowrap; cursor: default; }
 .sys-chip .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-3); }
 .sys-chip.on .dot { background: var(--ok); }
@@ -542,6 +551,9 @@ button.tag:hover { filter: brightness(.96); }
   .mobile-only { display: inline-flex; margin-bottom: 6px; }
 }
 
+@media (max-width: 1560px) { .who-text { display: none; } }
+@media (max-width: 1120px) { .role-switch .lbl-long { display: none; } .role-switch .lbl-short { display: inline; } }
+@media (max-width: 1320px) { .sys-chip .lbl { display: none; } .sys-chip { padding: 4px 8px; } }
 @media (max-width: 1180px) {
   .split, .split.left-fixed { grid-template-columns: minmax(0, 1fr); }
   .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }

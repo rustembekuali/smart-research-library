@@ -90,6 +90,13 @@ function md(text) {
   return html;
 }
 
+/* ---------- Тема: дневная, вечерняя или по времени суток ---------- */
+const THEME_KEY = 'srl-theme', THEME_DAY_FROM = 7, THEME_EVENING_FROM = 19;
+let themeModeVal = (() => { try { const v = localStorage.getItem(THEME_KEY); return ['day', 'evening', 'auto'].includes(v) ? v : 'day'; } catch (e) { return 'day'; } })();
+function themeIsDark(mode = themeModeVal, d = new Date()) { const h = d.getHours(); return mode === 'evening' || (mode === 'auto' && (h < THEME_DAY_FROM || h >= THEME_EVENING_FROM)); }
+function applyTheme() { document.documentElement.setAttribute('data-theme', themeIsDark() ? 'dark' : 'light'); }
+function setThemeMode(m) { themeModeVal = m; try { localStorage.setItem(THEME_KEY, m); } catch (e) { } applyTheme(); }
+
 const IC = {
   idcard: '<rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8.5" cy="12" r="2.5"/><path d="M13.5 10h5M13.5 14h3.5"/>',
   search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/>',
@@ -118,6 +125,8 @@ const IC = {
   grad: '<path d="M22 9.5 12 4.5 2 9.5l10 5z"/><path d="M6 11.5v5c3.5 3 8.5 3 12 0v-5"/><path d="M22 9.5v6"/>',
   building: '<path d="M3 21h18M5 21V10.5M9.5 21V10.5M14.5 21V10.5M19 21V10.5"/><path d="M2.5 10.5 12 3.5l9.5 7z"/>',
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/>',
+  moon: '<path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a6.8 6.8 0 0 0 10.7 10.7z"/>',
   info: '<circle cx="12" cy="12" r="9"/><path d="M12 16v-4.5M12 8h.01"/>',
   play: '<path d="M7 4.5v15l12-7.5z"/>',
   reset: '<path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1L3.5 8.5"/><path d="M3.5 3.5v5h5"/>',

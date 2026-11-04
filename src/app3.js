@@ -81,12 +81,16 @@ function renderTop() {
       <button data-act="role" data-role="staff" aria-pressed="${!student}">${ic('building')}<span class="lbl-long">Сотрудник библиотеки</span><span class="lbl-short">Библиотекарь</span></button>
     </div>
     <div class="grow"></div>
-    <div class="top-right">${aiChip}${liveChip}
+    <div class="top-right">${aiChip}${liveChip}${themeSwitch()}
       ${student ? `<div class="bell-wrap"><button class="icon-btn" data-act="bell" aria-haspopup="true" aria-expanded="${S.ui.bell}" aria-label="Уведомления${unread ? ': новых ' + unread : ''}">${ic('bell')}${unread ? `<span class="count">${unread}</span>` : ''}</button>${S.ui.bell ? bellDropdown(notes) : ''}</div>` : ''}
       <div class="who">${student
       ? `<div class="avatar">${esc(initials(p.name))}</div><div class="who-text"><div class="who-name">${esc(shortName(p.name))}</div><div class="who-role">${esc(p.status)} · ${p.course} курс</div></div>`
       : `<div class="avatar staff">${ic('building')}</div><div class="who-text"><div class="who-name">Библиотекарь-консультант</div><div class="who-role">Поддержка исследований</div></div>`}</div>
     </div>`;
+}
+function themeSwitch() {
+  const auto = `По времени суток: дневная с ${THEME_DAY_FROM}:00, вечерняя с ${THEME_EVENING_FROM}:00`;
+  return `<div class="theme-switch" role="group" aria-label="Тема оформления">${[['day', 'sun', 'Дневная тема'], ['evening', 'moon', 'Вечерняя тема'], ['auto', 'clock', auto]].map(([v, i, t]) => `<button data-act="theme" data-v="${v}" aria-pressed="${themeModeVal === v}" title="${t}" aria-label="${t}">${ic(i)}</button>`).join('')}</div>`;
 }
 function bellDropdown(notes) {
   return `<div class="dropdown" role="dialog" aria-label="Уведомления"><div class="dd-head"><span>Уведомления</span>${notes.some(n => n.unread) ? `<button class="btn xs ghost" data-act="notif-all">Прочитать все</button>` : ''}</div>

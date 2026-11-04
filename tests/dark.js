@@ -7,6 +7,8 @@ const { chromium } = require('playwright');
 (async () => {
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, colorScheme: 'dark' });
+  // вечерняя тема выбирается вручную: по умолчанию интерфейс дневной
+  await ctx.addInitScript(() => { try { if (!localStorage.getItem('srl-theme')) localStorage.setItem('srl-theme', 'evening'); } catch (e) { } });
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', e => errors.push(e.message));

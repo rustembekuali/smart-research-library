@@ -440,6 +440,11 @@ const ACT = {
   'p-open': el => openModal('prompt', { id: el.dataset.id }),
   'p-favtoggle': el => { const f = S.me.favPrompts || (S.me.favPrompts = []), i = f.indexOf(el.dataset.id); if (i >= 0) f.splice(i, 1); else f.push(el.dataset.id); persist(); render(); },
   'p-run': el => runPrompt(el.dataset.id),
+  theme: el => {
+    const m = el.dataset.v;
+    setThemeMode(m); renderTop();
+    toast(m === 'day' ? 'Дневная тема' : m === 'evening' ? 'Вечерняя тема' : `Тема по времени суток: дневная с ${THEME_DAY_FROM}:00, вечерняя с ${THEME_EVENING_FROM}:00`);
+  },
   'p-example': el => {
     const P = PROMPTS.find(p => p.id === el.dataset.id);
     if (!P || !P.ex) return;
@@ -641,6 +646,8 @@ document.addEventListener('focusout', () => { const t = tipEl(); if (t) t.hidden
 
 function boot() {
   loadState();
+  applyTheme();
+  setInterval(() => { if (themeModeVal === 'auto') applyTheme(); }, 60000);
   const h = parseHash();
   if (h) { S.role = h[0]; S.view[h[0]] = h[1]; }
   document.getElementById('app').innerHTML = '<div class="app"><header class="topbar" id="topbar"></header><nav class="nav" id="nav" aria-label="Модули кабинета"></nav><main class="main" id="main"></main></div>';

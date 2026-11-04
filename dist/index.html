@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Smart Research Library 1.0</title>
+<script>
+/* Тема до первой отрисовки: дневная по умолчанию, вечерняя или по времени суток (7:00–19:00 — дневная) */
+(function () { var m = 'day'; try { m = localStorage.getItem('srl-theme') || 'day'; } catch (e) { } var h = new Date().getHours(); var dark = m === 'evening' || (m === 'auto' && (h < 7 || h >= 19)); document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light'); })();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Literata:opsz,wght@7..72,500;7..72,600;7..72,700&display=swap" rel="stylesheet">
@@ -119,6 +123,11 @@ svg.i { width: 18px; height: 18px; flex: none; stroke: currentColor; fill: none;
 .panel.clip { overflow: hidden; }
 .road-grid { margin: -1px -1px -1px 0; }
 .top-right { display: flex; align-items: center; gap: 8px; }
+.theme-switch { display: inline-flex; padding: 3px; gap: 2px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; flex: none; }
+.theme-switch button { display: inline-grid; place-items: center; width: 30px; height: 28px; border: 0; border-radius: 999px; background: transparent; color: var(--ink-3); cursor: pointer; }
+.theme-switch button:hover { color: var(--ink); }
+.theme-switch button[aria-pressed="true"] { background: var(--surface); color: var(--accent); box-shadow: var(--shadow-1); }
+.theme-switch svg.i { width: 16px; height: 16px; }
 .sys-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-2); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; background: var(--surface); white-space: nowrap; cursor: default; }
 .sys-chip .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-3); }
 .sys-chip.on .dot { background: var(--ok); }
@@ -542,6 +551,9 @@ button.tag:hover { filter: brightness(.96); }
   .mobile-only { display: inline-flex; margin-bottom: 6px; }
 }
 
+@media (max-width: 1560px) { .who-text { display: none; } }
+@media (max-width: 1120px) { .role-switch .lbl-long { display: none; } .role-switch .lbl-short { display: inline; } }
+@media (max-width: 1320px) { .sys-chip .lbl { display: none; } .sys-chip { padding: 4px 8px; } }
 @media (max-width: 1180px) {
   .split, .split.left-fixed { grid-template-columns: minmax(0, 1fr); }
   .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1256,6 +1268,13 @@ function md(text) {
   return html;
 }
 
+/* ---------- Тема: дневная, вечерняя или по времени суток ---------- */
+const THEME_KEY = 'srl-theme', THEME_DAY_FROM = 7, THEME_EVENING_FROM = 19;
+let themeModeVal = (() => { try { const v = localStorage.getItem(THEME_KEY); return ['day', 'evening', 'auto'].includes(v) ? v : 'day'; } catch (e) { return 'day'; } })();
+function themeIsDark(mode = themeModeVal, d = new Date()) { const h = d.getHours(); return mode === 'evening' || (mode === 'auto' && (h < THEME_DAY_FROM || h >= THEME_EVENING_FROM)); }
+function applyTheme() { document.documentElement.setAttribute('data-theme', themeIsDark() ? 'dark' : 'light'); }
+function setThemeMode(m) { themeModeVal = m; try { localStorage.setItem(THEME_KEY, m); } catch (e) { } applyTheme(); }
+
 const IC = {
   idcard: '<rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8.5" cy="12" r="2.5"/><path d="M13.5 10h5M13.5 14h3.5"/>',
   search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/>',
@@ -1284,6 +1303,8 @@ const IC = {
   grad: '<path d="M22 9.5 12 4.5 2 9.5l10 5z"/><path d="M6 11.5v5c3.5 3 8.5 3 12 0v-5"/><path d="M22 9.5v6"/>',
   building: '<path d="M3 21h18M5 21V10.5M9.5 21V10.5M14.5 21V10.5M19 21V10.5"/><path d="M2.5 10.5 12 3.5l9.5 7z"/>',
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/>',
+  moon: '<path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a6.8 6.8 0 0 0 10.7 10.7z"/>',
   info: '<circle cx="12" cy="12" r="9"/><path d="M12 16v-4.5M12 8h.01"/>',
   play: '<path d="M7 4.5v15l12-7.5z"/>',
   reset: '<path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1L3.5 8.5"/><path d="M3.5 3.5v5h5"/>',
@@ -2157,12 +2178,16 @@ function renderTop() {
       <button data-act="role" data-role="staff" aria-pressed="${!student}">${ic('building')}<span class="lbl-long">Сотрудник библиотеки</span><span class="lbl-short">Библиотекарь</span></button>
     </div>
     <div class="grow"></div>
-    <div class="top-right">${aiChip}${liveChip}
+    <div class="top-right">${aiChip}${liveChip}${themeSwitch()}
       ${student ? `<div class="bell-wrap"><button class="icon-btn" data-act="bell" aria-haspopup="true" aria-expanded="${S.ui.bell}" aria-label="Уведомления${unread ? ': новых ' + unread : ''}">${ic('bell')}${unread ? `<span class="count">${unread}</span>` : ''}</button>${S.ui.bell ? bellDropdown(notes) : ''}</div>` : ''}
       <div class="who">${student
       ? `<div class="avatar">${esc(initials(p.name))}</div><div class="who-text"><div class="who-name">${esc(shortName(p.name))}</div><div class="who-role">${esc(p.status)} · ${p.course} курс</div></div>`
       : `<div class="avatar staff">${ic('building')}</div><div class="who-text"><div class="who-name">Библиотекарь-консультант</div><div class="who-role">Поддержка исследований</div></div>`}</div>
     </div>`;
+}
+function themeSwitch() {
+  const auto = `По времени суток: дневная с ${THEME_DAY_FROM}:00, вечерняя с ${THEME_EVENING_FROM}:00`;
+  return `<div class="theme-switch" role="group" aria-label="Тема оформления">${[['day', 'sun', 'Дневная тема'], ['evening', 'moon', 'Вечерняя тема'], ['auto', 'clock', auto]].map(([v, i, t]) => `<button data-act="theme" data-v="${v}" aria-pressed="${themeModeVal === v}" title="${t}" aria-label="${t}">${ic(i)}</button>`).join('')}</div>`;
 }
 function bellDropdown(notes) {
   return `<div class="dropdown" role="dialog" aria-label="Уведомления"><div class="dd-head"><span>Уведомления</span>${notes.some(n => n.unread) ? `<button class="btn xs ghost" data-act="notif-all">Прочитать все</button>` : ''}</div>
@@ -3300,6 +3325,11 @@ const ACT = {
   'p-open': el => openModal('prompt', { id: el.dataset.id }),
   'p-favtoggle': el => { const f = S.me.favPrompts || (S.me.favPrompts = []), i = f.indexOf(el.dataset.id); if (i >= 0) f.splice(i, 1); else f.push(el.dataset.id); persist(); render(); },
   'p-run': el => runPrompt(el.dataset.id),
+  theme: el => {
+    const m = el.dataset.v;
+    setThemeMode(m); renderTop();
+    toast(m === 'day' ? 'Дневная тема' : m === 'evening' ? 'Вечерняя тема' : `Тема по времени суток: дневная с ${THEME_DAY_FROM}:00, вечерняя с ${THEME_EVENING_FROM}:00`);
+  },
   'p-example': el => {
     const P = PROMPTS.find(p => p.id === el.dataset.id);
     if (!P || !P.ex) return;
@@ -3501,6 +3531,8 @@ document.addEventListener('focusout', () => { const t = tipEl(); if (t) t.hidden
 
 function boot() {
   loadState();
+  applyTheme();
+  setInterval(() => { if (themeModeVal === 'auto') applyTheme(); }, 60000);
   const h = parseHash();
   if (h) { S.role = h[0]; S.view[h[0]] = h[1]; }
   document.getElementById('app').innerHTML = '<div class="app"><header class="topbar" id="topbar"></header><nav class="nav" id="nav" aria-label="Модули кабинета"></nav><main class="main" id="main"></main></div>';
